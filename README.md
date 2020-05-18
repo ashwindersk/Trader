@@ -1,0 +1,2 @@
+# Trader
+A proprietary trader 
