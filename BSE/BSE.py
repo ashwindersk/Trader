@@ -1,36 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@ashwindersk 
-Learn Git and GitHub without any code!
-Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
-
-
-davecliff
-/
-BristolStockExchange
-21
-13554
- Code
- Issues 0
- Pull requests 1 Actions
- Projects 0
- Wiki
- Security 0
- Insights
-BristolStockExchange/BSE.py /
-@davecliff davecliff Exchange now publishes tape data
-c0b6a10 on 22 Jul 2018
-1319 lines (1074 sloc)  60.2 KB
-  
-Code navigation is available!
-Navigate your code with ease. Click on function and method calls to jump to their definitions or references in the same repository. Learn more
-
 # -*- coding: utf-8 -*-
 #
 # BSE: The Bristol Stock Exchange
@@ -814,6 +781,15 @@ class Trader_ZIP(Trader):
                 self.prev_best_ask_q = lob_best_ask_q
 
 
+
+class Prop_Trader(Trader):
+        def __init__(self, ttype, tid, balance, time):
+                pass
+        def bookkeep(self, trade, order, verbose, time):
+                return super().bookkeep(trade, order, verbose, time)
+        
+        def respond():
+                pass
 
 
 ##########################---trader-types have all been defined now--################
