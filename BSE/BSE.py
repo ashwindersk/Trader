@@ -48,7 +48,8 @@
 import sys
 import math
 import random
-
+import matplotlib.pyplot as plt
+import csv
 
 bse_sys_minprice = 1  # minimum price in the system, in cents/pennies
 bse_sys_maxprice = 1000  # maximum price in the system, in cents/pennies
@@ -783,13 +784,28 @@ class Trader_ZIP(Trader):
 
 
 class Prop_Trader(Trader):
-        def __init__(self, ttype, tid, balance, time):
-                pass
+        
         def bookkeep(self, trade, order, verbose, time):
                 return super().bookkeep(trade, order, verbose, time)
         
-        def respond():
+        def respond(self, time, lob, trade, verbose):
+                
+                best_bid = lob['bids']['best']
+                best_ask = lob['asks']['best']
+                
+                if best_bid is None:
+                        best_bid = 0
+                if best_ask is None:
+                        best_ask =0
+                        
+                midprice = (best_bid + best_ask)/2
+                fname = 'midprice.csv'
+                
+                with open(fname, 'a') as csvfile:
+                        csvfile.write("{midprice}\n".format(midprice=midprice))
+        def getorder(self,time, countdown,lob):
                 pass
+                        
 
 
 ##########################---trader-types have all been defined now--################
@@ -1190,12 +1206,12 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
                                 if dump_each_trade: trade_stats(sess_id, traders, tdump, time, exchange.publish_lob(time, lob_verbose))
 
                         # traders respond to whatever happened
-                        lob = exchange.publish_lob(time, lob_verbose)
-                        for t in traders:
+                lob = exchange.publish_lob(time, lob_verbose)
+                for t in traders:
                                 # NB respond just updates trader's internal variables
                                 # doesn't alter the LOB, so processing each trader in
                                 # sequence (rather than random/shuffle) isn't a problem
-                                traders[t].respond(time, lob, trade, respond_verbose)
+                        traders[t].respond(time, lob, trade, respond_verbose)
 
                 time = time + timestep
 
@@ -1224,6 +1240,7 @@ if __name__ == "__main__":
 
 
         # schedule_offsetfn returns time-dependent offset on schedule prices
+        #This to reduce the 'fixed equilibrium points' at each stage in the supply and demand schedule
         def schedule_offsetfn(t):
                 pi2 = math.pi * 2
                 c = math.pi * 3000
@@ -1235,96 +1252,53 @@ if __name__ == "__main__":
                 
                 
 
-# #        range1 = (10, 190, schedule_offsetfn)
-# #        range2 = (200,300, schedule_offsetfn)
+        range1 = (10, 190, schedule_offsetfn, schedule_offsetfn)
+        range2 = (200,300, schedule_offsetfn, schedule_offsetfn)
 
-# #        supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
-# #                            {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
-# #                            {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-# #                          ]
+        supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
+                           {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
+                           {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+                         ]
 
-
-
-        range1 = (95, 95, schedule_offsetfn)
-        supply_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                          ]
-
-        range1 = (105, 105, schedule_offsetfn)
-        demand_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                          ]
-
+        demand_schedule = supply_schedule
+        
         order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
                        'interval':30, 'timemode':'drip-poisson'}
 
-# #        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
-# #        sellers_spec = buyers_spec
-# #        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
-# #
-# #        # run a sequence of trials, one session per trial
-# #
-# #        n_trials = 1
-# #        tdump=open('avg_balance.csv','w')
-# #        trial = 1
-# #        if n_trials > 1:
-# #                dump_all = False
-# #        else:
-# #                dump_all = True
-# #                
-# #        while (trial<(n_trials+1)):
-# #                trial_id = 'trial%04d' % trial
-# #                market_session(trial_id, start_time, end_time, traders_spec, order_sched, tdump, dump_all)
-# #                tdump.flush()
-# #                trial = trial + 1
-# #        tdump.close()
-# #
-# #        sys.exit('Done Now')
-
-
+        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',9), ('PROP',1)]
+        sellers_spec = buyers_spec
+        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
         
+        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
 
-        # run a sequence of trials that exhaustively varies the ratio of four trader types
-        # NB this has weakness of symmetric proportions on buyers/sellers -- combinatorics of varying that are quite nasty
-        
+       # run a sequence of trials, one session per trial
 
-        n_trader_types = 4
-        equal_ratio_n = 4
-        n_trials_per_ratio = 50
+        n_trials = 1
+        tdump=open('avg_balance.csv','w')
+        trial = 1
+        if n_trials > 1:
+                dump_all = False
+        else:
+                dump_all = True
 
-        n_traders = n_trader_types * equal_ratio_n
-
-        fname = 'balances_%03d.csv' % equal_ratio_n
-
-        tdump = open(fname, 'w')
-
-        min_n = 1
-
-        trialnumber = 1
-        trdr_1_n = min_n
-        while trdr_1_n <= n_traders:
-                trdr_2_n = min_n 
-                while trdr_2_n <= n_traders - trdr_1_n:
-                        trdr_3_n = min_n
-                        while trdr_3_n <= n_traders - (trdr_1_n + trdr_2_n):
-                                trdr_4_n = n_traders - (trdr_1_n + trdr_2_n + trdr_3_n)
-                                if trdr_4_n >= min_n:
-                                        buyers_spec = [('GVWY', trdr_1_n), ('SHVR', trdr_2_n),
-                                                       ('ZIC', trdr_3_n), ('ZIP', trdr_4_n)]
-                                        sellers_spec = buyers_spec
-                                        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
-                                        # print buyers_spec
-                                        trial = 1
-                                        while trial <= n_trials_per_ratio:
-                                                trial_id = 'trial%07d' % trialnumber
-                                                market_session(trial_id, start_time, end_time, traders_spec,
-                                                               order_sched, tdump, False, True)
-                                                tdump.flush()
-                                                trial = trial + 1
-                                                trialnumber = trialnumber + 1
-                                trdr_3_n += 1
-                        trdr_2_n += 1
-                trdr_1_n += 1
+        while (trial<(n_trials+1)):
+                trial_id = 'trial%04d' % trial
+                print trial_id
+                market_session(trial_id, start_time, end_time, traders_spec, order_sched, tdump, dump_all, False)
+                tdump.flush()
+                trial = trial + 1
         tdump.close()
         
-        print trialnumber
+        midprices = []
+        
+        with open('transactions.csv', 'r') as csvfile:
+                plots = csv.reader(csvfile, delimiter = ",")
+                for row in plots:
+                        print row
+                        midprices.append(float(row[1]))
+        print len(midprices)
+        plt.plot(midprices)
+        plt.show()
 
+        
 
