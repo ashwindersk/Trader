@@ -857,6 +857,8 @@ def populate_market(traders_spec, traders, shuffle, verbose):
                         return Trader_Sniper('SNPR', name, 0.00, 0)
                 elif robottype == 'ZIP':
                         return Trader_ZIP('ZIP', name, 0.00, 0)
+                elif robottype == 'PROP':
+                        return Prop_Trader('PROP', name, 500.0, 0)
                 else:
                         sys.exit('FATAL: don\'t know robot type %s\n' % robottype)
 
