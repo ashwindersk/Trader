@@ -1235,7 +1235,7 @@ if __name__ == "__main__":
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 600.0
+        end_time = 2000.0
         duration = end_time - start_time
 
 
@@ -1255,11 +1255,18 @@ if __name__ == "__main__":
         range1 = (10, 190, schedule_offsetfn, schedule_offsetfn)
         range2 = (200,300, schedule_offsetfn, schedule_offsetfn)
 
-        supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
-                           {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
-                           {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                         ]
+        # supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
+        #                    {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
+        #                    {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+        #                  ]
 
+        range1 = (10, 190,  schedule_offsetfn, schedule_offsetfn)
+        range2 = (200, 300, schedule_offsetfn, schedule_offsetfn)
+        range3 = (150, 200, schedule_offsetfn, schedule_offsetfn)
+        supply_schedule = [ {'from':start_time, 'to':end_time/3, 'ranges':[range1], 'stepmode':'fixed'},
+                           {'from':end_time/3, 'to':2*end_time/3, 'ranges':[range2], 'stepmode':'fixed'},
+                           {'from':2*end_time/3, 'to':end_time, 'ranges':[range3], 'stepmode':'fixed'} ]
+        
         demand_schedule = supply_schedule
         
         order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
@@ -1291,11 +1298,10 @@ if __name__ == "__main__":
         
         midprices = []
         
-        with open('transactions.csv', 'r') as csvfile:
+        with open('midprice.csv', 'r') as csvfile:
                 plots = csv.reader(csvfile, delimiter = ",")
                 for row in plots:
-                        print row
-                        midprices.append(float(row[1]))
+                        midprices.append(float(row[0]))
         print len(midprices)
         plt.plot(midprices)
         plt.show()
