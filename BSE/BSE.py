@@ -1252,20 +1252,42 @@ if __name__ == "__main__":
                 
                 
 
-        range1 = (10, 190, schedule_offsetfn, schedule_offsetfn)
-        range2 = (200,300, schedule_offsetfn, schedule_offsetfn)
+        # range1 = (10, 190, schedule_offsetfn, schedule_offsetfn)
+        # range2 = (200,300, schedule_offsetfn, schedule_offsetfn)
 
         # supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
         #                    {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
         #                    {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
         #                  ]
 
-        range1 = (10, 190,  schedule_offsetfn, schedule_offsetfn)
-        range2 = (200, 300, schedule_offsetfn, schedule_offsetfn)
-        range3 = (150, 200, schedule_offsetfn, schedule_offsetfn)
-        supply_schedule = [ {'from':start_time, 'to':end_time/3, 'ranges':[range1], 'stepmode':'fixed'},
-                           {'from':end_time/3, 'to':2*end_time/3, 'ranges':[range2], 'stepmode':'fixed'},
-                           {'from':2*end_time/3, 'to':end_time, 'ranges':[range3], 'stepmode':'fixed'} ]
+
+        
+        low = 100
+        high = 150
+        intervals = 5
+        supply_schedule = []
+        sigma = 30
+        for i in range(0,intervals):
+                low = random.gauss(low,sigma)
+                high = random.gauss(high,sigma)
+                found = False
+                while not found:
+                        if (high > low) and (low > 0):
+                                found = True
+                        
+                        else:
+                                low = random.gauss(low,sigma)
+                                high = random.gauss(high,sigma)
+                
+                
+                low = int(low)
+                high = int(high)
+                
+                range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
+                supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
+        
+        
+        print supply_schedule
         
         demand_schedule = supply_schedule
         
