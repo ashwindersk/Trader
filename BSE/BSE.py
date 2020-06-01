@@ -799,10 +799,11 @@ class Prop_Trader(Trader):
                         best_ask =0
                         
                 midprice = (best_bid + best_ask)/2
+                #print midprice
                 fname = 'midprice.csv'
                 
                 with open(fname, 'a') as csvfile:
-                        csvfile.write("{midprice}\n".format(midprice=midprice))
+                        csvfile.write("{time},{midprice}\n".format(time = time, midprice=midprice))
         def getorder(self,time, countdown,lob):
                 pass
                         
@@ -1206,12 +1207,12 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
                                 if dump_each_trade: trade_stats(sess_id, traders, tdump, time, exchange.publish_lob(time, lob_verbose))
 
                         # traders respond to whatever happened
-                lob = exchange.publish_lob(time, lob_verbose)
-                for t in traders:
-                                # NB respond just updates trader's internal variables
-                                # doesn't alter the LOB, so processing each trader in
-                                # sequence (rather than random/shuffle) isn't a problem
-                        traders[t].respond(time, lob, trade, respond_verbose)
+                                lob = exchange.publish_lob(time, lob_verbose)
+                                for t in traders:
+                                                # NB respond just updates trader's internal variables
+                                                # doesn't alter the LOB, so processing each trader in
+                                                # sequence (rather than random/shuffle) isn't a problem
+                                        traders[t].respond(time, lob, trade, respond_verbose)
 
                 time = time + timestep
 
@@ -1235,7 +1236,8 @@ if __name__ == "__main__":
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 2000.0
+        end_time = 10000
+        .0
         duration = end_time - start_time
 
 
@@ -1245,9 +1247,10 @@ if __name__ == "__main__":
                 pi2 = math.pi * 2
                 c = math.pi * 3000
                 wavelength = t / c
-                gradient = 100 * t / (c / pi2)
-                amplitude = 100 * t / (c / pi2)
-                offset = gradient + amplitude * math.sin(wavelength * t)
+                gradient = 100*t / (c / pi2)
+                amplitude = 100*t / (c / pi2)
+                #offset = gradient + amplitude * math.sin(wavelength * t)
+                offset = 1 + math.sin(t*wavelength)
                 return int(round(offset, 0))
                 
                 
@@ -1264,7 +1267,7 @@ if __name__ == "__main__":
         
         low = 100
         high = 150
-        intervals = 5
+        intervals = 10
         supply_schedule = []
         sigma = 30
         for i in range(0,intervals):
@@ -1318,14 +1321,25 @@ if __name__ == "__main__":
                 trial = trial + 1
         tdump.close()
         
-        midprices = []
+        midprices_x = []
+        midprices_y = []
         
         with open('midprice.csv', 'r') as csvfile:
                 plots = csv.reader(csvfile, delimiter = ",")
                 for row in plots:
-                        midprices.append(float(row[0]))
-        print len(midprices)
-        plt.plot(midprices)
+                        midprices_x.append(float(row[0]))
+                        midprices_y.append(float(row[1]))
+                        
+        transactions_x = []
+        transactions_y = []
+        with open('transactions.csv','r') as csvfile:
+                plots = csv.reader(csvfile, delimiter = ',')
+                for row in plots:
+                        transactions_x.append(row[0])
+                        transactions_y.append(row[1])
+        
+        plt.plot(midprices_x, midprices_y)
+        plt.plot(transactions_x, transactions_y)
         plt.show()
 
         
