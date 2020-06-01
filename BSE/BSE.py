@@ -1215,6 +1215,7 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
                                         traders[t].respond(time, lob, trade, respond_verbose)
 
                 time = time + timestep
+                
 
 
         # end of an experiment -- dump the tape
@@ -1236,8 +1237,7 @@ if __name__ == "__main__":
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 10000
-        .0
+        end_time = 10000.0
         duration = end_time - start_time
 
 
@@ -1269,7 +1269,7 @@ if __name__ == "__main__":
         high = 150
         intervals = 10
         supply_schedule = []
-        sigma = 30
+        sigma = 20
         for i in range(0,intervals):
                 low = random.gauss(low,sigma)
                 high = random.gauss(high,sigma)
@@ -1287,7 +1287,7 @@ if __name__ == "__main__":
                 high = int(high)
                 
                 range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
-                supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
+                supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'jittered'})                
         
         
         print supply_schedule
