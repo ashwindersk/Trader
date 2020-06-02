@@ -50,6 +50,9 @@ import math
 import random
 import matplotlib.pyplot as plt
 import csv
+import time as ti
+from os import getcwd
+from os import listdir
 
 bse_sys_minprice = 1  # minimum price in the system, in cents/pennies
 bse_sys_maxprice = 1000  # maximum price in the system, in cents/pennies
@@ -785,6 +788,11 @@ class Trader_ZIP(Trader):
 
 class Prop_Trader(Trader):
         
+        def __init__(self, ttype, tid, balance, time):
+                Trader.__init__(self,ttype, tid, balance, time)
+                self.time_id = ti.time()
+                
+        
         def bookkeep(self, trade, order, verbose, time):
                 return super().bookkeep(trade, order, verbose, time)
         
@@ -800,7 +808,7 @@ class Prop_Trader(Trader):
                         
                 midprice = (best_bid + best_ask)/2
                 #print midprice
-                fname = 'midprice.csv'
+                fname = 'midprice-{id}.csv'.format(id = self.time_id)
                 
                 with open(fname, 'a') as csvfile:
                         csvfile.write("{time},{midprice}\n".format(time = time, midprice=midprice))
@@ -1219,7 +1227,7 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
 
 
         # end of an experiment -- dump the tape
-        exchange.tape_dump('transactions.csv', 'w', 'keep')
+        exchange.tape_dump('transactions-{id}.csv'.format(id = ti.time()), 'w', 'keep')
 
 
         # write trade_stats for this experiment NB end-of-session summary only
@@ -1232,12 +1240,13 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
 # # Below here is where we set up and run a series of experiments
 
 
+
 if __name__ == "__main__":
 
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 10000.0
+        end_time = 30000.0
         duration = end_time - start_time
 
 
@@ -1265,47 +1274,53 @@ if __name__ == "__main__":
 
 
         
-        low = 100
-        high = 150
-        intervals = 10
-        supply_schedule = []
-        sigma = 20
-        for i in range(0,intervals):
-                low = random.gauss(low,sigma)
-                high = random.gauss(high,sigma)
-                found = False
-                while not found:
-                        if (high > low) and (low > 0):
-                                found = True
-                        
-                        else:
-                                low = random.gauss(low,sigma)
-                                high = random.gauss(high,sigma)
-                
-                
-                low = int(low)
-                high = int(high)
-                
-                range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
-                supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'jittered'})                
         
         
-        print supply_schedule
         
-        demand_schedule = supply_schedule
-        
-        order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
-                       'interval':30, 'timemode':'drip-poisson'}
+        def get_traders_spec(schedule_offsetfn):
+                low = 100
+                high = 150
+                intervals = 10
+                supply_schedule = []
+                sigma = 20
+                for i in range(0,intervals):
+                        low = random.gauss(low,sigma)
+                        high = random.gauss(high,sigma)
+                        found = False
+                        while not found:
+                                if (high > low) and (low > 0):
+                                        found = True
 
-        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',9), ('PROP',1)]
-        sellers_spec = buyers_spec
-        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
-        
-        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
+                                else:
+                                        low = random.gauss(low,sigma)
+                                        high = random.gauss(high,sigma)
+
+
+                        low = int(low)
+                        high = int(high)
+
+                        range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
+                        supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'jittered'})                
+
+
+                print supply_schedule
+
+                demand_schedule = supply_schedule
+
+                order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
+                               'interval':30, 'timemode':'drip-poisson'}
+
+                buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',9), ('PROP',1)]
+                sellers_spec = buyers_spec
+                buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
+
+                traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
+
+                return traders_spec, order_sched
 
        # run a sequence of trials, one session per trial
 
-        n_trials = 1
+        n_trials = 10
         tdump=open('avg_balance.csv','w')
         trial = 1
         if n_trials > 1:
@@ -1314,6 +1329,7 @@ if __name__ == "__main__":
                 dump_all = True
 
         while (trial<(n_trials+1)):
+                traders_spec, order_sched= get_traders_spec(schedule_offsetfn)
                 trial_id = 'trial%04d' % trial
                 print trial_id
                 market_session(trial_id, start_time, end_time, traders_spec, order_sched, tdump, dump_all, False)
@@ -1321,26 +1337,45 @@ if __name__ == "__main__":
                 trial = trial + 1
         tdump.close()
         
+        
+        
+        
+        #-----------------------------------------Prepreprocessing-------------------------------------------------------
+        def find_midprice_filenames( path_to_dir, suffix=".csv" , prefix ='midprice'):
+                filenames = listdir(path_to_dir)
+                return [ filename for filename in filenames if (filename.endswith( suffix) and filename.startswith(prefix)) ]
+
+        def line_prepender(filename):
+                with open(filename, 'r+') as f:
+                        content = f.read()
+                        f.seek(0, 0)
+                        f.write('Time,Price' + '\n' + content)
+                        print("done")
+        fnames = find_midprice_filenames(getcwd())
+        
+        results = map(line_prepender,fnames)
+        
+        
         midprices_x = []
         midprices_y = []
         
-        with open('midprice.csv', 'r') as csvfile:
-                plots = csv.reader(csvfile, delimiter = ",")
-                for row in plots:
-                        midprices_x.append(float(row[0]))
-                        midprices_y.append(float(row[1]))
+        # with open('midprice.csv', 'r') as csvfile:
+        #         plots = csv.reader(csvfile, delimiter = ",")
+        #         for row in plots:
+        #                 midprices_x.append(float(row[0]))
+        #                 midprices_y.append(float(row[1]))
                         
-        transactions_x = []
-        transactions_y = []
-        with open('transactions.csv','r') as csvfile:
-                plots = csv.reader(csvfile, delimiter = ',')
-                for row in plots:
-                        transactions_x.append(row[0])
-                        transactions_y.append(row[1])
+        # transactions_x = []
+        # transactions_y = []
+        # with open('transactions.csv','r') as csvfile:
+        #         plots = csv.reader(csvfile, delimiter = ',')
+        #         for row in plots:
+        #                 transactions_x.append(row[0])
+        #                 transactions_y.append(row[1])
         
-        plt.plot(midprices_x, midprices_y)
-        plt.plot(transactions_x, transactions_y)
-        plt.show()
+        # plt.plot(midprices_x, midprices_y)
+        # plt.plot(transactions_x, transactions_y)
+        # plt.show()
 
         
 
