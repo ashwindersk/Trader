@@ -1246,7 +1246,7 @@ if __name__ == "__main__":
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 30000.0
+        end_time = 10000.0
         duration = end_time - start_time
 
 
@@ -1256,10 +1256,10 @@ if __name__ == "__main__":
                 pi2 = math.pi * 2
                 c = math.pi * 3000
                 wavelength = t / c
-                gradient = 100*t / (c / pi2)
-                amplitude = 100*t / (c / pi2)
-                #offset = gradient + amplitude * math.sin(wavelength * t)
-                offset = 1 + math.sin(t*wavelength)
+                gradient = 2*t / (c / pi2)
+                amplitude = 2*t / (c / pi2)
+                offset = gradient + amplitude * math.sin(wavelength * t)
+                #offset = 1 + math.sin(t*wavelength)
                 return int(round(offset, 0))
                 
                 
@@ -1282,7 +1282,7 @@ if __name__ == "__main__":
                 high = 150
                 intervals = 10
                 supply_schedule = []
-                sigma = 20
+                sigma = 5
                 for i in range(0,intervals):
                         low = random.gauss(low,sigma)
                         high = random.gauss(high,sigma)
@@ -1356,8 +1356,8 @@ if __name__ == "__main__":
         results = map(line_prepender,fnames)
         
         
-        midprices_x = []
-        midprices_y = []
+        # midprices_x = []
+        # midprices_y = []
         
         # with open('midprice.csv', 'r') as csvfile:
         #         plots = csv.reader(csvfile, delimiter = ",")
@@ -1365,16 +1365,16 @@ if __name__ == "__main__":
         #                 midprices_x.append(float(row[0]))
         #                 midprices_y.append(float(row[1]))
                         
-        # transactions_x = []
-        # transactions_y = []
-        # with open('transactions.csv','r') as csvfile:
-        #         plots = csv.reader(csvfile, delimiter = ',')
-        #         for row in plots:
-        #                 transactions_x.append(row[0])
-        #                 transactions_y.append(row[1])
+        # # transactions_x = []
+        # # transactions_y = []
+        # # with open('transactions.csv','r') as csvfile:
+        # #         plots = csv.reader(csvfile, delimiter = ',')
+        # #         for row in plots:
+        # #                 transactions_x.append(row[0])
+        # #                 transactions_y.append(row[1])
         
         # plt.plot(midprices_x, midprices_y)
-        # plt.plot(transactions_x, transactions_y)
+        # #plt.plot(transactions_x, transactions_y)
         # plt.show()
 
         
