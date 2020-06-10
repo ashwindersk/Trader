@@ -1142,7 +1142,6 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
         # create a bunch of traders
         traders = {}
         trader_stats = populate_market(trader_spec, traders, True, verbose)
-        print traders
 
 
         # timestep set so that can process all traders in one second
@@ -1236,7 +1235,7 @@ if __name__ == "__main__":
         # set up parameters for the session
 
         start_time = 0.0
-        end_time = 2000.0
+        end_time = 1000.0
         duration = end_time - start_time
 
 
@@ -1288,16 +1287,14 @@ if __name__ == "__main__":
                 supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
         
         
-        print supply_schedule
         
         demand_schedule = supply_schedule
         
         order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
                        'interval':30, 'timemode':'drip-poisson'}
 
-        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',9), ('PROP',1)]
+        buyers_spec = [('GVWY',10),('ZIC',9),('ZIP',10), ('PROP',1)]
         sellers_spec = buyers_spec
-        buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
         
         traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
 
