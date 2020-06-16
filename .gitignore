@@ -1,0 +1,5 @@
+#All data files 
+*.csv
+
+#MacOS files
+.DS_Store

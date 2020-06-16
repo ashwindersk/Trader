@@ -97,7 +97,7 @@ class Exchange(OrderBook):
     def print_public_lob(self, time):
         public_data = self.get_public_lob(time)
         print('***')
-        print('publish_lob: t=%d' % time)
+        print('publish_lob: t=%.2f' % time)
         print('BID_lob=%s' % public_data['bids'])
         print('ASK_lob=%s' % public_data['asks'])
         print('TAPE =', public_data['tape'])

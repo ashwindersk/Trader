@@ -51,18 +51,18 @@ class Environment:
         if not self.init:
             raise RuntimeError('Error: step() function in environment called before reset()')
         
-        
-        
+
+
         trade = None
 
         self.pending_cust_orders, kills = self._customer_orders(self.time, self.traders, self.trader_stats,
-                                                 self.order_schedule, self.pending_cust_orders)
+                                                 self.order_schedule, self.pending_cust_orders, player_action)
 
         # if any newly-issued customer orders mean quotes on the LOB need to be cancelled, kill them
         if len(kills) > 0 :
                 for kill in kills :
-                        if traders[kill].lastquote != None :
-                                self.exchange.del_order(time, traders[kill].lastquote)
+                        if self.traders[kill].lastquote != None :
+                                self.exchange.del_order(self.traders[kill].lastquote,self.time )
         balance = 0
 
         ## Shuffle traders in a random order
@@ -78,18 +78,21 @@ class Environment:
         # In their random order, traders take an action
         for trader_key in trader_keys:
             trader = self.traders[trader_key]
-            order = trader.action(player_action, self.time)
-            
+            order = trader.action(player_action, self.time) 
             output = None
             if order != None: # If an order is placed, process it
-                trader.n_quotes = 1
                 output = self.exchange.process_order(order, self.time)
+                
             if output != None: # If a trade occurred due to the order being placed, notify the parties involved
                 trader1 = self.traders[output['party1']]
                 trader2 = self.traders[output['party2']]
+                print(trader1.lastquote)
+                print(trader2.lastquote)
                 trader1.notify_transaction(output)
                 trader2.notify_transaction(output)
                 if output['party1'] == 'PLAYER' or output['party2'] == 'PLAYER': # If the player trader was involved in the trade, this step's reward becomes the balance of the trade
+                    print(output)
+                    ti.sleep(10)
                     player = self.traders['PLAYER']
                     balance = player.balance
 
@@ -199,7 +202,7 @@ class Environment:
         return {'n_buyers':n_buyers, 'n_sellers':n_sellers}, traders
 
 
-    def _customer_orders(self, time, traders, trader_stats,os, pending):
+    def _customer_orders(self, time, traders, trader_stats,os, pending, player_action):
         def sysmin_check(price):
             if price < self.minprice:
                     raise RuntimeWarning('WARNING: price < bse_sys_min -- clipped')
@@ -323,8 +326,17 @@ class Environment:
         shuffle_times = True
 
         cancellations = []
-    
 
+        trader_keys =  list(self.traders.keys())
+               
+        for trader_key in trader_keys:
+            trader = traders[trader_key]
+            if trader.ttype == TType.PLAYER:
+                response = trader.add_order(player_action)
+                if response == 'LOB_Cancel':
+                    cancellations.append(trader.tid)
+                
+        
         if len(pending) < 1:
                 # list of pending (to-be-issued) customer orders is empty, so generate a new one
                 new_pending = []
@@ -358,7 +370,7 @@ class Environment:
                         if order.time < time:
                                 # this order should have been issued by now
                                 # issue it to the trader
-                                tname = order.tid
+                                tname = order.tid                    
                                 response = traders[tname].add_order(order)
                                 
                                 if response == 'LOB_Cancel' :
@@ -370,7 +382,9 @@ class Environment:
                                 new_pending.append(order)
         return new_pending, cancellations
 
-    
+
+
+
 if __name__ == "__main__":
     
     end_time = 1000.0
@@ -378,31 +392,32 @@ if __name__ == "__main__":
   
   
     #------- All functionality to do with varying supply and demand schedule   ------------
-    def schedule_offsetfn(t):
-                pi2 = math.pi * 2
-                c = math.pi * 3000
-                wavelength = t / c
-                gradient = 2 * t / (c / pi2)
-                amplitude = 2 * t / (c / pi2)
-                offset = gradient + amplitude * math.sin(wavelength * t)
-                return int(round(offset, 0))
+    def get_traders_schedule():
+        def schedule_offsetfn(t):
+            pi2 = math.pi * 2
+            c = math.pi * 3000
+            wavelength = t / c
+            gradient = 2 * t / (c / pi2)
+            amplitude = 2 * t / (c / pi2)
+            offset = gradient + amplitude * math.sin(wavelength * t)
+            return int(round(offset, 0))
     
-    low = 100
-    high = 150
-    intervals = 10
-    supply_schedule = []
-    sigma = 5
-    for i in range(0,intervals):
+        low = 100
+        high = 150
+        intervals = 10
+        supply_schedule = []
+        sigma = 5
+        for i in range(0,intervals):
             low = random.gauss(low,sigma)
             high = random.gauss(high,sigma)
             found = False
             while not found:
-                    if (high > low) and (low > 0):
-                            found = True
-                    
-                    else:
-                            low = random.gauss(low,sigma)
-                            high = random.gauss(high,sigma)
+                if (high > low) and (low > 0):
+                        found = True
+                
+                else:
+                        low = random.gauss(low,sigma)
+                        high = random.gauss(high,sigma)
             
             
             low = int(low)
@@ -410,29 +425,63 @@ if __name__ == "__main__":
             
             range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
             supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
-        
-        
-
-    demand_schedule = supply_schedule
-        
-    order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
-                       'interval':30, 'timemode':'drip-poisson'}
-
+            
+            
     
-
-    buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
+        demand_schedule = supply_schedule
+            
+        order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
+                           'interval':30, 'timemode':'drip-poisson'}
     
-
-    sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
+        
     
-    traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
-
+        buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
+        
+    
+        sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
+        
+        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
+        
+        return traders_spec, order_sched
+    
+    traders_spec, order_sched = get_traders_schedule()
     
     #----------------------------------------------------------------
     
     
     trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [2], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
+    
+    def get_observation(observation):
+            index_error = False
+            try:
+                best_ask= observation['lob']['asks'][0][0]
+            except IndexError:
+                best_ask = 0
+                index_error = True
+            try:
+                best_bid= observation['lob']['bids'][0][0]
+            except IndexError:
+                best_bid = 0
+                index_error = True
+
+            
+            
+            midprice = (best_ask + best_bid)/2
+            tape = observation['lob']['tape']
+            transaction = None
+            for event in tape:
+                if event['type'] == 'Trade':
+                    transaction = event['price']
+                    
+            latest_transaction = transaction
+            if latest_transaction is None:
+                latest_transaction = 0
+            input = np.array([midprice,latest_transaction], dtype = np.double)
+            
+            return input, index_error
+        
+      #------------------------------------------------------------------  
     
     
     
@@ -445,66 +494,55 @@ if __name__ == "__main__":
     
 
     def trader_strategy(observation):
-        try:
-            best_ask= observation['lob']['asks'][0][0]
-        except IndexError:
-            best_ask = 0
-        
-        try:
-            best_bid= observation['lob']['bids'][0][0]
-        except IndexError:
-            best_bid = 0
-        midprice = (best_ask + best_bid)/2
-        tape = observation['lob']['tape']
-        tape_len = len(tape)
-        
-        try:
-            latest_transaction = tape[tape_len-1]['price']
-        except IndexError:
-            latest_transaction = 0
         
         
-        input = np.array([midprice,latest_transaction], dtype = np.double)
+        input, no_order = get_observation(observation)
         
         action = trader.choose_action(input)
-        if best_bid == 0 or best_ask ==0:
-            return None
         
+        
+        if no_order == True:
+            return None, input
 
         if action == 0:
-            return None
-        
+            return None,input
+        print(observation['trader'].position)
         if observation['trader'].position == 0:
+            
             if action == 1:
                 order_type = OType.BID
             elif action == 2:
                 order_type = OType.ASK
         elif observation['trader'].position == 1:
             if action == 1:
-                return None
+                return None,input
             elif action == 2:
                 order_type = OType.ASK
         elif observation['trader'].position == 2: 
             if action == 1:
                 order_type = OType.BID
             elif action == 2:
-                return None
+                return None,input
         tid = observation['trader'].tid
         time =  observation['lob']['time']
         
-        price = midprice
+        price = input[0]
         order = Order(tid, order_type, price, 1, time)
-        return order
+        return order, input
     
     
     
     for i in range(2500):
         while not done:
-            action = trader_strategy(observation)
+            action, state = trader_strategy(observation)
             print(action)
-            observation, reward, done, info = environment.step(action)
+            
+            observation_, reward, done, info = environment.step(action)
+            new_state, empty_flag = get_observation(observation_)
             totalreward += reward
+            trader.learn(state, reward, new_state, done)
+            observation = observation_
             i += 1
-    #print("Tape:", observation['lob']['tape'])
-    print("Balance at the end of session:", totalreward)
+
+        print("Balance at the end of session:", totalreward)
    

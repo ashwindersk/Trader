@@ -21,6 +21,7 @@ class Trader:
         self.otype = None # Type of the order last assigned to the trader. Used if we want to keep a trader exclusively bidding or asking
         self.balance = 0
         self.n_quotes = 0
+        self.lastquote = None
         # Exchange rules: # TODO: maybe change it to storing a local copy of the exchange if necessary?
         self.exchange_rules = {
             'minprice' : min_price,
@@ -43,19 +44,11 @@ class Trader:
     # Regress to a price and place an order in the exchange
     # player_action input is for the player action
     def action(self, player_action, time):
-        # If the trader has no pending trade orders, do nothing
-        if self.ttype == TType.PLAYER: # The player's strategy
-            order = player_action
-        else:
-            
-            raise RuntimeError('Unrecognised trader strategy')
-        
-        if self.order is None:
-            return None
+        # If the trader has no pending trade orders, do nothing 
+        self.lastquote = self.order
+        return self.order
 
-        
 
-        return order
 
     # Called whenever a transaction involving the trader has occurred
     def notify_transaction(self, transaction_record):
