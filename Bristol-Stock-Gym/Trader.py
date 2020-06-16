@@ -45,8 +45,8 @@ class Trader:
     # player_action input is for the player action
     def action(self, player_action, time):
         # If the trader has no pending trade orders, do nothing 
-        self.lastquote = self.order
         return self.order
+        
 
 
 

@@ -32,7 +32,6 @@ class Exchange(OrderBook):
 
     # delete a trader's quote/order from the exchange
     def del_order(self, order, time):
-
         #Delete order
         if order.otype == OType.BID:
             self.bids.del_order(order)
@@ -100,7 +99,7 @@ class Exchange(OrderBook):
         print('publish_lob: t=%.2f' % time)
         print('BID_lob=%s' % public_data['bids'])
         print('ASK_lob=%s' % public_data['asks'])
-        print('TAPE =', public_data['tape'])
+        #print('TAPE =', public_data['tape'])
         print('***')
         print()
 

@@ -17,5 +17,5 @@ class Order:
                 self.qid = qid      # quote i.d. (unique to each quote)
 
         def __str__(self):
-                return '[%s %s P=%03d Q=%s T=%5.4f QID:%d]' % \
+                return '[%s %s P=%03d Q=%s T=%5.6f QID:%d]' % \
                        (self.tid, self.otype, self.price, self.qty, self.time, self.qid)

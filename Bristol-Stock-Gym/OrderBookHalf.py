@@ -112,6 +112,7 @@ class OrderBookHalf:
             best_price = min(self.lob.keys())
 
         best_tid = self.lob[best_price][1][0][2] # TODO: This is confusing
+        
 
         return best_price, best_tid
 

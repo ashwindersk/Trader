@@ -4,6 +4,7 @@ from Exchange import Exchange
 from Order import OType, Order
 import math
 from actor_critic import Agent
+
 import numpy as np
 
 # Import Trader strategies:
@@ -12,7 +13,7 @@ from Giveaway import Giveaway
 from ZIU import ZIU
 from ZIC import ZIC
 from ZIP import ZIP
-from DeeplyReinforced import DeeplyReinforced
+from DeeplyReinforced import DeeplyReinforced, Position
 
 
 import matplotlib.pyplot as plt
@@ -62,8 +63,10 @@ class Environment:
         if len(kills) > 0 :
                 for kill in kills :
                         if self.traders[kill].lastquote != None :
-                                self.exchange.del_order(self.traders[kill].lastquote,self.time )
-        balance = 0
+                            
+                            self.exchange.del_order(self.traders[kill].lastquote,self.time )
+                            
+        benefit = 0
 
         ## Shuffle traders in a random order
         trader_keys =  list(self.traders.keys())
@@ -86,15 +89,11 @@ class Environment:
             if output != None: # If a trade occurred due to the order being placed, notify the parties involved
                 trader1 = self.traders[output['party1']]
                 trader2 = self.traders[output['party2']]
-                print(trader1.lastquote)
-                print(trader2.lastquote)
                 trader1.notify_transaction(output)
                 trader2.notify_transaction(output)
-                if output['party1'] == 'PLAYER' or output['party2'] == 'PLAYER': # If the player trader was involved in the trade, this step's reward becomes the balance of the trade
-                    print(output)
-                    ti.sleep(10)
-                    player = self.traders['PLAYER']
-                    balance = player.balance
+                # if output['party1'] == 'PLAYER' or output['party2'] == 'PLAYER': # If the player trader was involved in the trade, this step's reward becomes the balance of the trade
+                #     player = self.traders['PLAYER']
+                #     benefit = player.benefit
 
         # Assign new orders to the traders who completed the previous ones if the exchange(experiment) rules say so
         # Here we could try preserving which trader bids and which
@@ -107,13 +106,14 @@ class Environment:
         #             trader.assign_order(new_order)
 
         # Increment timestep
-        
+        benefit = self.traders['PLAYER'].get_benefit()
+                
         if self.time >= self.maxtime:
             self.done = True
         self.time += self.time_step
 
         observation = self._get_observation()
-        reward = balance
+        reward = benefit
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
@@ -177,13 +177,16 @@ class Environment:
                 ttype = bs[0]
                 for b in range(bs[1]):
                         tname = 'B%02d' % n_buyers  # buyer i.d. string
-                        traders[tname] = generate_trader(self,tname, ttype, min_price=self.minprice, max_price=self.maxprice)
+                        if ttype ==TType.PLAYER:
+                            pass
+                        else:
+                            traders[tname] = generate_trader(self,tname, ttype, min_price=self.minprice, max_price=self.maxprice)
                         n_buyers = n_buyers + 1
 
         if n_buyers < 1:
                 raise RuntimeError('FATAL: no buyers specified\n')
 
-        shuffle_traders('B', n_buyers, traders)
+        shuffle_traders('B', n_buyers-1, traders)
 
 
         n_sellers = 0
@@ -191,6 +194,8 @@ class Environment:
                 ttype = ss[0]
                 for s in range(ss[1]):
                         tname = 'S%02d' % n_sellers  # buyer i.d. string
+                        if ttype ==TType.PLAYER:
+                            tname = 'PLAYER'
                         traders[tname] = generate_trader(self,tname, ttype, min_price=self.minprice, max_price=self.maxprice)
                         n_sellers = n_sellers + 1
 
@@ -346,7 +351,7 @@ class Environment:
                 
                 ordertype = OType.BID
                 (sched, mode) = getschedmode(time, os['dem'])             
-                for t in range(n_buyers):
+                for t in range(n_buyers-1):
                         issuetime = time + issuetimes[t]
                         tname = 'B%02d' % t
                         orderprice = getorderprice(t, sched, n_buyers, mode, issuetime)
@@ -445,7 +450,7 @@ if __name__ == "__main__":
         return traders_spec, order_sched
     
     traders_spec, order_sched = get_traders_schedule()
-    
+
     #----------------------------------------------------------------
     
     
@@ -467,7 +472,7 @@ if __name__ == "__main__":
 
             
             
-            midprice = (best_ask + best_bid)/2
+            midprice = int((best_ask + best_bid)/2)
             tape = observation['lob']['tape']
             transaction = None
             for event in tape:
@@ -482,7 +487,6 @@ if __name__ == "__main__":
             return input, index_error
         
       #------------------------------------------------------------------  
-    
     
     
     time_step = 1.0/60.0
@@ -500,25 +504,27 @@ if __name__ == "__main__":
         
         action = trader.choose_action(input)
         
+        current_position = observation['trader'].position
+        
         
         if no_order == True:
             return None, input
 
         if action == 0:
             return None,input
-        print(observation['trader'].position)
-        if observation['trader'].position == 0:
+        
+        if current_position == Position.NONE:
             
             if action == 1:
                 order_type = OType.BID
             elif action == 2:
                 order_type = OType.ASK
-        elif observation['trader'].position == 1:
+        elif current_position == Position.BOUGHT:
             if action == 1:
                 return None,input
             elif action == 2:
                 order_type = OType.ASK
-        elif observation['trader'].position == 2: 
+        elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
             elif action == 2:
@@ -528,21 +534,28 @@ if __name__ == "__main__":
         
         price = input[0]
         order = Order(tid, order_type, price, 1, time)
+        
+        
+        
         return order, input
     
     
     
     for i in range(2500):
+        j = 0
         while not done:
             action, state = trader_strategy(observation)
             print(action)
-            
             observation_, reward, done, info = environment.step(action)
             new_state, empty_flag = get_observation(observation_)
             totalreward += reward
+            if(j % 10 == 0):
+                print(f"Reward after step: {reward}, Total Reward: {totalreward}")
             trader.learn(state, reward, new_state, done)
             observation = observation_
-            i += 1
+            
+            j+=1
+        i += 1
 
         print("Balance at the end of session:", totalreward)
    
