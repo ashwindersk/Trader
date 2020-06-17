@@ -489,25 +489,24 @@ if __name__ == "__main__":
       #------------------------------------------------------------------  
     
     
-    time_step = 1.0/60.0
-    environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
-    i = 0
-    totalreward = 0
-    done = False
-    observation = environment.reset()
     
-
+    #
     def trader_strategy(observation):
         
         
-        input, no_order = get_observation(observation)
+        #Based off've the LOB, get the current observation
         
+        input, no_midprice = get_observation(observation)
+        
+        
+        #Model chooses an action based on oberservation
         action = trader.choose_action(input)
+
         
         current_position = observation['trader'].position
         
         
-        if no_order == True:
+        if no_midprice == True:
             return None, input
 
         if action == 0:
@@ -519,15 +518,17 @@ if __name__ == "__main__":
                 order_type = OType.BID
             elif action == 2:
                 order_type = OType.ASK
+            else:
+                return None, input
         elif current_position == Position.BOUGHT:
-            if action == 1:
+            if action == 1 or action == 0:
                 return None,input
             elif action == 2:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
-            elif action == 2:
+            elif action == 2 or action == 0:
                 return None,input
         tid = observation['trader'].tid
         time =  observation['lob']['time']
@@ -542,20 +543,27 @@ if __name__ == "__main__":
     
     
     for i in range(2500):
+        time_step = 1.0/60.0
+        environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
+        
+        totalreward = 0
+        done = False
+        observation = environment.reset()
+    
         j = 0
         while not done:
             action, state = trader_strategy(observation)
-            print(action)
             observation_, reward, done, info = environment.step(action)
             new_state, empty_flag = get_observation(observation_)
             totalreward += reward
-            if(j % 10 == 0):
-                print(f"Reward after step: {reward}, Total Reward: {totalreward}")
+            if(j % 1000 == 0):
+                print(f"Reward after {j}'th step in {i}'th Episode': {reward}, Total Reward: {totalreward}")
             trader.learn(state, reward, new_state, done)
             observation = observation_
             
             j+=1
-        i += 1
+            
+        if done:
+            print(f"End of trading session{i} with Total Reward: {totalreward} ")
 
-        print("Balance at the end of session:", totalreward)
    

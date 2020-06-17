@@ -35,10 +35,6 @@ class DeeplyReinforced(Trader):
         return None 
     
     def action(self,player_action, time):
-            if self.order is None:
-                self.benefit = - 1e-4
-            if self.order:
-                self.benefit = 5
             if not self.order:
                 return None
 
@@ -48,46 +44,53 @@ class DeeplyReinforced(Trader):
         
     def notify_transaction(self, transaction_record):
         def calculate_benefit(order, trade_price):  
-            print("Calculating benefit", order, self.tid)   
-            ti.sleep(10)   
-            self.benefit = 0
+            
             benefit = 0
             if self.position == Position.NONE:
                 if order.otype == OType.ASK:
                     print("SOLD", order)
                     self.balance += trade_price
                     self.position = Position.SOLD
+                    self.prev_order_price = trade_price
                     
             
                 if order.otype == OType.BID:
                     print("BOUGHT", order)
                     self.balance -= trade_price
                     self.position = Position.BOUGHT
+                    self.prev_order_price = trade_price
                     
             elif self.position == Position.BOUGHT:
                 print("SOLD", order)
                 self.balance +=trade_price
-                benefit += trade_price - self.prev_order_price
+                benefit = (trade_price - self.prev_order_price)
+                ti.sleep(10)
                 self.position = Position.NONE
+                self.prev_order_price = None
             elif self.position == Position.SOLD:
                 print("BOUGHT", order)
-                self.balance -=trade_price
-                benefit += self.prev_order_price - trade_price 
+                self.balance -=trade_price 
+                print(f"Benefit: {benefit} -> {self.prev_order_price} - {trade_price}")
+                ti.sleep(10)
                 self.position = Position.NONE
-            
-            self.prev_order_price = trade_price
+                self.prev_order_price = None
             self.lastquote = None
             return benefit
 
         if transaction_record['type'] == 'Trade':
             benefit = calculate_benefit(self.order, transaction_record['price'])
-            self.benefit = benefit
+        
+            self.benefit += benefit
             self.order = None
             self.lastquote = self.order
             if self.position == Position.NONE:
                 self.prev_order_price = None
         
-        
+    #Total benefit for one step in the environment  
+    #reset the benefit   
     def get_benefit(self):
-        return self.benefit
+        
+        benefit = self.benefit
+        self.benefit = 0
+        return benefit
             
