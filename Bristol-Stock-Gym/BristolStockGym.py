@@ -3,7 +3,7 @@ import time as ti
 from Exchange import Exchange
 from Order import OType, Order
 import math
-from actor_critic import Agent
+
 
 import numpy as np
 
@@ -15,6 +15,9 @@ from ZIC import ZIC
 from ZIP import ZIP
 from DeeplyReinforced import DeeplyReinforced, Position
 
+
+from actor_critic import Agent
+from AE import LOB_trainer
 
 import matplotlib.pyplot as plt
 
@@ -457,6 +460,31 @@ if __name__ == "__main__":
     trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [2], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
     
+    lob_trainer = LOB_trainer() 
+    
+    
+    def get_lob(observation):
+        bids = observation['lob']['bids']
+        asks = observation['lob']['asks']
+        column = np.zeros(8)
+
+        len_bids = len(bids)
+        len_asks = len(asks)
+        for i in range(min(2,len_asks)):
+            column[4*i] = asks[i][0]
+            column[4*i +1 ] = asks[i][1]
+        
+        for i in range(min(2,len_bids)):
+            column[4*i + 2] = bids[i][0]
+            column[4*i + 3] = bids[i][1] 
+
+        column = column.reshape(-1,1)
+
+        lob_trainer.get_lob_snapshot(column)
+                
+        
+        
+
     def get_observation(observation):
             index_error = False
             try:
@@ -488,9 +516,19 @@ if __name__ == "__main__":
         
       #------------------------------------------------------------------  
     
+    #Autoencoder to reduce lob observation down to a reasonable dimensionality 
+    
+    # Modelling the state space as S_t = {ae(ob_t−T :t), u_t, po_t}
+    # Where ae(ob_t-T : t) is a latent representation of the LOB 
+    #       u_t is a vector of prior trades by the agent
+    #       po_t is the traders position at time t
+    # Unsure how we will use these as input considering they arent of fixed length
+    
+    #Reward function of R(t) = delta (midprice)_s_t, s_t+1 x po_t
     
     
-    #
+    
+    
     def trader_strategy(observation):
         
         
@@ -542,28 +580,33 @@ if __name__ == "__main__":
     
     
     
-    for i in range(2500):
+    for i in range(10):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         
         totalreward = 0
         done = False
         observation = environment.reset()
+        
     
         j = 0
         while not done:
+            lob =  get_lob(observation)
+            #lob_trainer.learn()
             action, state = trader_strategy(observation)
+            action = None
             observation_, reward, done, info = environment.step(action)
             new_state, empty_flag = get_observation(observation_)
             totalreward += reward
             if(j % 1000 == 0):
                 print(f"Reward after {j}'th step in {i}'th Episode': {reward}, Total Reward: {totalreward}")
-            trader.learn(state, reward, new_state, done)
+            #trader.learn(state, reward, new_state, done)
             observation = observation_
             
             j+=1
             
         if done:
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
+    lob_trainer.save_lob_data()
 
    
