@@ -40,7 +40,7 @@ for i in range(num_images):
     lobs.append(lob)
 
 
-lobs = preprocessing.normalize(x)
+lobs = preprocessing.normalize(lobs)
 
 # mean = 0.
 # std = 0.
@@ -56,7 +56,7 @@ lobs = preprocessing.normalize(x)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = args.lr, weight_decay = 1e-5)
 
-transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((mean), (std))])
+#transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((mean), (std))])
 dataloader = DataLoader(lobs, batch_size = args.batch_size, shuffle = True)
 
 
