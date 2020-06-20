@@ -7,9 +7,12 @@ from torch import nn
 torch.set_default_tensor_type('torch.DoubleTensor')
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-
 import torch.nn.functional as Functional
 from torch.autograd import Variable
+
+from sklearn import preprocessing
+
+
 
 from AE import Autoencoder 
 import numpy as np
@@ -37,22 +40,24 @@ for i in range(num_images):
     lobs.append(lob)
 
 
-mean = 0.
-std = 0.
-nb_samples = 0.
-for data in lobs:
-    mean += np.mean(data)
-    std += np.std(data)
-    nb_samples += 1
+lobs = preprocessing.normalize(x)
 
-mean /= nb_samples
-std /= nb_samples
+# mean = 0.
+# std = 0.
+# nb_samples = 0.
+# for data in lobs:
+#     mean += np.mean(data)
+#     std += np.std(data)
+#     nb_samples += 1
+
+# mean /= nb_samples
+# std /= nb_samples
 
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = args.lr, weight_decay = 1e-5)
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((mean), (std))])
-dataloader = DataLoader(lobs, batch_size = args.batch_size, shuffle = True, transform = transform)
+dataloader = DataLoader(lobs, batch_size = args.batch_size, shuffle = True)
 
 
 
