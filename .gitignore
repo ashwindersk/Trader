@@ -1,5 +1,5 @@
 #All data files 
 *.csv
-
+*.npy
 #MacOS files
 .DS_Store
