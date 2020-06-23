@@ -3,3 +3,4 @@
 *.npy
 #MacOS files
 .DS_Store
+*.icloud

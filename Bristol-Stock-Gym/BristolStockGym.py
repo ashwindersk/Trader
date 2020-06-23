@@ -15,9 +15,11 @@ from ZIC import ZIC
 from ZIP import ZIP
 from DeeplyReinforced import DeeplyReinforced, Position
 
+import torch
+from torch.autograd import Variable
 
 from actor_critic import Agent
-from AE import LOB_trainer
+from AE import LOB_trainer, Autoencoder
 
 import matplotlib.pyplot as plt
 
@@ -462,6 +464,9 @@ if __name__ == "__main__":
     
     lob_trainer = LOB_trainer() 
     
+    #Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
+    #Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+    
     
     def get_lob(observation):
         bids = observation['lob']['bids']
@@ -478,9 +483,18 @@ if __name__ == "__main__":
             column[4*i + 2] = bids[i][0]
             column[4*i + 3] = bids[i][1] 
 
-        column = column.reshape(-1,1)
+        time = observation['lob']['time']
+        
+        column = column.reshape((8,))
 
-        lob_trainer.get_lob_snapshot(column)
+        lob_trainer.get_lob_snapshot(column, time)
+        lob = lob_trainer.lob
+        row, cols, depth = lob.shape
+        lob_latest= lob[:,:,depth-1]
+        lob_new = Variable(torch.from_numpy(lob_latest.flatten()))
+        
+
+
                 
         
         
@@ -580,7 +594,7 @@ if __name__ == "__main__":
     
     
     
-    for i in range(10):
+    for i in range(1000):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         

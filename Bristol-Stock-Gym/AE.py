@@ -48,10 +48,10 @@ class Autoencoder(nn.Module):
 
 class LOB_trainer(object):
     
-    def __init__(self, lr = 1e-3, input_dims = 8*5, l1_size = 32, l2_size = 16 , l3_size = 8, window_size = 5):
-        self.lob = np.zeros((8,window_size,1))
+    def __init__(self, lr = 1e-3, input_dims = [9,5], l1_size = 32, l2_size = 16 , l3_size = 8, window_size = 5):
+        self.lob = np.zeros((input_dims[0],input_dims[1],1))
 
-        self.autoencoder = Autoencoder(lr = lr, input_dims=input_dims, 
+        self.autoencoder = Autoencoder(input_dims=input_dims[0]*input_dims[1], 
                                     l1_size=l1_size, l2_size=l1_size, l3_size= l3_size)
         
         self.optimizer = torch.optim.Adam(self.autoencoder.parameters(), lr=lr, weight_decay = 1e-5)
@@ -72,24 +72,29 @@ class LOB_trainer(object):
         loss.backward()                     # backpropagation, compute gradients
         self.optimizer.step()       
 
-    def get_lob_snapshot(self,column):
-        #get latest 5 time step snapshot 
+    def get_lob_snapshot(self,column, time):
+        #get latest 5 time step snapshot
+        #if latest time step is unchanged, no amendment, otherwise, next step 
         #delete latest oldest time step
         #add new time step lob
         #append to the stack of time step lobs
-        print(self.lob.shape)
+    
         rows, cols, depth = self.lob.shape
         
         snapshot = self.lob[:,:,depth-1]
-    
+        row, cols = snapshot.shape
+        latest_time_step = snapshot[:, cols-1]
+        #latest_time_step = np.reshape(latest_time_step, (9,1))
+        
+        if (latest_time_step[0:8]!=column).any():
+            column = np.append(column,time) 
+            column = np.expand_dims(column, axis = 1)
+            snapshot = np.delete(snapshot, 0, axis = 1)
+            snapshot = np.append(snapshot, column, axis = 1)
+            snapshot = np.expand_dims(snapshot, axis = 2)
+            
+            self.lob = np.append(self.lob, np.atleast_3d(snapshot), axis=2)
 
-        
-        snapshot = np.delete(snapshot, 0, axis = 1)
-        snapshot = np.append(snapshot, column, axis = 1)
-        snapshot = np.expand_dims(snapshot, axis = 2)
-        
-        
-        self.lob = np.append(self.lob, np.atleast_3d(snapshot), axis=2)
     
     
     def save_lob_data(self):
