@@ -94,11 +94,11 @@ class LOB_trainer(object):
             snapshot = np.expand_dims(snapshot, axis = 2)
             
             self.lob = np.append(self.lob, np.atleast_3d(snapshot), axis=2)
-
+            print(self.lob.shape)
     
     
-    def save_lob_data(self):
-        np.save("Data/lob_data.npy", self.lob)
+    def save_lob_data(self, fname):
+        np.save(f"Data/{fname}.npy", self.lob)
         #print(self.lob)
     
         

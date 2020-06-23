@@ -24,6 +24,7 @@ parser.add_argument("--epochs", type = int, default = 50)
 parser.add_argument("--batch-size", type = int, default = 256)
 parser.add_argument("--lr", type = float, default = 1e-3)
 parser.add_argument("--data-file", type = str, default = "Data/lob_data.npy")
+parser.add_argument("--outfile", type = str, default = "autoencoder.pth", required = True)
 args = parser.parse_args()
 
 input_dims = 8*5
@@ -84,6 +85,6 @@ for epoch in range(epochs):
         print('epoch [{}/{}], loss:{:.4f}'
           .format(epoch + 1, epochs, loss.item()))
         
-torch.save(model.state_dict(), 'autoencoder.pth')
+torch.save(model.state_dict(), f'Models/{args.outfile}')
 
 

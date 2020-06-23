@@ -1,5 +1,8 @@
 import random
 import time as ti
+import signal
+import sys
+
 from Exchange import Exchange
 from Order import OType, Order
 import math
@@ -393,7 +396,11 @@ class Environment:
         return new_pending, cancellations
 
 
-
+def save_lob(signum, frame):
+    lob_trainer.save_lob_data("unnormalized_data")
+    sys.exit()
+    
+signal.signal(signal.SIGINT,save_lob)
 
 if __name__ == "__main__":
     
@@ -489,9 +496,7 @@ if __name__ == "__main__":
 
         lob_trainer.get_lob_snapshot(column, time)
         lob = lob_trainer.lob
-        row, cols, depth = lob.shape
-        lob_latest= lob[:,:,depth-1]
-        lob_new = Variable(torch.from_numpy(lob_latest.flatten()))
+
         
 
 
