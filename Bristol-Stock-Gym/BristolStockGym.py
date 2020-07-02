@@ -2,6 +2,7 @@ import random
 import time as ti
 import signal
 import sys
+import pickle
 
 from Exchange import Exchange
 from Order import OType, Order
@@ -464,17 +465,22 @@ if __name__ == "__main__":
     traders_spec, order_sched = get_traders_schedule()
 
     #----------------------------------------------------------------
-    
-    
+    filehandler = open('Objects/scalar', 'rb')
+    print(type(filehandler))
+    scalar = pickle.load(filehandler)
+    filehandler.close()
     trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [2], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
     
     lob_trainer = LOB_trainer() 
     
-    #Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
-    #Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+    Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
+    Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
+ 
+
+    #Get the latest 5 changes to the lob - autoencoded 
     def get_lob(observation):
         bids = observation['lob']['bids']
         asks = observation['lob']['asks']
@@ -494,46 +500,22 @@ if __name__ == "__main__":
         
         column = column.reshape((8,))
 
-        lob_trainer.get_lob_snapshot(column, time)
-        lob = lob_trainer.lob
-
+        snapshot = lob_trainer.get_lob_snapshot(column, time)
+        snapshot = snapshot.flatten()
+        snapshot = snapshot.reshape(1,-1)
+        
+        snapshot = scalar.transform(snapshot)
+        snapshot = Variable(torch.from_numpy(snapshot))
+        snapshot = Autoencoder(snapshot)
         
 
-
-                
+        return snapshot               
         
         
 
     def get_observation(observation):
-            index_error = False
-            try:
-                best_ask= observation['lob']['asks'][0][0]
-            except IndexError:
-                best_ask = 0
-                index_error = True
-            try:
-                best_bid= observation['lob']['bids'][0][0]
-            except IndexError:
-                best_bid = 0
-                index_error = True
-
-            
-            
-            midprice = int((best_ask + best_bid)/2)
-            tape = observation['lob']['tape']
-            transaction = None
-            for event in tape:
-                if event['type'] == 'Trade':
-                    transaction = event['price']
-                    
-            latest_transaction = transaction
-            if latest_transaction is None:
-                latest_transaction = 0
-            input = np.array([midprice,latest_transaction], dtype = np.double)
-            
-            return input, index_error
+        lob = get_lob(observation)
         
-      #------------------------------------------------------------------  
     
     #Autoencoder to reduce lob observation down to a reasonable dimensionality 
     
@@ -545,7 +527,7 @@ if __name__ == "__main__":
     
     #Reward function of R(t) = delta (midprice)_s_t, s_t+1 x po_t
     
-    
+
     
     
     def trader_strategy(observation):
@@ -610,8 +592,6 @@ if __name__ == "__main__":
     
         j = 0
         while not done:
-            lob =  get_lob(observation)
-            #lob_trainer.learn()
             action, state = trader_strategy(observation)
             action = None
             observation_, reward, done, info = environment.step(action)
