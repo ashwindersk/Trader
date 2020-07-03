@@ -64,14 +64,14 @@ class DeeplyReinforced(Trader):
                 print("SOLD", order)
                 self.balance +=trade_price
                 benefit = (trade_price - self.prev_order_price)
-                ti.sleep(10)
+                print(f"Benefit: {benefit} -> - {trade_price} - {self.prev_order_price} ")
                 self.position = Position.NONE
                 self.prev_order_price = None
             elif self.position == Position.SOLD:
                 print("BOUGHT", order)
                 self.balance -=trade_price 
+                benefit = (self.prev_order_price - trade_price )
                 print(f"Benefit: {benefit} -> {self.prev_order_price} - {trade_price}")
-                ti.sleep(10)
                 self.position = Position.NONE
                 self.prev_order_price = None
             self.lastquote = None

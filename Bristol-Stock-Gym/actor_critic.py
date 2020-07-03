@@ -27,6 +27,7 @@ class GenericNetwork(nn.Module):
         
     def forward(self, observation):
         state = T.tensor(observation).to(self.device)
+        state = state.flatten()
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -36,7 +37,7 @@ class GenericNetwork(nn.Module):
     
 class Agent(object):
     
-    def __init__(self, actor_lr, critic_lr, input_dims, gamma = 0.99,
+    def __init__(self, actor_lr, critic_lr, input_dims, gamma = 0.9,
                   l1_size = 256, l2_size = 256, n_actions = 3):
         self.gamma = gamma
         self.log_probs = None 
@@ -46,7 +47,7 @@ class Agent(object):
         self.critic = GenericNetwork(lr = critic_lr, input_dims=input_dims, 
                                     fc1_dims=l1_size, fc2_dims=l1_size, n_actions= 1)
         
-    def choose_action(self,observation):
+    def choose_action(self,observation):       
         probabilities = F.softmax(self.actor.forward(observation))
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()

@@ -75,7 +75,7 @@ class Environment:
                             
                             self.exchange.del_order(self.traders[kill].lastquote,self.time )
                             
-        benefit = 0
+        benefit  = 0
 
         ## Shuffle traders in a random order
         trader_keys =  list(self.traders.keys())
@@ -464,12 +464,16 @@ if __name__ == "__main__":
     
     traders_spec, order_sched = get_traders_schedule()
 
-    #----------------------------------------------------------------
+    #------ Getting mixnmax scalar to transform lob input for AE -----
     filehandler = open('Objects/scalar', 'rb')
-    print(type(filehandler))
     scalar = pickle.load(filehandler)
     filehandler.close()
-    trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [2], gamma = 0.99,
+    #==================================================================
+    
+    
+    #------ Loading all models ----------------------------------------
+
+    trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [16], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
     
     lob_trainer = LOB_trainer() 
@@ -477,44 +481,60 @@ if __name__ == "__main__":
     Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
+    #==================================================================    
     
  
 
-    #Get the latest 5 changes to the lob - autoencoded 
-    def get_lob(observation):
-        bids = observation['lob']['bids']
-        asks = observation['lob']['asks']
-        column = np.zeros(8)
-
-        len_bids = len(bids)
-        len_asks = len(asks)
-        for i in range(min(2,len_asks)):
-            column[4*i] = asks[i][0]
-            column[4*i +1 ] = asks[i][1]
-        
-        for i in range(min(2,len_bids)):
-            column[4*i + 2] = bids[i][0]
-            column[4*i + 3] = bids[i][1] 
-
-        time = observation['lob']['time']
-        
-        column = column.reshape((8,))
-
-        snapshot = lob_trainer.get_lob_snapshot(column, time)
-        snapshot = snapshot.flatten()
-        snapshot = snapshot.reshape(1,-1)
-        
-        snapshot = scalar.transform(snapshot)
-        snapshot = Variable(torch.from_numpy(snapshot))
-        snapshot = Autoencoder(snapshot)
-        
-
-        return snapshot               
-        
-        
-
     def get_observation(observation):
-        lob = get_lob(observation)
+        
+         #Get the latest 5 changes to the lob - autoencoded 
+        def get_lob():
+            bids = observation['lob']['bids']
+            asks = observation['lob']['asks']
+            column = np.zeros(8)
+
+            len_bids = len(bids)
+            len_asks = len(asks)
+            for i in range(min(2,len_asks)):
+                column[4*i] = asks[i][0]
+                column[4*i +1 ] = asks[i][1]
+
+            for i in range(min(2,len_bids)):
+                column[4*i + 2] = bids[i][0]
+                column[4*i + 3] = bids[i][1] 
+
+            time = observation['lob']['time']
+
+            column = column.reshape((8,))
+
+            snapshot = lob_trainer.get_lob_snapshot(column, time)
+            snapshot = snapshot.flatten()
+            snapshot = snapshot.reshape(1,-1)
+
+            snapshot = scalar.transform(snapshot)
+            snapshot = Variable(torch.from_numpy(snapshot))
+            snapshot = Autoencoder.encoder(snapshot)
+    
+            return snapshot
+        
+        def get_trades():
+            tape = observation['lob']['tape']
+            trades = torch.zeros([1,8])
+            i = 0
+            for event in reversed(tape):
+                if event['type'] == 'event' and (event['party1'] == 'PLAYER' or event['party2'] == 'PLAYER'):
+                    try:
+                        trades[i] = event['price']
+                    except IndexError:
+                        pass
+                    i +=1
+            return trades
+        
+        lob    = get_lob()
+        trades = get_trades()
+        input = torch.stack([lob,trades],dim = 1)
+        
+        return input
         
     
     #Autoencoder to reduce lob observation down to a reasonable dimensionality 
@@ -525,6 +545,12 @@ if __name__ == "__main__":
     #       po_t is the traders position at time t
     # Unsure how we will use these as input considering they arent of fixed length
     
+    #These two parameters will be fed into a RNN to calculate a prediciton of the next 'state'
+    #The states (S0 and prediciton S') will be fed into the reinforcement learner to update the RL
+    
+    
+    
+    
     #Reward function of R(t) = delta (midprice)_s_t, s_t+1 x po_t
     
 
@@ -532,21 +558,19 @@ if __name__ == "__main__":
     
     def trader_strategy(observation):
         
+        midprice = observation['lob']['midprice']
+        
         
         #Based off've the LOB, get the current observation
         
-        input, no_midprice = get_observation(observation)
-        
-        
+        input = get_observation(observation)
         #Model chooses an action based on oberservation
         action = trader.choose_action(input)
-
-        
+    
         current_position = observation['trader'].position
         
-        
-        if no_midprice == True:
-            return None, input
+        if midprice == None:
+            return None,input
 
         if action == 0:
             return None,input
@@ -572,7 +596,7 @@ if __name__ == "__main__":
         tid = observation['trader'].tid
         time =  observation['lob']['time']
         
-        price = input[0]
+        price = midprice
         order = Order(tid, order_type, price, 1, time)
         
         
@@ -593,13 +617,12 @@ if __name__ == "__main__":
         j = 0
         while not done:
             action, state = trader_strategy(observation)
-            action = None
             observation_, reward, done, info = environment.step(action)
-            new_state, empty_flag = get_observation(observation_)
+            new_state = get_observation(observation_)
             totalreward += reward
             if(j % 1000 == 0):
                 print(f"Reward after {j}'th step in {i}'th Episode': {reward}, Total Reward: {totalreward}")
-            #trader.learn(state, reward, new_state, done)
+            trader.learn(state, reward, new_state, done)
             observation = observation_
             
             j+=1

@@ -90,7 +90,18 @@ class Exchange(OrderBook):
         public_data['bids'] = self.bids.lob_anon
         public_data['asks'] = self.asks.lob_anon
         public_data['tape'] = self.tape
+        public_data['midprice'] = self.get_midprice()
         return public_data
+    
+    def get_midprice(self):
+        best_bid, _ = self.bids.get_best()
+        best_ask, _ = self.asks.get_best()
+        
+        if best_bid == None or best_ask == None:
+            return 0
+        
+        return (best_bid+best_ask)/2
+            
 
     # This prints the public LOB data
     def print_public_lob(self, time):
