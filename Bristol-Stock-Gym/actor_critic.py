@@ -73,5 +73,7 @@ class Agent(object):
         self.actor.optimizer.step()
         self.critic.optimizer.step()
         
-        
+    def save_models(self, actor_outfile = "actor", critic_outfile = "critic"):
+        T.save(self.actor.state_dict(), f"Models/{actor_outfile}.pth")
+        T.save(self.critic.state_dict(), f"Models/{critic_outfile}.pth")
         

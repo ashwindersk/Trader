@@ -35,9 +35,12 @@ class DeeplyReinforced(Trader):
         return None 
     
     def action(self,player_action, time):
-            if not self.order:
-                return None
 
+            if not self.order:
+                self.benefit -=1e-1
+                return None
+            else:
+                self.benefit +=1e-1
             self.lastquote = self.order
             return self.order
     

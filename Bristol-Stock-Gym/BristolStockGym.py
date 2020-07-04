@@ -3,13 +3,15 @@ import time as ti
 import signal
 import sys
 import pickle
-
-from Exchange import Exchange
-from Order import OType, Order
 import math
 
 
+from Exchange import Exchange
+from Order import OType, Order
+
+
 import numpy as np
+from sklearn import preprocessing
 
 # Import Trader strategies:
 from Trader import TType, Trader
@@ -397,15 +399,15 @@ class Environment:
         return new_pending, cancellations
 
 
-def save_lob(signum, frame):
-    lob_trainer.save_lob_data("unnormalized_data")
+def save_models(signum, frame):
+    Agent.save_models()
     sys.exit()
     
-signal.signal(signal.SIGINT,save_lob)
+signal.signal(signal.SIGINT,save_models)
 
 if __name__ == "__main__":
     
-    end_time = 1000.0
+    end_time = 10000.0
   
   
   
@@ -528,10 +530,15 @@ if __name__ == "__main__":
                     except IndexError:
                         pass
                     i +=1
+                    
+            min_max = preprocessing.MinMaxScaler()
+            trades = min_max.fit_transform(trades)
+            trades = torch.from_numpy(trades)
             return trades
         
         lob    = get_lob()
         trades = get_trades()
+        
         input = torch.stack([lob,trades],dim = 1)
         
         return input
@@ -629,6 +636,10 @@ if __name__ == "__main__":
             
         if done:
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
-    lob_trainer.save_lob_data()
+            with open('rewards.csv', 'w') as rewardfile:
+                rewardfile.write(f"{totalreward}\n")
+    Agent.save_models()
+    
+    
 
    
