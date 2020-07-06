@@ -23,8 +23,9 @@ from DeeplyReinforced import DeeplyReinforced, Position
 
 import torch
 from torch.autograd import Variable
+import torch.optim as optim
 
-from actor_critic import Agent
+from actor_critic import Actor, Critic, save_models
 from AE import LOB_trainer, Autoencoder
 
 import matplotlib.pyplot as plt
@@ -400,94 +401,66 @@ class Environment:
 
 
 def save_models(signum, frame):
-    Agent.save_models()
+    save_models(actor, critic)
     sys.exit()
     
 signal.signal(signal.SIGINT,save_models)
 
-if __name__ == "__main__":
-    
-    end_time = 10000.0
-  
-  
-  
-    #------- All functionality to do with varying supply and demand schedule   ------------
-    def get_traders_schedule():
-        def schedule_offsetfn(t):
-            pi2 = math.pi * 2
-            c = math.pi * 3000
-            wavelength = t / c
-            gradient = 2 * t / (c / pi2)
-            amplitude = 2 * t / (c / pi2)
-            offset = gradient + amplitude * math.sin(wavelength * t)
-            return int(round(offset, 0))
-    
-        low = 100
-        high = 150
-        intervals = 10
-        supply_schedule = []
-        sigma = 5
-        for i in range(0,intervals):
-            low = random.gauss(low,sigma)
-            high = random.gauss(high,sigma)
-            found = False
-            while not found:
-                if (high > low) and (low > 0):
-                        found = True
-                
-                else:
-                        low = random.gauss(low,sigma)
-                        high = random.gauss(high,sigma)
-            
-            
-            low = int(low)
-            high = int(high)
-            
-            range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
-            supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
-            
-            
-    
-        demand_schedule = supply_schedule
-            
-        order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
-                           'interval':30, 'timemode':'drip-poisson'}
-    
-        
-    
-        buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
-        
-    
-        sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
-        
-        traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
-        
-        return traders_spec, order_sched
-    
-    traders_spec, order_sched = get_traders_schedule()
 
-    #------ Getting mixnmax scalar to transform lob input for AE -----
-    filehandler = open('Objects/scalar', 'rb')
-    scalar = pickle.load(filehandler)
-    filehandler.close()
-    #==================================================================
-    
-    
-    #------ Loading all models ----------------------------------------
+#------- All functionality to do with varying supply and demand schedule   ------------
+def get_traders_schedule():
+    def schedule_offsetfn(t):
+        pi2 = math.pi * 2
+        c = math.pi * 3000
+        wavelength = t / c
+        gradient = 2 * t / (c / pi2)
+        amplitude = 2 * t / (c / pi2)
+        offset = gradient + amplitude * math.sin(wavelength * t)
+        return int(round(offset, 0))
 
-    trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [16], gamma = 0.99,
-                   n_actions = 3, l1_size = 32, l2_size= 32)
+    low = 100
+    high = 150
+    intervals = 10
+    supply_schedule = []
+    sigma = 5
+    for i in range(0,intervals):
+        low = random.gauss(low,sigma)
+        high = random.gauss(high,sigma)
+        found = False
+        while not found:
+            if (high > low) and (low > 0):
+                    found = True
+            
+            else:
+                    low = random.gauss(low,sigma)
+                    high = random.gauss(high,sigma)
+        
+        
+        low = int(low)
+        high = int(high)
+        
+        range_i = (low, high, schedule_offsetfn, schedule_offsetfn)
+        supply_schedule.append({'from': i*end_time/intervals , 'to': (i+1)*end_time/intervals, 'ranges':[range_i], 'stepmode':'fixed'})                
+        
+        
+
+    demand_schedule = supply_schedule
+        
+    order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
+                       'interval':30, 'timemode':'drip-poisson'}
+
     
-    lob_trainer = LOB_trainer() 
+
+    buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
     
-    Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
-    Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+
+    sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
     
-    #==================================================================    
+    traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
     
+    return traders_spec, order_sched
  
-
-    def get_observation(observation):
+def get_observation(observation):
         
          #Get the latest 5 changes to the lob - autoencoded 
         def get_lob():
@@ -514,7 +487,7 @@ if __name__ == "__main__":
             snapshot = snapshot.reshape(1,-1)
 
             snapshot = scalar.transform(snapshot)
-            snapshot = Variable(torch.from_numpy(snapshot))
+            snapshot = torch.FloatTensor(snapshot)
             snapshot = Autoencoder.encoder(snapshot)
     
             return snapshot
@@ -533,54 +506,33 @@ if __name__ == "__main__":
                     
             min_max = preprocessing.MinMaxScaler()
             trades = min_max.fit_transform(trades)
-            trades = torch.from_numpy(trades)
+            trades = torch.FloatTensor(trades)
             return trades
         
         lob    = get_lob()
         trades = get_trades()
         
         input = torch.stack([lob,trades],dim = 1)
-        
-        return input
-        
-    
-    #Autoencoder to reduce lob observation down to a reasonable dimensionality 
-    
-    # Modelling the state space as S_t = {ae(ob_t−T :t), u_t, po_t}
-    # Where ae(ob_t-T : t) is a latent representation of the LOB 
-    #       u_t is a vector of prior trades by the agent
-    #       po_t is the traders position at time t
-    # Unsure how we will use these as input considering they arent of fixed length
-    
-    #These two parameters will be fed into a RNN to calculate a prediciton of the next 'state'
-    #The states (S0 and prediciton S') will be fed into the reinforcement learner to update the RL
-    
-    
-    
-    
-    #Reward function of R(t) = delta (midprice)_s_t, s_t+1 x po_t
-    
-
-    
-    
-    def trader_strategy(observation):
-        
         midprice = observation['lob']['midprice']
         
+        return input, midprice   
+
+def trader_strategy(state, midprice, actor, critic):
         
-        #Based off've the LOB, get the current observation
-        
-        input = get_observation(observation)
-        #Model chooses an action based on oberservation
-        action = trader.choose_action(input)
     
+        #Model chooses an action based on oberservation
+        dist = actor(state)
+        action = dist.sample()
+        value = critic(state)
+        
+        
         current_position = observation['trader'].position
         
         if midprice == None:
-            return None,input
+            return None,state, action, dist, value 
 
         if action == 0:
-            return None,input
+            return None,state, action, dist, value
         
         if current_position == Position.NONE:
             
@@ -589,17 +541,17 @@ if __name__ == "__main__":
             elif action == 2:
                 order_type = OType.ASK
             else:
-                return None, input
+                return None, state
         elif current_position == Position.BOUGHT:
             if action == 1 or action == 0:
-                return None,input
+                return None,state, action, dist, value
             elif action == 2:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
             elif action == 2 or action == 0:
-                return None,input
+                return None,state, action, dist, value
         tid = observation['trader'].tid
         time =  observation['lob']['time']
         
@@ -608,28 +560,66 @@ if __name__ == "__main__":
         
         
         
-        return order, input
+        return order, state, action, dist, value
+
+if __name__ == "__main__":
+    
+    end_time = 1000.0    
+    
+    traders_spec, order_sched = get_traders_schedule()
+
+    #------ Getting mixnmax scalar to transform lob input for AE -----
+    filehandler = open('Objects/scalar', 'rb')
+    scalar = pickle.load(filehandler)
+    filehandler.close()
+    #==================================================================
     
     
+    #------ Loading all models ----------------------------------------
     
-    for i in range(1000):
+    lob_trainer = LOB_trainer() 
+    
+    Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
+    Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+    
+    actor = Actor(input_shape=[2,8], action_size= 3)
+    critic = Critic(input_shape=[2,8])
+    
+    optimizerA = optim.Adam(actor.parameters())
+    optimizerC = optim.Adam(critic.parameters())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    #==================================================================    
+    
+    
+    for i in range(100):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
-        
         totalreward = 0
         done = False
         observation = environment.reset()
+        log_probs = []
+        values = []
+        rewards = []
+        masks = []
+        entropy = 0
         
     
         j = 0
         while not done:
-            action, state = trader_strategy(observation)
-            observation_, reward, done, info = environment.step(action)
-            new_state = get_observation(observation_)
-            totalreward += reward
-            if(j % 1000 == 0):
-                print(f"Reward after {j}'th step in {i}'th Episode': {reward}, Total Reward: {totalreward}")
-            trader.learn(state, reward, new_state, done)
+            state, midprice = get_observation(observation)
+            state = torch.FloatTensor(state).to(device) 
+            order, state, action, dist, value = trader_strategy(state, midprice, actor, critic)
+            observation_, reward, done, info = environment.step(order)
+            new_state, _  = get_observation(observation_)
+
+            log_prob = dist.log_prob(action).unsqueeze(0)
+            entropy += dist.entropy().mean()
+            
+            log_probs.append(log_prob)
+            values.append(value)
+            rewards.append(torch.tensor([reward], dtype = torch.float, device = device))
+            masks.append(torch.torch.tensor([1-done], dtype = torch.float, device = device))    
             observation = observation_
             
             j+=1
@@ -638,6 +628,27 @@ if __name__ == "__main__":
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
             with open('rewards.csv', 'w') as rewardfile:
                 rewardfile.write(f"{totalreward}\n")
+        
+        state, _ = get_observation(observation_)
+        next_state = torch.FloatTensor(state).to(device)
+        next_value = critic(next_state)
+        returns = compute_returns(next_value, rewards, masks)
+        log_probs = torch.cat(log_probs)
+        returns = torch.cat(returns).detach()
+        values = torch.cat(values)
+        
+        advantage = returns - value
+        
+        actor_loss = -(log_probs * advantage.detach()).mean()
+        critic_loss = advantage.pow(2).mean()
+        
+        optimizerA.zero_grad()
+        optimizerC.zero_grad()
+        actor_loss.backward()
+        critic_loss.backward()
+        optimizerA.step()
+        optimizerC.step()
+
     Agent.save_models()
     
     
