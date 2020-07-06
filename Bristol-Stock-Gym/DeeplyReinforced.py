@@ -51,27 +51,27 @@ class DeeplyReinforced(Trader):
             benefit = 0
             if self.position == Position.NONE:
                 if order.otype == OType.ASK:
-                    print("SOLD", order)
+                    #print("SOLD", order)
                     self.balance += trade_price
                     self.position = Position.SOLD
                     self.prev_order_price = trade_price
                     
             
                 if order.otype == OType.BID:
-                    print("BOUGHT", order)
+                    #print("BOUGHT", order)
                     self.balance -= trade_price
                     self.position = Position.BOUGHT
                     self.prev_order_price = trade_price
                     
             elif self.position == Position.BOUGHT:
-                print("SOLD", order)
+                #print("SOLD", order)
                 self.balance +=trade_price
                 benefit = (trade_price - self.prev_order_price)
-                print(f"Benefit: {benefit} -> - {trade_price} - {self.prev_order_price} ")
+                print(f"Benefit: {benefit} -> {trade_price} - {self.prev_order_price} ")
                 self.position = Position.NONE
                 self.prev_order_price = None
             elif self.position == Position.SOLD:
-                print("BOUGHT", order)
+                # print("BOUGHT", order)
                 self.balance -=trade_price 
                 benefit = (self.prev_order_price - trade_price )
                 print(f"Benefit: {benefit} -> {self.prev_order_price} - {trade_price}")

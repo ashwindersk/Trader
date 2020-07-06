@@ -101,6 +101,9 @@ class Environment:
             if output != None: # If a trade occurred due to the order being placed, notify the parties involved
                 trader1 = self.traders[output['party1']]
                 trader2 = self.traders[output['party2']]
+                if trader1==trader2:
+                    print("Traded with itself")
+                    ti.sleep(10)
                 trader1.notify_transaction(output)
                 trader2.notify_transaction(output)
                 # if output['party1'] == 'PLAYER' or output['party2'] == 'PLAYER': # If the player trader was involved in the trade, this step's reward becomes the balance of the trade
@@ -555,7 +558,7 @@ def trader_strategy(state, midprice, actor, critic):
         tid = observation['trader'].tid
         time =  observation['lob']['time']
         
-        price = midprice
+        price = int(midprice)
         order = Order(tid, order_type, price, 1, time)
         
         
@@ -589,8 +592,8 @@ if __name__ == "__main__":
     Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
-    actor = Actor(input_shape=[2,8], action_size= 3)
-    critic = Critic(input_shape=[2,8])
+    actor = Actor(input_shape=2*8, action_size= 3)
+    critic = Critic(input_shape=2*8)
     
     optimizerA = optim.Adam(actor.parameters())
     optimizerC = optim.Adam(critic.parameters())
@@ -633,8 +636,8 @@ if __name__ == "__main__":
             
         if done:
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
-            with open('rewards.csv', 'w') as rewardfile:
-                rewardfile.write(f"{totalreward}\n")
+            with open('rewards.csv', 'a') as rewardfile:
+                rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
         
         state, _ = get_observation(observation_)
         next_state = torch.FloatTensor(state).to(device)
@@ -651,8 +654,8 @@ if __name__ == "__main__":
         
         optimizerA.zero_grad()
         optimizerC.zero_grad()
-        actor_loss.backward()
-        critic_loss.backward()
+        actor_loss.backward(retain_graph = True)
+        critic_loss.backward(retain_graph = True)
         optimizerA.step()
         optimizerC.step()
 

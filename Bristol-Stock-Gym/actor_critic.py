@@ -17,7 +17,7 @@ class Actor(nn.Module):
         self.input_shape = input_shape
         self.action_size = action_size
         
-        self.Layer1 = nn.Linear(8*2, 128)
+        self.Layer1 = nn.Linear(self.input_shape, 128)
         self.Layer2 = nn.Linear(128,256)
         self.Layer3 = nn.Linear(256,self.action_size)
         
@@ -33,7 +33,7 @@ class Critic(nn.Module):
     def __init__(self, input_shape):
         super(Critic, self).__init__()
         self.input_shape = input_shape
-        self.linear1 = nn.Linear(8*2, 128)
+        self.linear1 = nn.Linear(self.input_shape, 128)
         self.linear2 = nn.Linear(128, 256)
         self.linear3 = nn.Linear(256, 1)
 
