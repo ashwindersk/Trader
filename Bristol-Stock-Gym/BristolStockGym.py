@@ -400,11 +400,11 @@ class Environment:
         return new_pending, cancellations
 
 
-def save_models(signum, frame):
+def save_model(signum, frame):
     save_models(actor, critic)
     sys.exit()
     
-signal.signal(signal.SIGINT,save_models)
+signal.signal(signal.SIGINT,save_model)
 
 
 #------- All functionality to do with varying supply and demand schedule   ------------
@@ -562,6 +562,13 @@ def trader_strategy(state, midprice, actor, critic):
         
         return order, state, action, dist, value
 
+def compute_returns(next_value, rewards, masks, gamma=0.99):
+    R = next_value
+    returns = []
+    for step in reversed(range(len(rewards))):
+        R = rewards[step] + gamma * R * masks[step]
+        returns.insert(0, R)
+    return returns
 if __name__ == "__main__":
     
     end_time = 1000.0    

@@ -45,6 +45,6 @@ class Critic(nn.Module):
         return value     
     
 def save_models(actor, critic, actor_outfile = "actor", critic_outfile = "critic"):
-    T.save(actor, f"Models/{actor_outfile}.pkl")
-    T.save(critic, f"Models/{critic_outfile}.pkl")
+    torch.save(actor, f"Models/{actor_outfile}.pkl")
+    torch.save(critic, f"Models/{critic_outfile}.pkl")
         
