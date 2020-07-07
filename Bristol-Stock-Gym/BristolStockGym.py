@@ -4,7 +4,7 @@ import signal
 import sys
 import pickle
 import math
-
+import os
 
 from Exchange import Exchange
 from Order import OType, Order
@@ -593,7 +593,7 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-     if os.path.exists('Models/actor.pkl'):
+    if os.path.exists('Models/actor.pkl'):
         actor = torch.load('Models/actor.pkl').to(device)
         print('Actor Model loaded')
     else:
