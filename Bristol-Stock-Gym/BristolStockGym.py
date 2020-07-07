@@ -591,13 +591,22 @@ if __name__ == "__main__":
     
     Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    actor = Actor(input_shape=2*8, action_size= 3)
-    critic = Critic(input_shape=2*8)
+     if os.path.exists('Models/actor.pkl'):
+        actor = torch.load('Models/actor.pkl').to(device)
+        print('Actor Model loaded')
+    else:
+        actor = Actor(input_shape=2*8, action_size= 3)
+    if os.path.exists('Models/critic.pkl'):
+        critic = torch.load('Models/critic.pkl').to(device)
+        print('Critic Model loaded')
+    else:
+        critic = Critic(input_shape=2*8)
+    
     
     optimizerA = optim.Adam(actor.parameters())
     optimizerC = optim.Adam(critic.parameters())
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     #==================================================================    
     
