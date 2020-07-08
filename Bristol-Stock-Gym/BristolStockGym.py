@@ -596,18 +596,21 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    if os.path.exists('Models/actor.pkl'):
-        actor = torch.load('Models/actor.pkl').to(device)
-        print('Actor Model loaded')
+    if torch.cuda.is_available() and os.path.exists("Models/actor-job.pkl"):
+            actor = torch.load("Models/actor-job.pkl").to(device)
+    elif os.path.exists('Models/actor.pkl'):
+            actor = torch.load("Models/actor.pkl")
     else:
         actor = Actor(input_shape=2*8, action_size= 3)
-    if os.path.exists('Models/critic.pkl'):
-        critic = torch.load('Models/critic.pkl').to(device)
-        print('Critic Model loaded')
+    print("Actor model loaded")
+    if torch.cuda.is_available() and os.path.exists("Models/critic-job.pkl"):
+            critic = torch.load("Models/critic-job.pkl").to(device)
+    elif os.path.exists('Models/critic.pkl'):
+            critic = torch.load("Models/critic.pkl")
     else:
         critic = Critic(input_shape=2*8)
     
-    
+    print("Critic model loaded") 
     optimizerA = optim.Adam(actor.parameters())
     optimizerC = optim.Adam(critic.parameters())
 
@@ -649,7 +652,7 @@ if __name__ == "__main__":
         if done:
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
             if torch.cuda.is_available():
-                with open('rewards-gpu.csv', 'a') as rewardfile:
+                with open('rewards-job.csv', 'a') as rewardfile:
                     rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")        
             else:
                 with open('rewards.csv', 'a') as rewardfile:
@@ -674,8 +677,7 @@ if __name__ == "__main__":
         critic_loss.backward(retain_graph = True)
         optimizerA.step()
         optimizerC.step()
-
-    Agent.save_models()
+        save_models(actor,critic,"actor-job", "critic-job")
     
     
 

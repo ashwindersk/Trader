@@ -5,5 +5,4 @@
 .DS_Store
 *.icloud
 #Model files
-*.pkl
 *.pth
