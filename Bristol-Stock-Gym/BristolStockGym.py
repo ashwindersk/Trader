@@ -404,7 +404,10 @@ class Environment:
 
 
 def save_model(signum, frame):
-    save_models(actor, critic)
+    if torch.cuda.is_available():
+        save_models(actor,critic,actor_outfile ="actor-gpu", critic_outfile = "critic_gpu")
+    else:
+        save_models(actor, critic)
     sys.exit()
     
 signal.signal(signal.SIGINT,save_model)
@@ -645,8 +648,12 @@ if __name__ == "__main__":
             
         if done:
             print(f"End of trading session{i} with Total Reward: {totalreward} ")
-            with open('rewards.csv', 'a') as rewardfile:
-                rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
+            if torch.cuda.is_available():
+                with open('rewards-gpu.csv', 'a') as rewardfile:
+                    rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")        
+            else:
+                with open('rewards.csv', 'a') as rewardfile:
+                    rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
         
         state, _ = get_observation(observation_)
         next_state = torch.FloatTensor(state).to(device)
