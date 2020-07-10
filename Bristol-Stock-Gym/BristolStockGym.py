@@ -12,6 +12,7 @@ from Order import OType, Order
 
 import numpy as np
 from sklearn import preprocessing
+import torch
 
 # Import Trader strategies:
 from Trader import TType, Trader
@@ -26,7 +27,7 @@ import matplotlib.pyplot as plt
 import argparse
 
 parser = argparse.ArgumentParser(description = "LOB autoencoder")
-parser.add_argument("--episodes", type = int, default = 100)
+parser.add_argument("--suffix", type = str, default = "")
 args = parser.parse_args()
 
 from actor_critic import Agent
@@ -476,12 +477,12 @@ def get_state(observation):
             snapshot = scalar.transform(snapshot)
             snapshot = torch.FloatTensor(snapshot)
             snapshot = Autoencoder.encoder(snapshot)
-    
+            snapshot = snapshot.cpu().detach().numpy()
             return snapshot
         
         def get_trades():
             tape = observation['lob']['tape']
-            trades = torch.zeros([1,8])
+            trades = np.zeros([1,8])
             i = 0
             for event in reversed(tape):
                 if event['type'] == 'event':
@@ -493,31 +494,26 @@ def get_state(observation):
                     
             min_max = preprocessing.MinMaxScaler()
             trades = min_max.fit_transform(trades)
-            trades = torch.FloatTensor(trades)
+            
             return trades
         
         lob    = get_lob()
         trades = get_trades()
+    
+        input = np.stack([lob,trades], axis = 1)
         
-        input = torch.stack([lob,trades],dim = 1)
-        midprice = observation['lob']['midprice']
-        
-        return input, midprice   
+        return input 
 
-def trader_strategy(state, midprice):
+def trader_strategy(state):
         
     
         #Model chooses an action based on oberservation
         action, price = agent.choose_action(state)
-        
-        
         current_position = observation['trader'].position
         
-        if midprice == None:
-            return None,state, action, dist, value 
 
         if action == 0:
-            return None,state, action, dist, value
+            return None, action
         
         if current_position == Position.NONE:
             
@@ -526,34 +522,28 @@ def trader_strategy(state, midprice):
             elif action == -1:
                 order_type = OType.ASK
             else:
-                return None, state
+                return None, action
         elif current_position == Position.BOUGHT:
             if action == 1 or action == 0:
-                return None,state, action, dist, value
+                return None, action
             elif action == -1:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
             elif action == -1 or action == 0:
-                return None,state, action, dist, value
+                return None, action
             
         tid = observation['trader'].tid
         time =  observation['lob']['time']
-        
+        if price < 0:
+            price = 1
         order = Order(tid, order_type, price, 1, time)
         
         
         
-        return order, state, action, dist, value
+        return order, action
 
-def compute_returns(next_value, rewards, masks, gamma=0.99):
-    R = next_value
-    returns = []
-    for step in reversed(range(len(rewards))):
-        R = rewards[step] + gamma * R * masks[step]
-        returns.insert(0, R)
-    return returns
 if __name__ == "__main__":
     
     end_time = 1000.0    
@@ -575,7 +565,7 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
-    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[2,8], tau = 0.001,
+    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[16], tau = 0.001,
                   batch_size = 64, layer1_size = 400, layer2_size = 300, n_actions = 2)
     
     np.random.seed(0)
@@ -594,10 +584,11 @@ if __name__ == "__main__":
     
         j = 0
         while not done:
-            state, midprice = get_state(observation)
-            order, state, action = trader_strategy(state, midprice)
+            state = get_state(observation)
+            order, action = trader_strategy(state.flatten())
             observation_, reward, done, info, balance = environment.step(order)
-            new_state, _  = get_state(observation_)
+            print(action,order, balance)
+            new_state  = get_state(observation_)
             agent.remember(state,action,reward,new_state, int(done))
             agent.learn()
             totalreward += reward
