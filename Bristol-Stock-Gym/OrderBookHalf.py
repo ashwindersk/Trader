@@ -115,7 +115,20 @@ class OrderBookHalf:
         
 
         return best_price, best_tid
+    def get_worst(self):
+        if len(self.lob) == 0:
+            return None, None
 
+        if self.booktype == OType.BID:
+            worst_price = min(self.lob.keys())
+        else:
+            worst_price = max(self.lob.keys())
+
+        best_tid = self.lob[worst_price][1][0][2] # TODO: This is confusing
+        
+
+        return worst_price, best_tid
+        
 if __name__ == "__main__":
 
     otype = OType.BID

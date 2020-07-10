@@ -80,7 +80,7 @@ class Environment:
                             
                             self.exchange.del_order(self.traders[kill].lastquote,self.time )
                             
-        benefit  = 0
+        
 
         ## Shuffle traders in a random order
         trader_keys =  list(self.traders.keys())
@@ -88,8 +88,11 @@ class Environment:
 
         ## Update the traders with the latest public lob
         for trader_key in trader_keys:
-            self.traders[trader_key].update(self.exchange.get_public_lob(self.time))
-
+            if trader_key == 'PLAYER':
+                self.traders[trader_key].update(self.exchange.bids, self.exchange.asks)    
+            else:
+                self.traders[trader_key].update(self.exchange.get_public_lob(self.time))
+            
         ## Process trader actions
 
         # In their random order, traders take an action
@@ -103,11 +106,10 @@ class Environment:
             if output != None: # If a trade occurred due to the order being placed, notify the parties involved
                 trader1 = self.traders[output['party1']]
                 trader2 = self.traders[output['party2']]
-                if trader1==trader2:
-                    print("Traded with itself")
-                    ti.sleep(10)
                 trader1.notify_transaction(output)
                 trader2.notify_transaction(output)
+            
+            
                 
 
 
@@ -119,6 +121,9 @@ class Environment:
         observation = self._get_observation()
         reward = self.traders['PLAYER'].get_reward()
         balance = self.traders['PLAYER'].get_balance()
+        position = Position.NONE.value
+        if self.traders['PLAYER'].prev_order_price is not None:
+            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
@@ -130,7 +135,7 @@ class Environment:
                 string = trader_key + ":" + str(trader.balance) + "\n"
                 info = info + string
 
-        return observation, reward, done, info, balance
+        return observation, reward, done, info, balance, position
 
     def _populate_traders(self, traders_spec):
 
@@ -448,7 +453,7 @@ def get_traders_schedule():
     
     return traders_spec, order_sched
  
-def get_state(observation):
+def get_state(observation, position):
         
          #Get the latest 5 changes to the lob - autoencoded 
         def get_lob():
@@ -478,6 +483,8 @@ def get_state(observation):
             snapshot = torch.FloatTensor(snapshot)
             snapshot = Autoencoder.encoder(snapshot)
             snapshot = snapshot.cpu().detach().numpy()
+            snapshot = snapshot.reshape(8)
+            
             return snapshot
         
         def get_trades():
@@ -494,13 +501,14 @@ def get_state(observation):
                     
             min_max = preprocessing.MinMaxScaler()
             trades = min_max.fit_transform(trades)
-            
+            trades = trades.reshape(8)
             return trades
         
-        lob    = get_lob()
-        trades = get_trades()
-    
-        input = np.stack([lob,trades], axis = 1)
+        lob    = np.array(get_lob())
+        
+        
+        trades = np.array(get_trades())
+        input = np.concatenate((lob, trades, [position]))
         
         return input 
 
@@ -510,7 +518,7 @@ def trader_strategy(state):
         #Model chooses an action based on oberservation
         action, price = agent.choose_action(state)
         current_position = observation['trader'].position
-        
+        price = round(price)
         if action == 0:
             return None, action
         
@@ -564,7 +572,7 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
-    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[16], tau = 0.001,
+    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[17], tau = 0.001,
                   batch_size = 64, layer1_size = 400, layer2_size = 300, n_actions = 2)
     
     np.random.seed(0)
@@ -579,15 +587,16 @@ if __name__ == "__main__":
         totalreward = 0
         done = False
         observation = environment.reset()
-        
+        position = Position.NONE.value
     
         j = 0
         while not done:
-            state = get_state(observation)
+            state = get_state(observation, position)
             order, action = trader_strategy(state.flatten())
-            observation_, reward, done, info, balance = environment.step(order)
-            print(action,order, balance)
-            new_state  = get_state(observation_)
+            observation_, reward, done, info, balance, position = environment.step(order)
+            if order is not None:
+                print(action,order, balance)
+            new_state  = get_state(observation_, position)
             agent.remember(state,action,reward,new_state, int(done))
             agent.learn()
             totalreward += reward

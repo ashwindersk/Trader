@@ -216,7 +216,7 @@ class Agent(object):
         
         mu_prime = mu_prime.cpu().detach().numpy()
         action = mu_prime[0]
-        print(action)
+        
         if round(action) < -1:
             action = -1.0
         elif round(action) > 1:

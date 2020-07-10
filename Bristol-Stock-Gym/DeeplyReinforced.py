@@ -17,6 +17,7 @@ class DeeplyReinforced(Trader):
         self.reward = 0
         super().__init__(trader_type, trader_id, min_price=min_price, max_price=max_price)
         self.balance = balance
+        self.lob_range = None
     
     def assign_order(self, order):
         pass
@@ -30,8 +31,12 @@ class DeeplyReinforced(Trader):
                 self.lastquote = self.order
             else:
                 response = 'Proceed'
+            
             self.order = order
             return response 
+            oprice = order.price
+            if self.lob_range is not None and oprice in self.lob_range:
+                self.reward+=50
         return None 
     
     def action(self,player_action, time):
@@ -48,14 +53,14 @@ class DeeplyReinforced(Trader):
             reward = 0
             if self.position == Position.NONE:
                 if order.otype == OType.ASK:
-                    #print("SOLD", order)
+                    print("SOLD", order)
                     self.balance += trade_price
                     self.position = Position.SOLD
                     self.prev_order_price = trade_price
                     
             
                 if order.otype == OType.BID:
-                    #print("BOUGHT", order)
+                    print("BOUGHT", order)
                     self.balance -= trade_price
                     self.position = Position.BOUGHT
                     self.prev_order_price = trade_price
@@ -96,3 +101,21 @@ class DeeplyReinforced(Trader):
             
     def get_balance(self):
         return self.balance
+    
+    def update(self,bids, asks):
+        worst_ask,_ = bids.get_worst()
+            
+        worst_bid,_ = asks.get_worst()
+
+        max_price = int(self.exchange_rules['maxprice'])
+        min_price = int(self.exchange_rules['minprice'])
+        
+        if worst_ask is None and worst_bid is not None:
+            self.lob_range = range(int(worst_bid), max_price)
+        elif worst_ask is not None and worst_bid is None:
+            self.lob_range = range(min_price, int(worst_ask))
+        elif worst_ask is None and worst_bid is None:
+            self.lob_range = None
+        else:
+            self.lob_range = range(int(worst_bid), int(worst_ask))
+        
