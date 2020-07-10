@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 class OUActionNoise(object):
-    def __init__(self, mu,sigma = 0.15, theta = 0.2, dt = 1e-2, x0=None):
+    def __init__(self, mu,sigma = 0.5, theta = 0.2, dt = 1e-2, x0=None):
         self.theta = theta
         self.mu = mu
         self.sigma = sigma
@@ -216,10 +216,13 @@ class Agent(object):
         
         mu_prime = mu_prime.cpu().detach().numpy()
         action = mu_prime[0]
+        print(action)
         if round(action) < -1:
             action = -1.0
-        print(action) 
-        return round(mu_prime[0]), mu_prime[1]*self.MAX_ACTION
+        elif round(action) > 1:
+            action = 1.0
+        
+        return round(action), mu_prime[1]*self.MAX_ACTION
     
     def remember(self,state,action,reward,new_state,done):
         self.memory.store_transition(state, action,reward,new_state, done)

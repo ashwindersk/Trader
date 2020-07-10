@@ -511,7 +511,6 @@ def trader_strategy(state):
         action, price = agent.choose_action(state)
         current_position = observation['trader'].position
         
-
         if action == 0:
             return None, action
         
