@@ -600,7 +600,7 @@ if __name__ == "__main__":
         print(f"End of trading session{i} with Total Reward: {balance} ")
         
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
-            rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
+            rewardfile.write(f"{i}: {np.sum(np.array(totalreward))}\n")
         
         with open(f'balance-{args.suffix}.csv', 'a') as rewardfile:
             rewardfile.write(f"{i}: {np.sum(np.array(balance))}\n")

@@ -217,7 +217,7 @@ class Agent(object):
         mu_prime = mu_prime.cpu().detach().numpy()
         action = mu_prime[0]
         if round(action) < -1:
-            action = -1
+            action = -1.0
         print(action) 
         return round(mu_prime[0]), mu_prime[1]*self.MAX_ACTION
     
