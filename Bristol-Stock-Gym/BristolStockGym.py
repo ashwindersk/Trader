@@ -20,15 +20,16 @@ from ZIU import ZIU
 from ZIC import ZIC
 from ZIP import ZIP
 from DeeplyReinforced import DeeplyReinforced, Position
-
-import torch
-from torch.autograd import Variable
-import torch.optim as optim
-
-from actor_critic import Actor, Critic, save_models
 from AE import LOB_trainer, Autoencoder
 
 import matplotlib.pyplot as plt
+import argparse
+
+parser = argparse.ArgumentParser(description = "LOB autoencoder")
+parser.add_argument("--episodes", type = int, default = 100)
+args = parser.parse_args()
+
+from actor_critic import Agent
 
 
 class Environment:
@@ -106,29 +107,17 @@ class Environment:
                     ti.sleep(10)
                 trader1.notify_transaction(output)
                 trader2.notify_transaction(output)
-                # if output['party1'] == 'PLAYER' or output['party2'] == 'PLAYER': # If the player trader was involved in the trade, this step's reward becomes the balance of the trade
-                #     player = self.traders['PLAYER']
-                #     benefit = player.benefit
+                
 
-        # Assign new orders to the traders who completed the previous ones if the exchange(experiment) rules say so
-        # Here we could try preserving which trader bids and which
-        # trader asks (chosen), or we could give them random orders (thus upsetting the balance)
-        # if self.replenish_orders == True:
-        #     for trader_key in trader_keys:
-        #         trader = self.traders[trader_key]
-        #         if trader.order == None:
-        #             new_order = self._generate_order(trader.tid, trader.otype, self.time)
-        #             trader.assign_order(new_order)
 
-        # Increment timestep
-        benefit = self.traders['PLAYER'].get_benefit()
                 
         if self.time >= self.maxtime:
             self.done = True
         self.time += self.time_step
 
         observation = self._get_observation()
-        reward = benefit
+        reward = self.traders['PLAYER'].get_reward()
+        balance = self.traders['PLAYER'].get_balance()
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
@@ -140,7 +129,7 @@ class Environment:
                 string = trader_key + ":" + str(trader.balance) + "\n"
                 info = info + string
 
-        return observation, reward, done, info
+        return observation, reward, done, info, balance
 
     def _populate_traders(self, traders_spec):
 
@@ -403,14 +392,6 @@ class Environment:
         return new_pending, cancellations
 
 
-def save_model(signum, frame):
-    if torch.cuda.is_available():
-        save_models(actor,critic,actor_outfile ="actor-gpu", critic_outfile = "critic_gpu")
-    else:
-        save_models(actor, critic)
-    sys.exit()
-    
-signal.signal(signal.SIGINT,save_model)
 
 
 #------- All functionality to do with varying supply and demand schedule   ------------
@@ -466,7 +447,7 @@ def get_traders_schedule():
     
     return traders_spec, order_sched
  
-def get_observation(observation):
+def get_state(observation):
         
          #Get the latest 5 changes to the lob - autoencoded 
         def get_lob():
@@ -503,7 +484,7 @@ def get_observation(observation):
             trades = torch.zeros([1,8])
             i = 0
             for event in reversed(tape):
-                if event['type'] == 'event' and (event['party1'] == 'PLAYER' or event['party2'] == 'PLAYER'):
+                if event['type'] == 'event':
                     try:
                         trades[i] = event['price']
                     except IndexError:
@@ -523,13 +504,11 @@ def get_observation(observation):
         
         return input, midprice   
 
-def trader_strategy(state, midprice, actor, critic):
+def trader_strategy(state, midprice):
         
     
         #Model chooses an action based on oberservation
-        dist = actor(state)
-        action = dist.sample()
-        value = critic(state)
+        action, price = agent.choose_action(state)
         
         
         current_position = observation['trader'].position
@@ -544,24 +523,24 @@ def trader_strategy(state, midprice, actor, critic):
             
             if action == 1:
                 order_type = OType.BID
-            elif action == 2:
+            elif action == -1:
                 order_type = OType.ASK
             else:
                 return None, state
         elif current_position == Position.BOUGHT:
             if action == 1 or action == 0:
                 return None,state, action, dist, value
-            elif action == 2:
+            elif action == -1:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
-            elif action == 2 or action == 0:
+            elif action == -1 or action == 0:
                 return None,state, action, dist, value
+            
         tid = observation['trader'].tid
         time =  observation['lob']['time']
         
-        price = int(midprice)
         order = Order(tid, order_type, price, 1, time)
         
         
@@ -588,96 +567,60 @@ if __name__ == "__main__":
     #==================================================================
     
     
-    #------ Loading all models ----------------------------------------
+    #------ Autoencoder ----------------------------------------
     
     lob_trainer = LOB_trainer() 
     
     Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    if torch.cuda.is_available() and os.path.exists("Models/actor-job.pkl"):
-            actor = torch.load("Models/actor-job.pkl").to(device)
-    elif os.path.exists('Models/actor.pkl'):
-            actor = torch.load("Models/actor.pkl")
-    else:
-        actor = Actor(input_shape=2*8, action_size= 3)
-    print("Actor model loaded")
-    if torch.cuda.is_available() and os.path.exists("Models/critic-job.pkl"):
-            critic = torch.load("Models/critic-job.pkl").to(device)
-    elif os.path.exists('Models/critic.pkl'):
-            critic = torch.load("Models/critic.pkl")
-    else:
-        critic = Critic(input_shape=2*8)
     
-    print("Critic model loaded") 
-    optimizerA = optim.Adam(actor.parameters())
-    optimizerC = optim.Adam(critic.parameters())
-
+    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[2,8], tau = 0.001,
+                  batch_size = 64, layer1_size = 400, layer2_size = 300, n_actions = 2)
+    
+    np.random.seed(0)
+    
+    
     #==================================================================    
     
     
-    for i in range(100):
+    for i in range(1000):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
         done = False
         observation = environment.reset()
-        log_probs = []
-        values = []
-        rewards = []
-        masks = []
-        entropy = 0
         
     
         j = 0
         while not done:
-            state, midprice = get_observation(observation)
-            state = torch.FloatTensor(state).to(device) 
-            order, state, action, dist, value = trader_strategy(state, midprice, actor, critic)
-            observation_, reward, done, info = environment.step(order)
-            new_state, _  = get_observation(observation_)
-
-            log_prob = dist.log_prob(action).unsqueeze(0)
-            entropy += dist.entropy().mean()
-            
-            log_probs.append(log_prob)
-            values.append(value)
-            rewards.append(torch.tensor([reward], dtype = torch.float, device = device))
-            masks.append(torch.torch.tensor([1-done], dtype = torch.float, device = device))    
+            state, midprice = get_state(observation)
+            order, state, action = trader_strategy(state, midprice)
+            observation_, reward, done, info, balance = environment.step(order)
+            new_state, _  = get_state(observation_)
+            agent.remember(state,action,reward,new_state, int(done))
+            agent.learn()
+            totalreward += reward
             observation = observation_
             
             j+=1
-            
-        if done:
-            print(f"End of trading session{i} with Total Reward: {totalreward} ")
-            if torch.cuda.is_available():
-                with open('rewards-job.csv', 'a') as rewardfile:
-                    rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")        
-            else:
-                with open('rewards.csv', 'a') as rewardfile:
-                    rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
         
-        state, _ = get_observation(observation_)
-        next_state = torch.FloatTensor(state).to(device)
-        next_value = critic(next_state)
-        returns = compute_returns(next_value, rewards, masks)
-        log_probs = torch.cat(log_probs)
-        returns = torch.cat(returns).detach()
-        values = torch.cat(values)
         
-        advantage = returns - value
+        print(f"End of trading session{i} with Total Reward: {balance} ")
         
-        actor_loss = -(log_probs * advantage.detach()).mean()
-        critic_loss = advantage.pow(2).mean()
+        with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
+            rewardfile.write(f"{i}: {np.sum(np.array(rewards))}\n")
         
-        optimizerA.zero_grad()
-        optimizerC.zero_grad()
-        actor_loss.backward(retain_graph = True)
-        critic_loss.backward(retain_graph = True)
-        optimizerA.step()
-        optimizerC.step()
-        save_models(actor,critic,"actor-job", "critic-job")
+        with open(f'balance-{args.suffix}.csv', 'a') as rewardfile:
+            rewardfile.write(f"{i}: {np.sum(np.array(balance))}\n")
+                    
+        if i % 5 == 0:
+            agent.save_models()
+        
+        
+       
+        
+    
     
     
 
