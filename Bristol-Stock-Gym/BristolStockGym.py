@@ -119,11 +119,18 @@ class Environment:
         self.time += self.time_step
 
         observation = self._get_observation()
+        
+        #Getting all relevant data from trader
+        
         reward = self.traders['PLAYER'].get_reward()
         balance = self.traders['PLAYER'].get_balance()
         position = Position.NONE.value
         if self.traders['PLAYER'].prev_order_price is not None:
-            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price
+            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price/1000
+            
+        num_trades =self.traders['PLAYER'].num_trades    
+        
+        
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
@@ -135,7 +142,7 @@ class Environment:
                 string = trader_key + ":" + str(trader.balance) + "\n"
                 info = info + string
 
-        return observation, reward, done, info, balance, position
+        return observation, reward, done, info, balance, position, num_trades
 
     def _populate_traders(self, traders_spec):
 
@@ -586,32 +593,33 @@ if __name__ == "__main__":
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
         done = False
+        balance = 500 
         observation = environment.reset()
         position = Position.NONE.value
-    
-        j = 0
+        num_trades = 0
+
         while not done:
             state = get_state(observation, position)
             order, action = trader_strategy(state.flatten())
-            observation_, reward, done, info, balance, position = environment.step(order)
             if order is not None:
-                print(action,order, balance)
+                print(action,order, balance, position, num_trades)
+            observation_, reward, done, info, balance, position, num_trades = environment.step(order)
             new_state  = get_state(observation_, position)
             agent.remember(state,action,reward,new_state, int(done))
             agent.learn()
             totalreward += reward
             observation = observation_
             
-            j+=1
         
         
-        print(f"End of trading session{i} with Total Reward: {balance} ")
+        print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
         
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
-            rewardfile.write(f"{i}: {np.sum(np.array(totalreward))}\n")
+            rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
         
-        with open(f'balance-{args.suffix}.csv', 'a') as rewardfile:
-            rewardfile.write(f"{i}: {np.sum(np.array(balance))}\n")
+        
+        
+        
                     
         if i % 5 == 0:
             agent.save_models()

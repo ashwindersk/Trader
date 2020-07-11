@@ -15,6 +15,7 @@ class DeeplyReinforced(Trader):
         self.prev_order_price = None
         self.orders = []
         self.reward = 0
+        self.num_trades = 0
         super().__init__(trader_type, trader_id, min_price=min_price, max_price=max_price)
         self.balance = balance
         self.lob_range = None
@@ -53,14 +54,14 @@ class DeeplyReinforced(Trader):
             reward = 0
             if self.position == Position.NONE:
                 if order.otype == OType.ASK:
-                    print("SOLD", order)
+                    print("SOLD", trade_price)
                     self.balance += trade_price
                     self.position = Position.SOLD
                     self.prev_order_price = trade_price
                     
             
                 if order.otype == OType.BID:
-                    print("BOUGHT", order)
+                    print("BOUGHT", trade_price)
                     self.balance -= trade_price
                     self.position = Position.BOUGHT
                     self.prev_order_price = trade_price
@@ -68,13 +69,14 @@ class DeeplyReinforced(Trader):
             elif self.position == Position.BOUGHT:
                 #print("SOLD", order)
                 self.balance +=trade_price
+                self.num_trades +=1
                 reward = (trade_price - self.prev_order_price)
                 print(f"Benefit: {reward} -> {trade_price} - {self.prev_order_price} ")
                 self.position = Position.NONE
                 self.prev_order_price = None
             elif self.position == Position.SOLD:
-                # print("BOUGHT", order)
                 self.balance -=trade_price 
+                self.num_trades += 1
                 reward = (self.prev_order_price - trade_price )
                 print(f"Benefit: {reward} -> {self.prev_order_price} - {trade_price}")
                 self.position = Position.NONE

@@ -121,8 +121,12 @@ class CriticNetwork(nn.Module):
         
     def load_checkpoint(self):
         print("Loading model..")
-        self.load_state_dict(torch.load(self.name))
-        
+        try:
+            self.load_state_dict(torch.load(self.name))
+            print("Model loaded")
+        except:
+            print("Failed to load model..")
+            
 
 class ActorNetwork(nn.Module):
     def __init__(self,lr, input_dims, fc1_dims, fc2_dims, n_actions, name, MAX_ACTION):
@@ -179,8 +183,12 @@ class ActorNetwork(nn.Module):
         
     def load_checkpoint(self):
         print("Loading model..")
-        self.load_state_dict(torch.load(self.name))
-        
+        try:
+            self.load_state_dict(torch.load(self.name))
+            print("Model loaded")
+        except:
+            print("Failed to load model..")
+            
         
 
 
@@ -195,13 +203,14 @@ class Agent(object):
         self.memory = ReplayBuffer(max_size, input_dims, n_actions)
         self.batch_size = batch_size
         self.MAX_ACTION = MAX_ACTION
-        
         self.actor = ActorNetwork(alpha, input_dims, layer1_size, layer2_size, n_actions = n_actions, name = actor_name, MAX_ACTION = MAX_ACTION)
         self.target_actor = ActorNetwork(alpha, input_dims, layer1_size, layer2_size, n_actions = n_actions, name = target_actor_name, MAX_ACTION = MAX_ACTION)
-        
         self.critic = CriticNetwork(alpha, input_dims, layer1_size, layer2_size, n_actions = n_actions, name = critic_name)
         self.target_critic = CriticNetwork(alpha, input_dims, layer1_size, layer2_size, n_actions = n_actions, name = target_critic_name)
-        
+        self.actor.load_checkpoint()
+        self.target_actor.load_checkpoint()
+        self.critic.load_checkpoint()
+        self.target_critic.load_checkpoint()
         self.noise = OUActionNoise(mu = np.zeros(n_actions))
         
         self.update_network_parameters(tau = 1)
