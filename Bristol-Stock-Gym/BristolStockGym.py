@@ -417,9 +417,8 @@ def get_traders_schedule():
         amplitude = 2 * t / (c / pi2)
         offset = gradient + amplitude * math.sin(wavelength * t)
         return int(round(offset, 0))
-
-    low = 100
-    high = 150
+    low = random.choice(range(100,600))
+    high = random.choice(range(300,800))
     intervals = 10
     supply_schedule = []
     sigma = 5
@@ -610,7 +609,7 @@ if __name__ == "__main__":
             totalreward += reward
             observation = observation_
             
-        
+            
         
         print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
         

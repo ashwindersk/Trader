@@ -35,9 +35,7 @@ class DeeplyReinforced(Trader):
             
             self.order = order
             return response 
-            oprice = order.price
-            if self.lob_range is not None and oprice in self.lob_range:
-                self.reward+=50
+            
         return None 
     
     def action(self,player_action, time):
@@ -67,7 +65,6 @@ class DeeplyReinforced(Trader):
                     self.prev_order_price = trade_price
                     
             elif self.position == Position.BOUGHT:
-                #print("SOLD", order)
                 self.balance +=trade_price
                 self.num_trades +=1
                 reward = (trade_price - self.prev_order_price)
