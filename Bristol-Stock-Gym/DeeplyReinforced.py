@@ -26,7 +26,6 @@ class DeeplyReinforced(Trader):
     
     def add_order(self,order):
         if order is not None:
-            
             if self.order is not None :
                 response = 'LOB_Cancel'
                 self.lastquote = self.order
@@ -35,6 +34,8 @@ class DeeplyReinforced(Trader):
             
             self.order = order
             return response 
+        else:
+            self.reward -=50
             
         return None 
     
@@ -78,7 +79,21 @@ class DeeplyReinforced(Trader):
                 print(f"Benefit: {reward} -> {self.prev_order_price} - {trade_price}")
                 self.position = Position.NONE
                 self.prev_order_price = None
+                
+                
+                
             self.lastquote = None
+            
+            
+            #Amplify rewards for profitable trade 
+            #reward small losses more than big losses
+            
+            if reward > -5 and reward < 0:
+                reward *= -10 
+            elif reward > 0:
+                reward *= 50   
+            else:
+                reward *=30
             return reward
 
         if transaction_record['type'] == 'Trade':
@@ -93,7 +108,7 @@ class DeeplyReinforced(Trader):
     #Total reward for one step in the environment  
     #reset the reward   
     def get_reward(self):
-        
+    
         reward = self.reward
         self.reward = 0
         return reward

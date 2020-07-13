@@ -4,6 +4,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np 
 import os
+import time
+
 
 class OUActionNoise(object):
     def __init__(self, mu,sigma = 0.25, theta = 0.2, dt = 1e-2, x0=None):
@@ -11,7 +13,7 @@ class OUActionNoise(object):
         self.mu = mu
         self.sigma = sigma
         self.x0= x0
-        self.dt = dt
+        self.dt = dt    
         self.reset()
         
     
@@ -28,7 +30,7 @@ class OUActionNoise(object):
 
 
 class ReplayBuffer(object):
-    def __init__(self,max_size,input_shape,n_actions):
+    def __init__(self,max_size,input_shape,n_actions, unusual_sample_factor = 0.85):
         self.mem_size = max_size
         self.mem_cntr = 0
         self.state_memory = np.zeros((self.mem_size, *input_shape))
@@ -36,6 +38,10 @@ class ReplayBuffer(object):
         self.action_memory = np.zeros((self.mem_size , n_actions))
         self.reward_memory = np.zeros(self.mem_size)
         self.terminal_memory = np.zeros(self.mem_size, dtype = np.float32)
+        assert unusual_sample_factor <= 1, "unusual_sample_factor has to be <= 1"
+        # Setting this value to a low number over-samples experience that had unusually high or
+        # low rewards
+        self.unusual_sample_factor = unusual_sample_factor
 
     
     def store_transition(self,state,action,reward,state_,done):
@@ -51,7 +57,11 @@ class ReplayBuffer(object):
     
     def sample_buffer(self,batch_size):
         max_mem = min(self.mem_cntr, self.mem_size)
-        batch = np.random.choice(max_mem, batch_size)
+        p = np.array([self.unusual_sample_factor ** i for i in range(max_mem)])
+        p = p / sum(p)
+        batch = np.random.choice(max_mem, batch_size, p = p)
+
+        
         
         states = self.state_memory[batch]
         new_states = self.new_state_memory[batch]
@@ -62,7 +72,22 @@ class ReplayBuffer(object):
         
         return states,actions,rewards,new_states,terminal_memory
 
+    def sort_buffer(self):
+        self.state_memory, self.action_memory,self.reward_memory,self.new_state_memory,self.terminal_memory = \
+            self.sort_lists_by([self.state_memory, self.action_memory,self.reward_memory,self.new_state_memory,self.terminal_memory],
+                               key_list = 2)
 
+        self.state_memory = np.array(self.state_memory)
+        self.action_memory = np.array(self.action_memory)
+        self.reward_memory = np.array(self.reward_memory)
+        self.new_state_memory = np.array(self.new_state_memory)
+        self.terminal_memory = np.array(self.terminal_memory)
+        
+        
+        
+    def sort_lists_by(self,lists, key_list=0, desc=False):
+        return zip(*sorted(zip(*lists), reverse=desc,
+                 key=lambda x: abs(x[key_list])))
 
 class CriticNetwork(nn.Module):
     def __init__(self,lr, input_dims, fc1_dims, fc2_dims, n_actions, name):
@@ -126,6 +151,7 @@ class CriticNetwork(nn.Module):
             print("Model loaded")
         except:
             print("Failed to load model..")
+            print("Creating new model..")
             
 
 class ActorNetwork(nn.Module):
@@ -195,7 +221,7 @@ class ActorNetwork(nn.Module):
 
 class Agent(object):
     def __init__(self,alpha, beta, input_dims, tau, gamma = 0.99, n_actions = 2,
-                  max_size = 1000000, layer1_size = 400, layer2_size = 300, batch_size = 64, 
+                  max_size = 1000, layer1_size = 400, layer2_size = 300, batch_size = 64, 
                   MAX_ACTION = 1000, actor_name ='Actor-DDPG', target_actor_name ='TargetActor-DDPG',
                   critic_name ='Critic-DDPG', target_critic_name = 'TargetCritic-DDPG' ):
         self.gamma = gamma
@@ -239,6 +265,8 @@ class Agent(object):
     def learn(self):
         if self.memory.mem_cntr < self.batch_size:
             return
+        self.memory.sort_buffer()
+        
         state,action,reward,new_state,done = self.memory.sample_buffer(self.batch_size)
         reward = torch.tensor(reward, dtype = torch.float).to(self.critic.device)
         new_state = torch.tensor(new_state, dtype= torch.float).to(self.critic.device)

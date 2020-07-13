@@ -620,8 +620,8 @@ if __name__ == "__main__":
         
         
                     
-        if i % 5 == 0:
-            agent.save_models()
+        #if i % 5 == 0:
+        #    agent.save_models()
         
         
        
