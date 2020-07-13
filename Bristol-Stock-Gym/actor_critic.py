@@ -8,7 +8,7 @@ import time
 
 
 class OUActionNoise(object):
-    def __init__(self, mu,sigma = 0.25, theta = 0.2, dt = 1e-2, x0=None):
+    def __init__(self, mu,sigma = 0.4, theta = 0.2, dt = 1e-2, x0=None):
         self.theta = theta
         self.mu = mu
         self.sigma = sigma
@@ -193,15 +193,27 @@ class ActorNetwork(nn.Module):
     
     def forward(self, state):
         x = self.fc1(state)
-        
         x = self.bn1(x)
         x = F.relu(x)
         x = self.fc2(x)
         x = self.bn2(x)
         x = F.relu(x)
-        x = torch.tanh(self.mu(x))
+        x = self.mu(x)
+        if [*x.shape] == [2]:
+            a = x[0]
+            b = x[1]
+            a = torch.tanh(a)
+            b = torch.sigmoid(b)
+            x = torch.tensor([a,b])
+        else:
+            a = x[:,0]
+            b = x[:,1]
+            a = torch.tanh(a)
+            b = torch.sigmoid(b)
+            x = torch.stack([a,b], dim = 1)
         
-        return x 
+        
+        return x
     
     def save_checkpoint(self):
         print("Saving Model..")
@@ -221,7 +233,7 @@ class ActorNetwork(nn.Module):
 
 class Agent(object):
     def __init__(self,alpha, beta, input_dims, tau, gamma = 0.99, n_actions = 2,
-                  max_size = 1000, layer1_size = 400, layer2_size = 300, batch_size = 64, 
+                  max_size = 100000, layer1_size = 400, layer2_size = 300, batch_size = 64, 
                   MAX_ACTION = 1000, actor_name ='Actor-DDPG', target_actor_name ='TargetActor-DDPG',
                   critic_name ='Critic-DDPG', target_critic_name = 'TargetCritic-DDPG' ):
         self.gamma = gamma
@@ -262,50 +274,54 @@ class Agent(object):
     def remember(self,state,action,reward,new_state,done):
         self.memory.store_transition(state, action,reward,new_state, done)
     
-    def learn(self):
+    def learn(self, itertaion):
         if self.memory.mem_cntr < self.batch_size:
             return
-        self.memory.sort_buffer()
+        if itertaion % 5 != 0:
+            return
+        else:
+            self.memory.sort_buffer()
+
+            state,action,reward,new_state,done = self.memory.sample_buffer(self.batch_size)
+            
+            reward = torch.tensor(reward, dtype = torch.float).to(self.critic.device)
+            new_state = torch.tensor(new_state, dtype= torch.float).to(self.critic.device)
+            action = torch.tensor(action, dtype= torch.float).to(self.critic.device)
+            state = torch.tensor(state, dtype= torch.float).to(self.critic.device)
+            done = torch.tensor(done).to(self.critic.device)
+
+            self.target_actor.eval()
+            self.target_critic.eval()
         
-        state,action,reward,new_state,done = self.memory.sample_buffer(self.batch_size)
-        reward = torch.tensor(reward, dtype = torch.float).to(self.critic.device)
-        new_state = torch.tensor(new_state, dtype= torch.float).to(self.critic.device)
-        action = torch.tensor(action, dtype= torch.float).to(self.critic.device)
-        state = torch.tensor(state, dtype= torch.float).to(self.critic.device)
-        done = torch.tensor(done).to(self.critic.device)
-        
-        self.target_actor.eval()
-        self.target_critic.eval()
-    
-        target_actions = self.target_actor.forward(new_state)
-        critic_value_ = self.target_critic.forward(new_state, target_actions)
-        
-        critic_value = self.critic.forward(state,action)
-        
-        target = []
-        for j in range(self.batch_size):
-            target.append(reward[j] * self.gamma*critic_value_[j]*done[j])
-        target = torch.Tensor(target).to(self.critic.device)
-        target = target.view(self.batch_size, 1)
-        
-        
-        self.critic.train()
-        self.critic.optimizer.zero_grad()
-        critic_loss = F.mse_loss(target,critic_value)
-        critic_loss.backward()
-        self.critic.optimizer.step()
-        
-        self.critic.eval()
-        self.actor.optimizer.zero_grad()
-        
-        mu = self.actor.forward(state)
-        self.actor.train()
-        actor_loss = - self.critic.forward(state,mu)
-        actor_loss = torch.mean(actor_loss)
-        actor_loss.backward()
-        self.actor.optimizer.step()
-        
-        self.update_network_parameters()
+            target_actions = self.target_actor(new_state)
+            critic_value_ = self.target_critic.forward(new_state, target_actions)
+
+            critic_value = self.critic.forward(state,action)
+
+            target = []
+            for j in range(self.batch_size):
+                target.append(reward[j] * self.gamma*critic_value_[j]*done[j])
+            target = torch.Tensor(target).to(self.critic.device)
+            target = target.view(self.batch_size, 1)
+
+
+            self.critic.train()
+            self.critic.optimizer.zero_grad()
+            critic_loss = F.mse_loss(target,critic_value)
+            critic_loss.backward()
+            self.critic.optimizer.step()
+
+            self.critic.eval()
+            self.actor.optimizer.zero_grad()
+
+            mu = self.actor.forward(state)
+            self.actor.train()
+            actor_loss = - self.critic.forward(state,mu)
+            actor_loss = torch.mean(actor_loss)
+            actor_loss.backward()
+            self.actor.optimizer.step()
+
+            self.update_network_parameters()
         
     
     def update_network_parameters(self, tau= None):

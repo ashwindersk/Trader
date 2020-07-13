@@ -551,6 +551,8 @@ def trader_strategy(state):
         time =  observation['lob']['time']
         if price < 0:
             price = 1
+        if price > 1000:
+            price = 1000
         order = Order(tid, order_type, price, 1, time)
         
         
@@ -596,7 +598,7 @@ if __name__ == "__main__":
         observation = environment.reset()
         position = Position.NONE.value
         num_trades = 0
-
+        j  = 0
         while not done:
             state = get_state(observation, position)
             order, action = trader_strategy(state.flatten())
@@ -605,10 +607,10 @@ if __name__ == "__main__":
             observation_, reward, done, info, balance, position, num_trades = environment.step(order)
             new_state  = get_state(observation_, position)
             agent.remember(state,action,reward,new_state, int(done))
-            agent.learn()
+            agent.learn(j)
             totalreward += reward
             observation = observation_
-            
+            j+=1
             
         
         print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
