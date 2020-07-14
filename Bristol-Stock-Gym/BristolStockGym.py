@@ -122,13 +122,7 @@ class Environment:
         
         #Getting all relevant data from trader
         
-        reward = self.traders['PLAYER'].get_reward()
-        balance = self.traders['PLAYER'].get_balance()
-        position = Position.NONE.value
-        if self.traders['PLAYER'].prev_order_price is not None:
-            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price/1000
             
-        num_trades =self.traders['PLAYER'].num_trades    
         
         
         done = self.done
@@ -142,6 +136,12 @@ class Environment:
                 string = trader_key + ":" + str(trader.balance) + "\n"
                 info = info + string
 
+        position = Position.NONE.value
+        if self.traders['PLAYER'].prev_order_price is not None:
+            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price/1000
+        num_trades =self.traders['PLAYER'].num_trades    
+        reward = self.traders['PLAYER'].get_reward()
+        balance = self.traders['PLAYER'].get_balance()
         return observation, reward, done, info, balance, position, num_trades
 
     def _populate_traders(self, traders_spec):
@@ -614,7 +614,7 @@ if __name__ == "__main__":
             
         
         print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
-        
+            
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
             rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
         

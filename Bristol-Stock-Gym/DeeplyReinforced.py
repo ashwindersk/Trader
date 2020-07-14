@@ -31,7 +31,18 @@ class DeeplyReinforced(Trader):
                 self.lastquote = self.order
             else:
                 response = 'Proceed'
+            if self.position == Position.SOLD and order.price < self.prev_order_price:
+                self.reward += 100
+            else:
+                self.reward += -50
+                
+            if self.position == Position.BOUGHT and order.price > self.prev_order_price:
+                self.reward += 100
+            else: 
+                self.reward += -50
             
+                
+                        
             self.order = order
             return response 
         else:
@@ -91,9 +102,9 @@ class DeeplyReinforced(Trader):
             if reward > -5 and reward < 0:
                 reward *= -10 
             elif reward > 0:
-                reward *= 50   
+                reward *= 100   
             else:
-                reward *=30
+                reward *=10
             return reward
 
         if transaction_record['type'] == 'Trade':
