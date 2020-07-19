@@ -588,8 +588,8 @@ if __name__ == "__main__":
     
     #==================================================================    
     
-    
-    for i in range(1000):
+    states = []
+    for i in range(5):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
@@ -601,29 +601,45 @@ if __name__ == "__main__":
         j  = 0
         while not done:
             state = get_state(observation, position)
+                
             order, action = trader_strategy(state.flatten())
+            latent = np.concatenate((state.flatten(), np.array([action]), np.array([order.price if order is not None else 0])))
+            states.append(latent)
+            print(len(states))
+            #a sequence of the last N (Observation_, a) pairs are used to predict the next state 
+            #state_prediction = RNN_model((state,a))
+            
+            #Instead of the reward being calculated here, a LSTM regression model (trained), calculates the reward beased on the midprice x position
+            #reward = reward_model(state, state_prediction)
+            
             if order is not None:
                 print(action,order, balance, position, num_trades)
             observation_, reward, done, info, balance, position, num_trades = environment.step(order)
+            #
+            
+            
+            
             new_state  = get_state(observation_, position)
-            agent.remember(state,action,reward,new_state, int(done))
-            agent.learn(j)
+            #agent.remember(state,action,reward,new_state, int(done))
+            #agent.learn(j)
             totalreward += reward
             observation = observation_
             j+=1
             
         
-        print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
+        #print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
             
-        with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
-            rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
+        #with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
+        #    rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
         
         
-        
-        
-                    
         #if i % 5 == 0:
-        #    agent.save_models()
+        #   agent.save_models()
+        
+    states = np.stack([states])
+    with open('latent.npy', 'wb') as f:
+        np.save(f, states)  
+                    
         
         
        

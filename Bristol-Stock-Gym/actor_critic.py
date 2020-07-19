@@ -26,9 +26,6 @@ class OUActionNoise(object):
     def reset(self):
         self.x_prev = self.x0 if self.x0 is not None else np.zeros_like(self.mu)
 
-
-
-
 class ReplayBuffer(object):
     def __init__(self,max_size,input_shape,n_actions, unusual_sample_factor = 0.85):
         self.mem_size = max_size
@@ -227,8 +224,7 @@ class ActorNetwork(nn.Module):
         except:
             print("Failed to load model..")
             
-        
-
+    
 
 
 class Agent(object):
