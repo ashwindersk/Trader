@@ -516,7 +516,7 @@ def get_state(observation, position):
         trades = np.array(get_trades())
         input = np.concatenate((lob, trades, [position]))
         
-        return input 
+        return input, observation['lob']['midprice']
 
 def trader_strategy(state):
         
@@ -589,7 +589,8 @@ if __name__ == "__main__":
     #==================================================================    
     
     states = []
-    for i in range(5):
+    midprices = []
+    for i in range(10):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
@@ -600,11 +601,12 @@ if __name__ == "__main__":
         num_trades = 0
         j  = 0
         while not done:
-            state = get_state(observation, position)
+            state, midprice = get_state(observation, position)
                 
             order, action = trader_strategy(state.flatten())
             latent = np.concatenate((state.flatten(), np.array([action]), np.array([order.price if order is not None else 0])))
             states.append(latent)
+            midprices.append(midprice)
             print(len(states))
             #a sequence of the last N (Observation_, a) pairs are used to predict the next state 
             #state_prediction = RNN_model((state,a))
@@ -619,7 +621,7 @@ if __name__ == "__main__":
             
             
             
-            new_state  = get_state(observation_, position)
+            new_state, _  = get_state(observation_, position)
             #agent.remember(state,action,reward,new_state, int(done))
             #agent.learn(j)
             totalreward += reward
@@ -637,10 +639,12 @@ if __name__ == "__main__":
         #   agent.save_models()
         
     states = np.stack([states])
-    with open('latent.npy', 'wb') as f:
+    with open('Regression/latent.npy', 'wb') as f:
         np.save(f, states)  
-                    
-        
+    
+    with open('Regression/midprices.npy') as f:
+        midprices = np.asarray(midprices)                   
+        np.save(f, midprices)
         
        
         
