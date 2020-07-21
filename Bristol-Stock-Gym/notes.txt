@@ -1,1 +1,9 @@
-#Features to regress to a price, maybe that can be critiqued and acted on, use the previous trade history to do it
+#Features to regress to a price, maybe that
+#can be critiqued and acted on, use the previous trade history to do it
+
+Get current state of the lob (AE + trades): a
+get action from trader: a
+predict: new state = prediction(s,a)
+
+
+

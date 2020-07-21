@@ -277,7 +277,7 @@ class Agent(object):
     def learn(self, itertaion):
         if self.memory.mem_cntr < self.batch_size:
             return
-        if itertaion % 5 != 0:
+        if itertaion % 2 != 0:
             return
         else:
             self.memory.sort_buffer()

@@ -12,13 +12,14 @@ class Position(Enum):
 class DeeplyReinforced(Trader):
     def __init__(self, trader_type, trader_id, min_price=1, max_price=1000, balance=500):
         self.position = Position.NONE
-        self.prev_order_price = None
+        self.prev_trade_price = None
         self.orders = []
         self.reward = 0
         self.num_trades = 0
         super().__init__(trader_type, trader_id, min_price=min_price, max_price=max_price)
         self.balance = balance
         self.lob_range = None
+        self.prev_order = None
     
     def assign_order(self, order):
         pass
@@ -31,22 +32,19 @@ class DeeplyReinforced(Trader):
                 self.lastquote = self.order
             else:
                 response = 'Proceed'
-            if self.position == Position.SOLD and order.price < self.prev_order_price:
-                self.reward += 100
-            else:
-                self.reward += -50
-                
-            if self.position == Position.BOUGHT and order.price > self.prev_order_price:
-                self.reward += 100
-            else: 
-                self.reward += -50
+          
             
                 
                         
             self.order = order
             return response 
         else:
-            self.reward -=50
+            try:
+                self.reward -= 1e-3 * (self.time - self.prev_order.time)
+            
+            except:
+                self.reward -= 1e-3
+                
             
         return None 
     
@@ -62,32 +60,43 @@ class DeeplyReinforced(Trader):
         def calculate_reward(order, trade_price):  
             
             reward = 0
+            profit = 0
             if self.position == Position.NONE:
                 if order.otype == OType.ASK:
                     print("SOLD", trade_price)
+                    self.num_trades += 1
                     self.balance += trade_price
                     self.position = Position.SOLD
-                    self.prev_order_price = trade_price
+                    self.prev_trade_price = trade_price
+                    self.prev_order = order
+                    reward += trade_price
                     
             
                 if order.otype == OType.BID:
                     print("BOUGHT", trade_price)
+                    self.num_trades += 1
                     self.balance -= trade_price
                     self.position = Position.BOUGHT
-                    self.prev_order_price = trade_price
+                    self.prev_trade_price = trade_price
+                    self.prev_order = order
+                    reward -= trade_price
+                    
                     
             elif self.position == Position.BOUGHT:
                 self.balance +=trade_price
                 self.num_trades +=1
-                reward = (trade_price - self.prev_order_price)
-                print(f"Benefit: {reward} -> {trade_price} - {self.prev_order_price} ")
+                profit = (trade_price - self.prev_trade_price)
+                reward += trade_price
+                print(f"Profit: {profit} -> {trade_price} - {self.prev_trade_price} ")
                 self.position = Position.NONE
-                self.prev_order_price = None
+                self.prev_trade_price = None
+                self.prev_order = order
             elif self.position == Position.SOLD:
                 self.balance -=trade_price 
+                reward -= trade_price
+                profit = (self.prev_trade_price - trade_price)
                 self.num_trades += 1
-                reward = (self.prev_order_price - trade_price )
-                print(f"Benefit: {reward} -> {self.prev_order_price} - {trade_price}")
+                print(f"Profit: {profit} -> {self.prev_trade_price} - {trade_price}")
                 self.position = Position.NONE
                 self.prev_order_price = None
                 
@@ -96,15 +105,13 @@ class DeeplyReinforced(Trader):
             self.lastquote = None
             
             
-            #Amplify rewards for profitable trade 
-            #reward small losses more than big losses
+            if profit > 0:
+                if reward < 0:
+                    reward *=-30
+                else:
+                    reward *=30
+                
             
-            if reward > -5 and reward < 0:
-                reward *= -10 
-            elif reward > 0:
-                reward *= 100   
-            else:
-                reward *=10
             return reward
 
         if transaction_record['type'] == 'Trade':
@@ -119,7 +126,7 @@ class DeeplyReinforced(Trader):
     #Total reward for one step in the environment  
     #reset the reward   
     def get_reward(self):
-    
+        
         reward = self.reward
         self.reward = 0
         return reward
@@ -127,7 +134,8 @@ class DeeplyReinforced(Trader):
     def get_balance(self):
         return self.balance
     
-    def update(self,bids, asks):
+    def update(self,bids, asks, time):
+        self.time = time
         worst_ask,_ = bids.get_worst()
             
         worst_bid,_ = asks.get_worst()

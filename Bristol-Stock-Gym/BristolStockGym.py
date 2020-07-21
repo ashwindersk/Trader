@@ -89,7 +89,7 @@ class Environment:
         ## Update the traders with the latest public lob
         for trader_key in trader_keys:
             if trader_key == 'PLAYER':
-                self.traders[trader_key].update(self.exchange.bids, self.exchange.asks)    
+                self.traders[trader_key].update(self.exchange.bids, self.exchange.asks, self.time)    
             else:
                 self.traders[trader_key].update(self.exchange.get_public_lob(self.time))
             
@@ -128,17 +128,17 @@ class Environment:
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
-            info = "BALANCES: \n"
+            info = "BALANCES: "
             trader_keys =  list(self.traders.keys())
             for trader_key in trader_keys:
                 trader = self.traders[trader_key]
                 balance = trader.balance
-                string = trader_key + ":" + str(trader.balance) + "\n"
+                string = trader_key + ": " + str(trader.balance) + ", "
                 info = info + string
-
+            info = info + "\n"
         position = Position.NONE.value
-        if self.traders['PLAYER'].prev_order_price is not None:
-            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price/1000
+        if self.traders['PLAYER'].prev_trade_price is not None:
+            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_trade_price/1000
         num_trades =self.traders['PLAYER'].num_trades    
         reward = self.traders['PLAYER'].get_reward()
         balance = self.traders['PLAYER'].get_balance()
@@ -524,6 +524,27 @@ def trader_strategy(state):
         #Model chooses an action based on oberservation
         action, price = agent.choose_action(state)
         current_position = observation['trader'].position
+        time = observation['lob']['time']
+        tid = observation['trader'].tid
+        
+        
+        if current_position != Position.NONE and time > 990:
+            if current_position == Position.SOLD:
+                order_type = OType.BID 
+                
+                price = observation['lob']['asks'][0][0]
+                
+            else:
+                order_type = OType.BID 
+                price = observation['lob']['bids'][0][0]
+        
+            order = Order(tid, order_type, price, 1, time)
+                
+            return order,action
+        
+        if current_position == Position.NONE and time > 990:
+            return None, action
+        
         price = round(price)
         if action == 0:
             return None, action
@@ -547,8 +568,8 @@ def trader_strategy(state):
             elif action == -1 or action == 0:
                 return None, action
             
-        tid = observation['trader'].tid
-        time =  observation['lob']['time']
+        
+        
         if price < 0:
             price = 1
         if price > 1000:
@@ -618,12 +639,14 @@ if __name__ == "__main__":
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
             rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
         
+        with open(f'balances-{args.suffix}.csv', 'a') as balancefile:
+            balancefile.write(f"Trading session {i}:{info}\n")
         
         
         
                     
-        #if i % 5 == 0:
-        #    agent.save_models()
+        
+        agent.save_models()
         
         
        
