@@ -604,7 +604,7 @@ if __name__ == "__main__":
             state, midprice = get_state(observation, position)
                 
             order, action = trader_strategy(state.flatten())
-            latent = np.concatenate((state.flatten(), np.array([action]), np.array([order.price if order is not None else 0])))
+            latent = state.flatten()
             states.append(latent)
             midprices.append(midprice)
             print(len(states))
@@ -642,7 +642,7 @@ if __name__ == "__main__":
     with open('Regression/latent.npy', 'wb') as f:
         np.save(f, states)  
     
-    with open('Regression/midprices.npy') as f:
+    with open('Regression/midprices.npy', 'wb') as f:
         midprices = np.asarray(midprices)                   
         np.save(f, midprices)
         
