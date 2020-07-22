@@ -10,6 +10,23 @@ import numpy as np
 from torch import nn
 from sklearn.preprocessing import MinMaxScaler
 from torch.autograd import Variable
+import signal
+import sys
+import pickle
+
+
+def signal_handler(sig, frame):
+    print('You pressed Ctrl+C!')
+    torch.save(lstm.state_dict(), '../Models/state2-regression')
+    print("Saved model..")
+    with open('sc_midprice', 'wb') as f:
+        pickle.dump(sc_y, f)
+    with open('sc_latent', 'wb') as f:
+        pickle.dump(sc_x, f)    
+    print("Saved scalars")
+    sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
+
 
 
 # In[2]:
@@ -148,7 +165,6 @@ torch.save(lstm.state_dict(), '../Models/state2-regression')
 # In[ ]:
 
 
-import pickle
 with open('sc_midprice', 'wb') as f:
     pickle.dump(sc_y, f)
     
