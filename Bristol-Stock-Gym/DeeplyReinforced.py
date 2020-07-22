@@ -38,12 +38,7 @@ class DeeplyReinforced(Trader):
                         
             self.order = order
             return response 
-        else:
-            try:
-                self.reward -= 1e-3 * (self.time - self.prev_order.time)
             
-            except:
-                self.reward -= 1e-3
                 
             
         return None 
@@ -105,11 +100,6 @@ class DeeplyReinforced(Trader):
             self.lastquote = None
             
             
-            if profit > 0:
-                if reward < 0:
-                    reward *=-30
-                else:
-                    reward *=30
                 
             
             return reward

@@ -234,8 +234,8 @@ class ActorNetwork(nn.Module):
 class Agent(object):
     def __init__(self,alpha, beta, input_dims, tau, gamma = 0.99, n_actions = 2,
                   max_size = 100000, layer1_size = 400, layer2_size = 300, batch_size = 64, 
-                  MAX_ACTION = 1000, actor_name ='Actor-DDPG', target_actor_name ='TargetActor-DDPG',
-                  critic_name ='Critic-DDPG', target_critic_name = 'TargetCritic-DDPG' ):
+                  MAX_ACTION = 1000, actor_name ='Actor-DDPG-vanilla', target_actor_name ='TargetActor-DDPG-vanilla',
+                  critic_name ='Critic-DDPG-vanilla', target_critic_name = 'TargetCritic-DDPG-vanilla' ):
         self.gamma = gamma
         self.tau = tau
         self.memory = ReplayBuffer(max_size, input_dims, n_actions)

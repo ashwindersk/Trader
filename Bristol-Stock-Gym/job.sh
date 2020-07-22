@@ -6,4 +6,4 @@
 #SBATCH --time=0:24:00
 #SBATCH --account comsm0018
 #SBATCH --mem=10GB
-python BristolStockGym.py > log.txt
+python BristolStockGym.py --suffix "gpu"> log.txt
