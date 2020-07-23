@@ -13,8 +13,9 @@ from torch.autograd import Variable
 import signal
 import sys
 import pickle
-
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
+cuda = torch.cuda.is_available()
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
     torch.save(lstm.state_dict(), '../Models/state2-regression')
@@ -84,12 +85,12 @@ test_size = len(y) - train_size
 dataX = Variable(torch.Tensor(np.array(x)))
 dataY = Variable(torch.Tensor(np.array(y)))
 
-trainX = Variable(torch.Tensor(np.array(x[0:train_size])))
-trainY = Variable(torch.Tensor(np.array(y[0:train_size])))
+trainX = Variable(torch.Tensor(np.array(x[0:train_size]))).to(device)
+trainY = Variable(torch.Tensor(np.array(y[0:train_size]))).to(device)
 
 
-testX = Variable(torch.Tensor(np.array(x[train_size:len(x)])))
-testY = Variable(torch.Tensor(np.array(y[train_size:len(y)])))
+testX = Variable(torch.Tensor(np.array(x[train_size:len(x)]))).to(device)
+testY = Variable(torch.Tensor(np.array(y[train_size:len(y)]))).to(device)
 
 
 # In[5]:
@@ -106,18 +107,18 @@ num_classes = 1
 
 lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128)
 
-
+lstm = lstm.to(device)
 # In[ ]:
 
 
-print("hey")
+lstm.train()
 test_hist = []
-criterion = torch.nn.MSELoss()    # mean-squared error for regression
+criterion = torch.nn.MSELoss().to(device)    # mean-squared error for regression
 optimizer = torch.optim.Adam(lstm.parameters(), lr=learning_rate)
 
 for epoch in range(num_epochs):
 
-        outputs = lstm(trainX)
+        outputs = lstm(trainX).to(device)
 
         optimizer.zero_grad()
     
@@ -129,8 +130,8 @@ for epoch in range(num_epochs):
         optimizer.step()
         if testX is not None:
             with torch.no_grad():
-                y_test_pred = lstm(testX)
-                test_loss = criterion(y_test_pred.float(), testY)
+                y_test_pred = lstm(testX).to(device)
+                test_loss = criterion(y_test_pred.float(), testY).to(device)
                 test_hist.append( test_loss.item())
         if epoch % 5 == 0:
             print("Epoch: %d, train loss: %1.5f, test loss: %1.5f" % (epoch, loss.item(), test_hist[epoch]))
