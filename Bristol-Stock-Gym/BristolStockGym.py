@@ -493,21 +493,22 @@ def get_state(observation, position):
             
             return snapshot
         
-        def get_trades():
+          def get_trades():
             tape = observation['lob']['tape']
-            trades = np.zeros([1,8])
+            print(tape)
+            trades = np.zeros(8)
             i = 0
             for event in reversed(tape):
-                if event['type'] == 'event':
+                if event['type'] == 'Trade':
+                    
                     try:
                         trades[i] = event['price']
+                        print(trades[i])
                     except IndexError:
                         pass
                     i +=1
-                    
-            min_max = preprocessing.MinMaxScaler()
-            trades = min_max.fit_transform(trades)
-            trades = trades.reshape(8)
+                       
+            trades /=1000
             return trades
         
         lob    = np.array(get_lob())
