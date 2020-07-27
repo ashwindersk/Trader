@@ -72,7 +72,7 @@ y_data = sc_y.fit_transform(y_data.reshape(-1,1))
 
 
 
-seq_length = 4
+seq_length = 2
 x, y = sliding_windows(x_data,y_data, seq_length)
 
 
@@ -102,7 +102,6 @@ learning_rate = 1e-3
 input_size = 17
 hidden_size = 256
 num_layers = 1
-seq_length = 4
 num_classes = 1
 
 lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128)
@@ -136,7 +135,7 @@ for epoch in range(num_epochs):
         if epoch % 5 == 0:
             print("Epoch: %d, train loss: %1.5f, test loss: %1.5f" % (epoch, loss.item(), test_hist[epoch]))
 
-
+            torch.save(lstm.state_dict(), '../Models/state-midprice-regression')
 # In[ ]:
 
 
@@ -160,7 +159,7 @@ plt.show()
 # In[ ]:
 
 
-torch.save(lstm.state_dict(), '../Models/state2-regression')
+torch.save(lstm.state_dict(), '../Models/state-midprice-regression')
 
 
 # In[ ]:

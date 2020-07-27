@@ -97,9 +97,12 @@ class Exchange(OrderBook):
         best_bid, _ = self.bids.get_best()
         best_ask, _ = self.asks.get_best()
         
-        if best_bid == None or best_ask == None:
-            return 0
-        
+        if best_bid is None and best_ask is not None:
+            best_bid = best_ask
+        elif best_bid is not None and best_ask is None:
+            best_ask = best_bid
+        else:
+            pass
         return (best_bid+best_ask)/2
             
 

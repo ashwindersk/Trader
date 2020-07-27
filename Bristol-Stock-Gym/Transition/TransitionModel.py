@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[16]:
 
 
 from RNN import MDNRNN
@@ -18,7 +17,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ################
 
 
-# In[3]:
+
 
 
 
@@ -35,12 +34,12 @@ def sliding_windows(data,seq_length):
     return np.array(x),np.array(y)
 
 
-# In[22]:
 
 
-bsz = 64
 
-data = np.load('latent.npy')
+bsz = 16
+
+data = np.load('../Regression/latent-action.npy')
 
 #Reshaping data and seperating training and test set
 sc = MinMaxScaler()
@@ -76,13 +75,10 @@ trainloader = torch.utils.data.DataLoader(trainingset, batch_size=bsz, shuffle=F
 
 
 
-# In[23]:
-
-
 num_epochs = 2000
 learning_rate = 1e-7
 
-input_size = 17
+input_size = 18
 hidden_size = 256
 num_layers = 1
 seq_length = 4
@@ -130,9 +126,9 @@ for epoch in range(epochs):
     total_loss /=j
     if epoch % 2 == 0:
         print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch, epochs, total_loss))
-        torch.save(mdnrnn.state_dict(), '../Models/transition-regression')
+        torch.save(mdnrnn.state_dict(), '../Models/transition-regression-new')
 
-# In[ ]:
+
 
 
 import matplotlib.pyplot as plt
@@ -149,13 +145,11 @@ print("---------------------------------------")
 print(data_truth[0:5])
 
 
-# In[ ]:
 
 
 torch.save(mdnrnn.state_dict(), '../Models/transition-regression')
 
 
-# In[ ]:
 
 
 import pickle
@@ -164,7 +158,6 @@ with open('sc_transition', 'wb') as f:
     
 
 
-# In[ ]:
 
 
 

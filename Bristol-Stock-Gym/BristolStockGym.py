@@ -89,7 +89,7 @@ class Environment:
         ## Update the traders with the latest public lob
         for trader_key in trader_keys:
             if trader_key == 'PLAYER':
-                self.traders[trader_key].update(self.exchange.bids, self.exchange.asks)    
+                self.traders[trader_key].update(self.exchange.bids, self.exchange.asks, self.time)    
             else:
                 self.traders[trader_key].update(self.exchange.get_public_lob(self.time))
             
@@ -137,8 +137,8 @@ class Environment:
                 info = info + string
 
         position = Position.NONE.value
-        if self.traders['PLAYER'].prev_order_price is not None:
-            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_order_price/1000
+        if self.traders['PLAYER'].prev_trade_price is not None:
+            position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_trade_price/1000
         num_trades =self.traders['PLAYER'].num_trades    
         reward = self.traders['PLAYER'].get_reward()
         balance = self.traders['PLAYER'].get_balance()
@@ -495,7 +495,6 @@ def get_state(observation, position):
         
         def get_trades():
             tape = observation['lob']['tape']
-            print(tape)
             trades = np.zeros(8)
             i = 0
             for event in reversed(tape):
@@ -503,7 +502,6 @@ def get_state(observation, position):
                     
                     try:
                         trades[i] = event['price']
-                        print(trades[i])
                     except IndexError:
                         pass
                     i +=1
@@ -515,51 +513,57 @@ def get_state(observation, position):
         
         
         trades = np.array(get_trades())
-        print(trades)
-        input = np.concatenate((lob, trades, [position]))
+        state = np.concatenate((lob, trades, [position]))
         
-        return input, observation['lob']['midprice']
+        return state.flatten()
 
 def trader_strategy(state):
         
-    
-        #Model chooses an action based on oberservation
-        action, price = agent.choose_action(state)
+        midprice = observation['lob']['midprice']
         current_position = observation['trader'].position
-        price = round(price)
+        
+        
+        #Based off've the LOB, get the current observation
+        
+        #Model chooses an action based on oberservation
+        action = trader.choose_action(state)
+    
+        
+        if midprice == None:
+            return None,action, midprice
+
         if action == 0:
-            return None, action
+            return None,action, midprice
         
         if current_position == Position.NONE:
             
             if action == 1:
                 order_type = OType.BID
-            elif action == -1:
+            elif action == 2:
                 order_type = OType.ASK
             else:
                 return None, action
         elif current_position == Position.BOUGHT:
             if action == 1 or action == 0:
-                return None, action
-            elif action == -1:
+                return None,action, midprice
+            elif action == 2:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
-            elif action == -1 or action == 0:
-                return None, action
-            
+            elif action == 2 or action == 0:
+                return None,action, midprice
         tid = observation['trader'].tid
         time =  observation['lob']['time']
-        if price < 0:
-            price = 1
-        if price > 1000:
-            price = 1000
+        
+        price = int(midprice)
         order = Order(tid, order_type, price, 1, time)
         
         
         
-        return order, action
+        return order, action, midprice
+        
+        
 
 if __name__ == "__main__":
     
@@ -582,8 +586,8 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
-    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[17], tau = 0.001,
-                  batch_size = 64, layer1_size = 400, layer2_size = 300, n_actions = 2)
+    trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
+                   n_actions = 3, l1_size = 32, l2_size= 32)
     
     np.random.seed(0)
     
@@ -592,7 +596,7 @@ if __name__ == "__main__":
     
     states = []
     midprices = []
-    for i in range(10):
+    for i in range(20):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
@@ -603,13 +607,16 @@ if __name__ == "__main__":
         num_trades = 0
         j  = 0
         while not done:
-            state, midprice = get_state(observation, position)
+            state = get_state(observation, position)
                 
-            order, action = trader_strategy(state.flatten())
+            order, action, midprice = trader_strategy(state)
             latent = state.flatten()
-            states.append(latent)
+            state_action = np.concatenate((latent,[action]))
+            states.append(state_action)
             midprices.append(midprice)
-            #print(len(states))
+            if j %100 == 0:
+                print(len(states), balance)
+
             #a sequence of the last N (Observation_, a) pairs are used to predict the next state 
             #state_prediction = RNN_model((state,a))
             
@@ -617,13 +624,13 @@ if __name__ == "__main__":
             #reward = reward_model(state, state_prediction)
             
             if order is not None:
-                print(action,order, balance, position, num_trades)
+                pass#print(action,order, balance, position, num_trades)
             observation_, reward, done, info, balance, position, num_trades = environment.step(order)
             #
             
             
             
-            new_state, _  = get_state(observation_, position)
+            new_state = get_state(observation_, position)
             #agent.remember(state,action,reward,new_state, int(done))
             #agent.learn(j)
             totalreward += reward
@@ -641,10 +648,10 @@ if __name__ == "__main__":
         #   agent.save_models()
         
     states = np.stack([states])
-    with open('Regression/latent.npy', 'wb') as f:
+    with open('Regression/latent-action.npy', 'wb') as f:
         np.save(f, states)  
     
-    with open('Regression/midprices.npy', 'wb') as f:
+    with open('Regression/midprices-action.npy', 'wb') as f:
         midprices = np.asarray(midprices)                   
         np.save(f, midprices)
         
