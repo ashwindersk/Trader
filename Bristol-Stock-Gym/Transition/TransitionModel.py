@@ -43,21 +43,19 @@ def sliding_windows(data,seq_length):
 # In[4]:
 
 
-bsz = 200
+bsz = 64
 
-data = np.load('latent-action.npy')
-print(data[:,23233,:])
+data = np.load('../Regression/latent-action.npy')
 #Reshaping data and seperating training and test set
 sc = MinMaxScaler()
 data = sc.fit_transform(data.squeeze(axis = 0))
-print(data[23233,:])
 seq_length = 4
 x, y = sliding_windows(data, seq_length)
 
 
 
-train_size = int(len(y) * 0.67)
-test_size = len(y) - train_size
+train_size = int(len(y) * 0.50)
+test_size = int(train_size * 1.3)
 
 dataX = Variable(torch.Tensor(np.array(x)))
 dataY = Variable(torch.Tensor(np.array(y)))
@@ -65,9 +63,11 @@ dataY = Variable(torch.Tensor(np.array(y)))
 trainX = Variable(torch.Tensor(np.array(x[0:train_size])).float())
 trainY = Variable(torch.Tensor(np.array(y[0:train_size])).float())
 
+print(trainY.shape)
 
-testX = Variable(torch.Tensor(np.array(x[train_size:len(x)])).float())
-testY = Variable(torch.Tensor(np.array(y[train_size:len(y)])).float())
+
+testX = Variable(torch.Tensor(np.array(x[train_size:test_size])).float())
+testY = Variable(torch.Tensor(np.array(y[train_size:test_size])).float())
 
 
 trainingset =[]
@@ -85,17 +85,17 @@ trainloader = torch.utils.data.DataLoader(trainingset, batch_size=bsz, shuffle=F
 
 
 
-learning_rate = 1e-7
+learning_rate = 1e-3
 input_size = 18
 hidden_size = 256
 num_layers = 1
 num_classes = 1
-fc1_out = 128
+fc1_out = 64
 output_size = 18
 
 lstm = LSTM(output_size, input_size, hidden_size, num_layers, seq_length, fc1_out)
 
-
+#lstm.load_state_dict(torch.load('../Models/test-transition-gpu',map_location='cpu'))
 def detach(states):
     return [state.detach() for state in states]
 
@@ -105,30 +105,34 @@ def detach(states):
 
 lstm.train()
 test_hist = []
-criterion = torch.nn.MSELoss().to(device)    # mean-squared error for regression
+criterion = torch.nn.MSELoss()    # mean-squared error for regression
 optimizer = torch.optim.Adam(lstm.parameters(), lr=learning_rate)
 
 for epoch in range(500):
-
-        outputs = lstm(trainX).to(device)
-
-        optimizer.zero_grad()
-    
+        total_loss = 0
+        for i, (inputs, targets) in enumerate(trainloader):
+             outputs = lstm(inputs.to(device))
+             del inputs
+             
+             optimizer.zero_grad()
+             outputs = outputs.reshape((outputs.shape[0],1,18))
     # obtain the loss function
-        loss = criterion(outputs, trainY)
+             loss = criterion(outputs, targets.to(device))
+             total_loss += loss.item()
+             loss.backward()
     
-        loss.backward()
-    
-        optimizer.step()
+             optimizer.step()
+        torch.cuda.empty_cache()
         if testX is not None:
-            with torch.no_grad():
-                y_test_pred = lstm(testX).to(device)
-                test_loss = criterion(y_test_pred.float(), testY).to(device)
+             with torch.no_grad():
+                y_test_pred = lstm(testX.to(device))
+                y_test_pred = y_test_pred.reshape((y_test_pred.shape[0],1,18))
+                test_loss = criterion(y_test_pred.float(), testY.to(device))
                 test_hist.append( test_loss.item())
+        total_loss /= i
+        print("Epoch: %d, train loss: %1.5f, test loss: %1.5f" % (epoch, total_loss, test_hist[epoch]))
 
-        print("Epoch: %d, train loss: %1.5f, test loss: %1.5f" % (epoch, loss.item(), test_hist[epoch]))
-
-        torch.save(lstm.state_dict(), '../Models/test-transition')
+        torch.save(lstm.state_dict(), f'../Models/transition-gpu-{learning_rate}')
 
 
 
