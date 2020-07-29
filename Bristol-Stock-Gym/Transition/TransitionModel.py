@@ -98,7 +98,6 @@ def detach(states):
 optimizer = torch.optim.Adam(mdnrnn.parameters(), lr = learning_rate)
 
 epochs = 500
-random = torch.zeros(200,4,17)
 
 for epoch in range(epochs):
     # Set initial hidden and cell states
