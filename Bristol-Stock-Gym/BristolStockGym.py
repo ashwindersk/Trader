@@ -5,6 +5,7 @@ import sys
 import pickle
 import math
 import os
+import warnings
 
 from Exchange import Exchange
 from Order import OType, Order
@@ -36,6 +37,7 @@ parser.add_argument("--suffix", type = str, default = "")
 args = parser.parse_args()
 
 from actor_critic import Agent
+from PolicyGradient import PolicyGradientAgent
 
 
 class Environment:
@@ -69,8 +71,8 @@ class Environment:
     #
     def step(self, player_action):
         if not self.init:
-            raise RuntimeError('Error: step() function in environment called before reset()')
-        
+            #raise RuntimeError('Error: step() function in environment called before reset()')
+            warnings.warn('Error: step() function in environment called before reset()')
 
 
         trade = None
@@ -208,7 +210,7 @@ class Environment:
 
         if n_buyers < 1:
                 raise RuntimeError('FATAL: no buyers specified\n')
-
+                
         shuffle_traders('B', n_buyers-1, traders)
 
 
@@ -224,7 +226,7 @@ class Environment:
 
         if n_sellers < 1:
                 raise RuntimeError('FATAL: no sellers specified\n')
-
+                
         shuffle_traders('S', n_sellers, traders)
 
         return {'n_buyers':n_buyers, 'n_sellers':n_sellers}, traders
@@ -233,14 +235,16 @@ class Environment:
     def _customer_orders(self, time, traders, trader_stats,os, pending, player_action):
         def sysmin_check(price):
             if price < self.minprice:
-                    raise RuntimeWarning('WARNING: price < bse_sys_min -- clipped')
+                    #raise RuntimeWarning('WARNING: price < bse_sys_min -- clipped')
+                    warnings.warn('WARNING: price < bse_sys_min -- clipped')
                     price = self.minprice
             return price
 
 
         def sysmax_check(price):
             if price > self.maxprice:
-                    raise RuntimeWarning('WARNING: price > bse_sys_max -- clipped')
+                    #raise RuntimeWarning('WARNING: price > bse_sys_max -- clipped')
+                    warnings.warn('WARNING: price > bse_sys_max -- clipped')
                     price = self.maxprice
             return price
 
@@ -613,7 +617,7 @@ if __name__ == "__main__":
     seq_length = 4
     num_classes = 1
 
-    lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).double()
+    lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).float()
     lstm.load_state_dict(torch.load('Models/midprice-regression-new', map_location='cpu'))
     filehandler = open('Regression/sc_midprice', 'rb')
     scalar = pickle.load(filehandler)
@@ -650,9 +654,10 @@ if __name__ == "__main__":
     
     
     
-    trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
-                   n_actions = 3, l1_size = 32, l2_size= 32)
-    trader.load_models(actor_outfile = "actor-regress.pth", critic_outfile = "critic-regress.pth")
+    # trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
+    #                n_actions = 3, l1_size = 32, l2_size= 32)
+    # trader.load_models(actor_outfile = "actor-regress.pth", critic_outfile = "critic-regress.pth")
+    trader = PolicyGradientAgent(lr = 1e-3, input_dims = [17], GAMMA = 0.99, n_actions = 3, layer1_size = 128, layer2_size = 128)
     np.random.seed(0)
     
     
@@ -719,13 +724,15 @@ if __name__ == "__main__":
             #trader.remember(state,action,reward,new_state, int(done))
             
             
-            state_ = get_state(observation_, position)
-            trader.learn(state, reward, state_, done)
+            #state_ = get_state(observation_, position)
+            #trader.learn(state, reward, state_, done)
+            trader.store_rewards(reward+benefit)
             totalreward += reward + benefit
             
             observation = observation_
             j+=1
-            state = state_
+        trader.learn()
+        
             
         
         print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
@@ -735,8 +742,8 @@ if __name__ == "__main__":
         with open(f'balances-{args.suffix}.csv', 'a') as balances:
             balances.write(f"{i}: {info}\n")
         
-        if i % 5 == 0:
-          trader.save_models(actor_outfile = "actor-regress", critic_outfile = "critic-regress")
+        
+        trader.save_model(args.suffix)
 
        
         
