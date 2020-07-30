@@ -519,7 +519,7 @@ def get_state(observation, position):
         
         trades = np.array(get_trades())
         state = np.concatenate((lob, trades, [position]))
-        
+        state = torch.Tensor(state)
         return state.flatten()
 
 def trader_strategy(state):
@@ -591,33 +591,47 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
-    #------MDNRNN -------------------------------------
-    input_size = 18
+    
+    #-----midprice LSTM -------------
+    input_size = 4
     hidden_size = 256
     num_layers = 1
-    num_classes = 1
-    fc1_out = 64
-    output_size = 18
     seq_length = 4
-    state_lstm = LSTM(output_size, input_size, hidden_size, num_layers, seq_length, fc1_out).double()
-    state_lstm.load_state_dict(torch.load('Models/transition-gpu-0.001', map_location='cpu'))
-    filehandler = open('Transition/sc', 'rb')
-    sc_mdn = pickle.load(filehandler)
-    filehandler.close()
-    #------LSTM-----------------------------------------
-    input_size = 8
-    hidden_size = 256
-    num_layers = 1
     num_classes = 1
-    seq_length = 2
+
     lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).double()
-    lstm.load_state_dict(torch.load('Models/midprice-regression', map_location = torch.device('cpu')))
+    lstm.load_state_dict(torch.load('Models/midprice-regression-new', map_location='cpu'))
     filehandler = open('Regression/sc_midprice', 'rb')
-    sc_midprice = pickle.load(filehandler)
+    scalar = pickle.load(filehandler)
     filehandler.close()
-    filehandler = open('Regression/sc_latent', 'rb')
-    sc_latent = pickle.load(filehandler)
-    filehandler.close()
+    
+    #------MDNRNN -------------------------------------
+    # input_size = 18
+    # hidden_size = 256
+    # num_layers = 1
+    # num_classes = 1
+    # fc1_out = 64
+    # output_size = 18
+    # seq_length = 4
+    # state_lstm = LSTM(output_size, input_size, hidden_size, num_layers, seq_length, fc1_out).double()
+    # state_lstm.load_state_dict(torch.load('Models/transition-gpu-0.001', map_location='cpu'))
+    # filehandler = open('Transition/sc', 'rb')
+    # sc_mdn = pickle.load(filehandler)
+    # filehandler.close()
+    #------LSTM-----------------------------------------
+    # input_size = 8
+    # hidden_size = 256
+    # num_layers = 1
+    # num_classes = 1
+    # seq_length = 2
+    # lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).double()
+    # lstm.load_state_dict(torch.load('Models/midprice-regression', map_location = torch.device('cpu')))
+    # filehandler = open('Regression/sc_midprice', 'rb')
+    # sc_midprice = pickle.load(filehandler)
+    # filehandler.close()
+    # filehandler = open('Regression/sc_latent', 'rb')
+    # sc_latent = pickle.load(filehandler)
+    # filehandler.close()
     
     
     
@@ -642,76 +656,68 @@ if __name__ == "__main__":
         position = Position.NONE.value
         num_trades = 0
         j  = 0
-        states = np.zeros((4,18))
         
-
+        midprices = np.zeros(4)
+        
         while not done:
             state = get_state(observation, position)      
             order, action, midprice = trader_strategy(state)
+            midprices = np.concatenate([midprices[1:4], np.array([midprice])])
             
+            midprices = midprices.reshape((1,4))
+            midprices = torch.Tensor(scalar.transform(midprices)).unsqueeze(0)
             
-            #Update the states with sequence length of 4
+            prediction = lstm(midprices).detach().numpy()
+            prediction = scalar.inverse_transform(prediction)[0][0] - 45
+            if np.isnan(prediction):
+                prediction = 0
             
-            # latent = state.flatten()
-            # state_action = np.concatenate((latent,[action]))
-            # state_action = sc_mdn.transform(state_action.reshape(1,-1))
-            # state_action = state_action.reshape((1,1,18))
-            # # states = np.concatenate([states[1:4], state_action])
-            # state_action = torch.Tensor(state_action)
-            # state_action = state_action.reshape((1,1,18))
-            # state_action_ = state_lstm(state_action)
-            # state_action_ = sc_mdn.inverse_transform(state_action_.detach().numpy())
+            midprices = midprices.flatten()
             
-            # state_ = state_action_[:,0:17]
-            # state_ = sc_latent.transform(state_)
-            # state_ = torch.Tensor(state_.reshape(1,1,17))
-            
-            
-            midprice_ = lstm(state_)
-            print(sc_midprice.inverse_transform(midprice_.detach().numpy()))
-            #a sequence of the last N (Observation_, a) pairs are used to predict the next state 
-            #state_prediction = RNN_model((state,a))
-            
-            #Instead of the reward being calculated here, a LSTM regression model (trained), calculates the reward beased on the midprice x position
-            #reward = reward_model(state, state_prediction)
-            
+            reward = 0
+            if position < 0:
+                order_price = - position * 1000
+                
+                if action == 0:
+                    reward = 0
+                elif action == 2:
+                    reward = 0
+                else:
+                    reward = int(order_price - prediction)
+                    
+                    print(f'{reward} = {order_price} - {prediction}')
+            if position > 0:
+                order_price = position * 1000
+                if action == 0:
+                    reward = 0
+                elif action == 1:
+                    reward = 0
+                else:
+                    reward = int(prediction - order_price )
+                    print(f'{reward} = {prediction}- {order_price} ')    
             if order is not None:
-                pass#print(action,order, balance, position, num_trades)
-            observation_, reward, done, info, balance, position, num_trades = environment.step(order)
-            #
+                print(action,order, balance, position, num_trades)
+            observation_, _, done, info, balance, position, num_trades = environment.step(order)
+            #trader.remember(state,action,reward,new_state, int(done))
             
             
-            
-            new_state = get_state(observation_, position)
-            latent = state.flatten()
-            
-            state_action = np.concatenate((latent,[action]))
-            print(observation['lob']['midprice'])
-            print("------------------------------")
-            #agent.remember(state,action,reward,new_state, int(done))
-            #agent.learn(j)
+            state_ = get_state(observation_, position)
+            trader.learn(state, reward, state_, done)
             totalreward += reward
             observation = observation_
             j+=1
+            state = state_
             
         
-        #print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
+        print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
             
-        #with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
-        #    rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
+        with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
+            rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
         
         
-        #if i % 5 == 0:
-        #   agent.save_models()
-        
-    states = np.stack([states])
-    with open('Regression/latent-action.npy', 'wb') as f:
-        np.save(f, states)  
-    
-    with open('Regression/midprices-action.npy', 'wb') as f:
-        midprices = np.asarray(midprices)                   
-        np.save(f, midprices)
-        
+        if i % 5 == 0:
+          trader.save_models(actor_outfile = "actor-regress", critic_outfile = "critic-regress")
+
        
         
     
