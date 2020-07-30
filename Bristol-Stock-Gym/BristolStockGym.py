@@ -21,7 +21,12 @@ from ZIU import ZIU
 from ZIC import ZIC
 from ZIP import ZIP
 from DeeplyReinforced import DeeplyReinforced, Position
+
+from torch.autograd import Variable
+
 from AE import LOB_trainer, Autoencoder
+from Regression.LSTM import LSTM
+from Transition.RNN import MDNRNN
 
 import matplotlib.pyplot as plt
 import argparse
@@ -586,6 +591,37 @@ if __name__ == "__main__":
     Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
     
     
+    #------MDNRNN -------------------------------------
+    input_size = 18
+    hidden_size = 256
+    num_layers = 1
+    num_classes = 1
+    fc1_out = 64
+    output_size = 18
+    seq_length = 4
+    state_lstm = LSTM(output_size, input_size, hidden_size, num_layers, seq_length, fc1_out).double()
+    state_lstm.load_state_dict(torch.load('Models/transition-gpu-0.001', map_location='cpu'))
+    filehandler = open('Transition/sc', 'rb')
+    sc_mdn = pickle.load(filehandler)
+    filehandler.close()
+    #------LSTM-----------------------------------------
+    input_size = 8
+    hidden_size = 256
+    num_layers = 1
+    num_classes = 1
+    seq_length = 2
+    lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).double()
+    lstm.load_state_dict(torch.load('Models/midprice-regression', map_location = torch.device('cpu')))
+    filehandler = open('Regression/sc_midprice', 'rb')
+    sc_midprice = pickle.load(filehandler)
+    filehandler.close()
+    filehandler = open('Regression/sc_latent', 'rb')
+    sc_latent = pickle.load(filehandler)
+    filehandler.close()
+    
+    
+    
+    
     trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
     
@@ -594,8 +630,8 @@ if __name__ == "__main__":
     
     #==================================================================    
     
-    states = []
-    midprices = []
+    
+    
     for i in range(20):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
@@ -606,17 +642,33 @@ if __name__ == "__main__":
         position = Position.NONE.value
         num_trades = 0
         j  = 0
-        while not done:
-            state = get_state(observation, position)
-                
-            order, action, midprice = trader_strategy(state)
-            latent = state.flatten()
-            state_action = np.concatenate((latent,[action]))
-            states.append(state_action)
-            midprices.append(midprice)
-            if j %100 == 0:
-                print(len(states), balance)
+        states = np.zeros((4,18))
+        
 
+        while not done:
+            state = get_state(observation, position)      
+            order, action, midprice = trader_strategy(state)
+            
+            
+            #Update the states with sequence length of 4
+            
+            # latent = state.flatten()
+            # state_action = np.concatenate((latent,[action]))
+            # state_action = sc_mdn.transform(state_action.reshape(1,-1))
+            # state_action = state_action.reshape((1,1,18))
+            # # states = np.concatenate([states[1:4], state_action])
+            # state_action = torch.Tensor(state_action)
+            # state_action = state_action.reshape((1,1,18))
+            # state_action_ = state_lstm(state_action)
+            # state_action_ = sc_mdn.inverse_transform(state_action_.detach().numpy())
+            
+            # state_ = state_action_[:,0:17]
+            # state_ = sc_latent.transform(state_)
+            # state_ = torch.Tensor(state_.reshape(1,1,17))
+            
+            
+            midprice_ = lstm(state_)
+            print(sc_midprice.inverse_transform(midprice_.detach().numpy()))
             #a sequence of the last N (Observation_, a) pairs are used to predict the next state 
             #state_prediction = RNN_model((state,a))
             
@@ -631,6 +683,11 @@ if __name__ == "__main__":
             
             
             new_state = get_state(observation_, position)
+            latent = state.flatten()
+            
+            state_action = np.concatenate((latent,[action]))
+            print(observation['lob']['midprice'])
+            print("------------------------------")
             #agent.remember(state,action,reward,new_state, int(done))
             #agent.learn(j)
             totalreward += reward

@@ -20,6 +20,8 @@ class LSTM(nn.Module):
         self.fc2 = nn.Linear(fc1_out, num_classes).to(self.device)
 
     def forward(self, x):
+        
+        
         h_0 = Variable(torch.zeros(
             self.num_layers, x.size(0), self.hidden_size)).to(self.device)
         
