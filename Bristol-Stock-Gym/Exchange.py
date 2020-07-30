@@ -102,7 +102,7 @@ class Exchange(OrderBook):
         elif best_bid is not None and best_ask is None:
             best_ask = best_bid
         elif best_bid is None and best_ask is None:
-            return 0
+            return 500
         else:
             return (best_bid+best_ask)/2
             

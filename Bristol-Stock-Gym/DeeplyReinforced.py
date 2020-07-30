@@ -27,6 +27,7 @@ class DeeplyReinforced(Trader):
     
     def add_order(self,order):
         if order is not None:
+            self.reward += 50
             if self.order is not None :
                 response = 'LOB_Cancel'
                 self.lastquote = self.order
@@ -39,7 +40,8 @@ class DeeplyReinforced(Trader):
             self.order = order
             return response 
             
-                
+        else:
+            self.reward -=100
             
         return None 
     

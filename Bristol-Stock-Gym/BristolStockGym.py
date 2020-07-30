@@ -133,13 +133,14 @@ class Environment:
         done = self.done
         info = ""
         if self.done: # Return the balance of each trader
-            info = "BALANCES: \n"
+            info = "BALANCES: "
             trader_keys =  list(self.traders.keys())
             for trader_key in trader_keys:
                 trader = self.traders[trader_key]
                 balance = trader.balance
-                string = trader_key + ":" + str(trader.balance) + "\n"
-                info = info + string
+                string = trader_key + ":" + str(trader.balance) + ", "
+                info = info + string 
+            info = info + "\n"
 
         position = Position.NONE.value
         if self.traders['PLAYER'].prev_trade_price is not None:
@@ -526,13 +527,26 @@ def trader_strategy(state):
         
         midprice = observation['lob']['midprice']
         current_position = observation['trader'].position
-        
-        
-        #Based off've the LOB, get the current observation
-        
-        #Model chooses an action based on oberservation
         action = trader.choose_action(state)
-    
+        time = observation['lob']['time']
+        tid = observation['trader'].tid
+        
+        if current_position != Position.NONE and time > 990:
+            if current_position == Position.SOLD:
+                order_type = OType.BID 
+                
+                price = observation['lob']['asks'][0][0]
+                
+            else:
+                order_type = OType.BID 
+                price = observation['lob']['bids'][0][0]
+        
+            order = Order(tid, order_type, price, 1, time)
+                
+            return order,action, midprice
+        
+        if current_position == Position.NONE and time > 990:
+            return None, action, midprice
         
         if midprice == None:
             return None,action, midprice
@@ -638,7 +652,7 @@ if __name__ == "__main__":
     
     trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
                    n_actions = 3, l1_size = 32, l2_size= 32)
-    
+    trader.load_models(actor_outfile = "actor-regress.pth", critic_outfile = "critic-regress.pth")
     np.random.seed(0)
     
     
@@ -646,7 +660,7 @@ if __name__ == "__main__":
     
     
     
-    for i in range(20):
+    for i in range(1000):
         time_step = 1.0/60.0
         environment = Environment(traders_spec, order_sched,time_step = time_step, max_time = end_time, min_price = 1, max_price = end_time, replenish_orders = True)
         totalreward = 0
@@ -684,6 +698,8 @@ if __name__ == "__main__":
                     reward = 0
                 else:
                     reward = int(order_price - prediction)
+                    if reward > 0:
+                        reward *= 1000
                     
                     print(f'{reward} = {order_price} - {prediction}')
             if position > 0:
@@ -694,16 +710,19 @@ if __name__ == "__main__":
                     reward = 0
                 else:
                     reward = int(prediction - order_price )
+                    if reward > 0:
+                        reward *= 1000
                     print(f'{reward} = {prediction}- {order_price} ')    
             if order is not None:
                 print(action,order, balance, position, num_trades)
-            observation_, _, done, info, balance, position, num_trades = environment.step(order)
+            observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
             #trader.remember(state,action,reward,new_state, int(done))
             
             
             state_ = get_state(observation_, position)
             trader.learn(state, reward, state_, done)
-            totalreward += reward
+            totalreward += reward + benefit
+            
             observation = observation_
             j+=1
             state = state_
@@ -713,7 +732,8 @@ if __name__ == "__main__":
             
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
             rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
-        
+        with open(f'balances-{args.suffix}.csv', 'a') as balances:
+            balances.write(f"{i}: {info}\n")
         
         if i % 5 == 0:
           trader.save_models(actor_outfile = "actor-regress", critic_outfile = "critic-regress")

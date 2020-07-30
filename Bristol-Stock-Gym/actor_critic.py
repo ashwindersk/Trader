@@ -76,3 +76,11 @@ class Agent(object):
     def save_models(self, actor_outfile = "actor", critic_outfile = "critic"):
         T.save(self.actor.state_dict(), f"Models/{actor_outfile}.pth")
         T.save(self.critic.state_dict(), f"Models/{critic_outfile}.pth")
+    
+    def load_models(self, actor_outfile = "actor", critic_outfile = "critic"):
+        try:
+            self.actor.load_state_dict(T.load(f'Models/{actor_outfile}', map_location = 'cpu'))
+            self.actor.load_state_dict(T.load(f'Models/{critic_outfile}', map_location = 'cpu'))
+        except Exception as e:
+            print(e)
+            print("No models found")
