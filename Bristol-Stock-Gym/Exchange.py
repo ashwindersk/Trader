@@ -104,7 +104,8 @@ class Exchange(OrderBook):
         elif best_bid is None and best_ask is None:
             return 500
         else:
-            return (best_bid+best_ask)/2
+            pass
+        return (best_bid+best_ask)/2
             
 
     # This prints the public LOB data

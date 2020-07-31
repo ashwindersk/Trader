@@ -27,7 +27,7 @@ class DeeplyReinforced(Trader):
     
     def add_order(self,order):
         if order is not None:
-            self.reward += 50
+            
             if self.order is not None :
                 response = 'LOB_Cancel'
                 self.lastquote = self.order
@@ -41,7 +41,8 @@ class DeeplyReinforced(Trader):
             return response 
             
         else:
-            self.reward -=100
+            self.reward -= 200
+            
             
         return None 
     
@@ -66,7 +67,7 @@ class DeeplyReinforced(Trader):
                     self.position = Position.SOLD
                     self.prev_trade_price = trade_price
                     self.prev_order = order
-                    reward += trade_price
+                    #reward += trade_price
                     
             
                 if order.otype == OType.BID:
@@ -76,22 +77,22 @@ class DeeplyReinforced(Trader):
                     self.position = Position.BOUGHT
                     self.prev_trade_price = trade_price
                     self.prev_order = order
-                    reward -= trade_price
+                    #reward -= trade_price
                     
                     
             elif self.position == Position.BOUGHT:
                 self.balance +=trade_price
                 self.num_trades +=1
                 profit = (trade_price - self.prev_trade_price)
-                reward += trade_price
+                reward += profit
                 print(f"Profit: {profit} -> {trade_price} - {self.prev_trade_price} ")
                 self.position = Position.NONE
                 self.prev_trade_price = None
                 self.prev_order = order
             elif self.position == Position.SOLD:
                 self.balance -=trade_price 
-                reward -= trade_price
                 profit = (self.prev_trade_price - trade_price)
+                reward = profit
                 self.num_trades += 1
                 print(f"Profit: {profit} -> {self.prev_trade_price} - {trade_price}")
                 self.position = Position.NONE

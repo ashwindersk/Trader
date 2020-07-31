@@ -658,6 +658,7 @@ if __name__ == "__main__":
     #                n_actions = 3, l1_size = 32, l2_size= 32)
     # trader.load_models(actor_outfile = "actor-regress.pth", critic_outfile = "critic-regress.pth")
     trader = PolicyGradientAgent(lr = 1e-3, input_dims = [17], GAMMA = 0.99, n_actions = 3, layer1_size = 128, layer2_size = 128)
+    trader.load_model(f'PG-{args.suffix}')
     np.random.seed(0)
     
     
@@ -681,6 +682,7 @@ if __name__ == "__main__":
         while not done:
             state = get_state(observation, position)      
             order, action, midprice = trader_strategy(state)
+            
             midprices = np.concatenate([midprices[1:4], np.array([midprice])])
             
             midprices = midprices.reshape((1,4))
@@ -698,25 +700,30 @@ if __name__ == "__main__":
                 order_price = - position * 1000
                 
                 if action == 0:
-                    reward = 0
+                    if midprice > order_price:
+                        reward +=400
+                    if midprice < order_price:
+                        reward -=200
                 elif action == 2:
                     reward = 0
                 else:
                     reward = int(order_price - prediction)
-                    if reward > 0:
-                        reward *= 1000
-                    
                     print(f'{reward} = {order_price} - {prediction}')
             if position > 0:
                 order_price = position * 1000
                 if action == 0:
                     reward = 0
+                    if midprice < order_price:
+                        reward +=400
+                    if midprice > order_price:
+                        reward -=200
                 elif action == 1:
                     reward = 0
                 else:
+                    
                     reward = int(prediction - order_price )
-                    if reward > 0:
-                        reward *= 1000
+                    
+                        
                     print(f'{reward} = {prediction}- {order_price} ')    
             if order is not None:
                 print(action,order, balance, position, num_trades)

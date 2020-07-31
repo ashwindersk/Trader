@@ -82,4 +82,12 @@ class PolicyGradientAgent(object):
         
     def save_model(self, suffix):
         T.save(self.policy.state_dict(), f'Models/PG-{suffix}')
+    
+    def load_model(self, name):
+        try:
+            self.policy.load_state_dict(T.load(f'Models/{name}', map_location= 'cpu'))
+            print("Model loaded")
+        except Exception as e:
+            print("Model not found")
+            
         
