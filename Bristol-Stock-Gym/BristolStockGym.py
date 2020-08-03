@@ -683,58 +683,58 @@ if __name__ == "__main__":
             state = get_state(observation, position)      
             order, action, midprice = trader_strategy(state)
             
-            midprices = np.concatenate([midprices[1:4], np.array([midprice])])
+            # midprices = np.concatenate([midprices[1:4], np.array([midprice])])
             
-            midprices = midprices.reshape((1,4))
-            midprices = torch.Tensor(scalar.transform(midprices)).unsqueeze(0)
+            # midprices = midprices.reshape((1,4))
+            # midprices = torch.Tensor(scalar.transform(midprices)).unsqueeze(0)
             
-            prediction = lstm(midprices).detach().numpy()
-            prediction = scalar.inverse_transform(prediction)[0][0] - 45
-            if np.isnan(prediction):
-                prediction = 0
+            # prediction = lstm(midprices).detach().numpy()
+            # prediction = scalar.inverse_transform(prediction)[0][0] - 45
+            # if np.isnan(prediction):
+            #     prediction = 0
             
-            midprices = midprices.flatten()
+            # midprices = midprices.flatten()
             
-            reward = 0
-            if position < 0:
-                order_price = - position * 1000
+            # reward = 0
+            # if position < 0:
+            #     order_price = - position * 1000
                 
-                if action == 0:
-                    if midprice > order_price:
-                        reward +=400
-                    if midprice < order_price:
-                        reward -=200
-                elif action == 2:
-                    reward = 0
-                else:
-                    reward = int(order_price - prediction)
-                    print(f'{reward} = {order_price} - {prediction}')
-            if position > 0:
-                order_price = position * 1000
-                if action == 0:
-                    reward = 0
-                    if midprice < order_price:
-                        reward +=400
-                    if midprice > order_price:
-                        reward -=200
-                elif action == 1:
-                    reward = 0
-                else:
+            #     if action == 0:
+            #         if midprice > order_price:
+            #             reward +=400
+            #         if midprice < order_price:
+            #             reward -=200
+            #     elif action == 2:
+            #         reward = 0
+            #     else:
+            #         reward = int(order_price - prediction)
+            #         print(f'{reward} = {order_price} - {prediction}')
+            # if position > 0:
+            #     order_price = position * 1000
+            #     if action == 0:
+            #         reward = 0
+            #         if midprice < order_price:
+            #             reward +=400
+            #         if midprice > order_price:
+            #             reward -=200
+            #     elif action == 1:
+            #         reward = 0
+            #     else:
                     
-                    reward = int(prediction - order_price )
+            #         reward = int(prediction - order_price )
                     
                         
-                    print(f'{reward} = {prediction}- {order_price} ')    
+            #         print(f'{reward} = {prediction}- {order_price} ')    
             if order is not None:
                 print(action,order, balance, position, num_trades)
             observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
             #trader.remember(state,action,reward,new_state, int(done))
             
             
-            #state_ = get_state(observation_, position)
-            #trader.learn(state, reward, state_, done)
-            trader.store_rewards(reward+benefit)
-            totalreward += reward + benefit
+            
+            
+            trader.store_rewards(benefit)
+            totalreward +=  benefit
             
             observation = observation_
             j+=1
