@@ -535,21 +535,21 @@ def trader_strategy(state):
         time = observation['lob']['time']
         tid = observation['trader'].tid
         
-        if current_position != Position.NONE and time > 990:
+        if current_position != Position.NONE and time > 998:
             if current_position == Position.SOLD:
                 order_type = OType.BID 
                 
                 price = observation['lob']['asks'][0][0]
                 
             else:
-                order_type = OType.BID 
+                order_type = OType.ASK 
                 price = observation['lob']['bids'][0][0]
         
             order = Order(tid, order_type, price, 1, time)
                 
             return order,action, midprice
         
-        if current_position == Position.NONE and time > 990:
+        if current_position == Position.NONE and time > 998:
             return None, action, midprice
         
         if midprice == None:
@@ -695,36 +695,17 @@ if __name__ == "__main__":
             
             # midprices = midprices.flatten()
             
-            # reward = 0
-            # if position < 0:
-            #     order_price = - position * 1000
-                
-            #     if action == 0:
-            #         if midprice > order_price:
-            #             reward +=400
-            #         if midprice < order_price:
-            #             reward -=200
-            #     elif action == 2:
-            #         reward = 0
-            #     else:
-            #         reward = int(order_price - prediction)
-            #         print(f'{reward} = {order_price} - {prediction}')
-            # if position > 0:
-            #     order_price = position * 1000
-            #     if action == 0:
-            #         reward = 0
-            #         if midprice < order_price:
-            #             reward +=400
-            #         if midprice > order_price:
-            #             reward -=200
-            #     elif action == 1:
-            #         reward = 0
-            #     else:
-                    
-            #         reward = int(prediction - order_price )
-                    
-                        
-            #         print(f'{reward} = {prediction}- {order_price} ')    
+            
+            
+            reward = 0
+            if position < 0:
+                if action == 1 and midprice < - position * 1000:
+                    reward +=100
+            if position > 0:
+                if action == 2 and midprice > position * 1000:
+                    reward+=100    
+            if reward > 0:
+                print(reward)
             if order is not None:
                 print(action,order, balance, position, num_trades)
             observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
@@ -733,8 +714,8 @@ if __name__ == "__main__":
             
             
             
-            trader.store_rewards(benefit)
-            totalreward +=  benefit
+            trader.store_rewards(benefit + reward)
+            totalreward +=  reward + benefit
             
             observation = observation_
             j+=1

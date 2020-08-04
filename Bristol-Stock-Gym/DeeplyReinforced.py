@@ -40,8 +40,7 @@ class DeeplyReinforced(Trader):
             self.order = order
             return response 
             
-        # else:
-        #     self.reward -= 200
+       
             
             
         return None 

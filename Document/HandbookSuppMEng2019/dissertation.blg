@@ -1,0 +1,90 @@
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: dissertation.aux
+The style file: plain.bst
+White space in argument---line 28 of file dissertation.aux
+ : \citation{Gode
+ :                and Sunder}
+I'm skipping whatever remains of this command
+White space in argument---line 31 of file dissertation.aux
+ : \citation{IBM
+ :               experiments}
+I'm skipping whatever remains of this command
+White space in argument---line 42 of file dissertation.aux
+ : \citation{Deep
+ :                Learning Revolution}
+I'm skipping whatever remains of this command
+White space in argument---line 44 of file dissertation.aux
+ : \citation{deep
+ :                learning robots https://arxiv.org/abs/1504.00702}
+I'm skipping whatever remains of this command
+White space in argument---line 47 of file dissertation.aux
+ : \citation{mx
+ :              banks profit breakdown https://www.mx.com/moneysummit/top-us-retail-banks-income-revenue}
+I'm skipping whatever remains of this command
+White space in argument---line 53 of file dissertation.aux
+ : \citation{deepmind
+ :                    alpha go zero}
+I'm skipping whatever remains of this command
+I couldn't open database file references.bib
+---line 97 of file dissertation.aux
+ : \bibdata{references
+ :                    }
+I'm skipping whatever remains of this command
+I found no database files---while reading file dissertation.aux
+Warning--I didn't find a database entry for "DQN"
+Warning--I didn't find a database entry for "BSE"
+Warning--I didn't find a database entry for "BSG"
+Warning--I didn't find a database entry for "BC4"
+Warning--I didn't find a database entry for "limit-order"
+Warning--I didn't find a database entry for "algorithmic-trading-wiki"
+Warning--I didn't find a database entry for "MarketEquilibrium"
+Warning--I didn't find a database entry for "Cliff-critique"
+Warning--I didn't find a database entry for "GD"
+Warning--I didn't find a database entry for "AA"
+Warning--I didn't find a database entry for "RL-history"
+Warning--I didn't find a database entry for "quora-trading-hard"
+Warning--I didn't find a database entry for "https://www.statista.com/chart/20245/share-of-computerized-and-human-trading-in-us-equities/"
+Warning--I didn't find a database entry for "falcao"
+You've used 0 entries,
+            2118 wiz_defined-function locations,
+            518 strings with 4268 characters,
+and the built_in function-call counts, 18 in all, are:
+= -- 0
+> -- 0
+< -- 0
++ -- 0
+- -- 0
+* -- 2
+:= -- 7
+add.period$ -- 0
+call.type$ -- 0
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 0
+duplicate$ -- 0
+empty$ -- 1
+format.name$ -- 0
+if$ -- 1
+int.to.chr$ -- 0
+int.to.str$ -- 0
+missing$ -- 0
+newline$ -- 3
+num.names$ -- 0
+pop$ -- 0
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 1
+stack$ -- 0
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 0
+width$ -- 0
+write$ -- 2
+(There were 8 error messages)
