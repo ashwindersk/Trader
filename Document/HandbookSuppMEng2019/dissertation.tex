@@ -38,6 +38,8 @@
 \usepackage{float} 
 \usepackage{subfig}
 
+
+
 \begin{document}
 
 % =============================================================================
@@ -458,176 +460,254 @@ The proprietary trader's objective is that to maximise their own capital buy buy
 \section{Reinforcement Learning}
 
 This project transforms the current Prop trader problem to a problem that is well suited to a DRL paradigm, which will be the main avenue of solutions this project explores, so it is paramount to provide the technical background for reinforcement learning, which is the basis of this project.
+\subsection{What is Reinforcement Learning}
+Reinforcement Learning is the training of machine learning models(agents) to take actions that interact with a complex, to maximise a a reward. More formally, the agent learns, via interactive with an environment, a policy $\pi(\alpha|\sigma)$ which is the probability to take a particular action $\alpha$, after observing a state $\sigma$ that maximises its reward. 
+\\
+\\
 
-\subsection{Markov Decision Process}
-Reinforcement Learning requires a fully observable environment 
+\noindent
+\textbf{Markov Decision Process}
+\\
+\\
+Reinforcement Learning requires a fully observable environment in which Markov Decision Processes (MDP's) are a formalisation of this environment and the problem definition as a whole, where almost all RL problems can be formalised as. 
+\\
+\\
+\noindent 
+A MDP is a 5-tuple which has components that are defined as follows:
+\begin{itemize}
+\item $\Sigma \rightarrow$ The set of all states, where a state $\sigma_t$ is defined as an observation from an 
+environment at time stamp t
+\item  A $\rightarrow$ The set of all actions possible, where an action $\alpha$ is any action available to the the agent in state $\sigma_t$ at time stamp t
+\item $\Phi \rightarrow$ The set of all transition probabilities, where $\phi_{\alpha_t}$ is the probability that action $\alpha_t$ in state $\sigma_t$ at time stamp $t$ will lead to state $\sigma'$ in time stamp $t+1$. 
+$\Phi(\sigma_t, \sigma') = Pr(\sigma(t+1) = \sigma' | \sigma_t, \alpha_t)$. This is a stochastic process because the same state-action transition may not lead to the same state', which may due to random factors in the environment or interactions with the other agents, or an inaccurate interpretation of the current state from the agent, which is suitable for this projects' environment. 
+\item $\rho_{\alpha_t}(\sigma_t) \rightarrow$ The immediate reward after the transition from state $\sigma_t$ to an arbitrary state $\sigma'$ 
+\item $\gamma \in [0,1]\rightarrow$ is a discount factor representing the difference in importance between present and future rewards. Depending on the value of $\gamma$, it will encode the idea that a reward that is received in the present is more desirable/valuable than the same reward received at any point in the future . 
+
+
+
+\end{itemize}
+\vspace{0.5cm}
+\noindent
+Making MDP a 5-tuple:{$(\Sigma,A, \Phi(\cdot , \cdot), \rho,\gamma)$
+\\
+\\
+
+\noindent
+The goal of a MDP is to optimise a policy $\pi(\alpha | \sigma)$, which defines the probability that the agent should take an action $\alpha$ given an observed state $\sigma$, maximising a cumulative reward function of random rewards, i.e the expected discounted sum of rewards over an infinite time horizon. So, an agent during every time step in its existence, tries to maximise the expected return:
+
+\begin{equation}
+\label{discount-rewards}
+\begin{split}
+U(t) = \sum\limits^{\infty}_{t=0}{\gamma^{t} \rho(\sigma_t)}
+\end{split}
+\end{equation}
+
+\vspace{0.5cm}
+\noindent
+The equation \ref{discount-rewards} establishes a measure of value for a given \textit{sequence of states}, however, this measure needs to be used to define the value for a \textit{specific state}. This measure ideally represents both the immediate reward, and a measure of of the agent 'heading in the right direction', which in this context means to make a profitable trade, to accumulate future rewards.
+\\
+\\
+To summarise so far, the \textit{utility} of a state is the expected reward received in the current state, plus the rewards we accumulate on the journey through future states, following a given policy. This definition is framed as an \textit{expectation} because the environment that is specified in this domain is stochastic, so future states are not deterministic. This notion of \textit{utility} is encapsulated in what is called the value function. 
+
+\begin{equation}
+\label{expected-discounted-rewards}
+\begin{split}
+V_\pi (\sigma) = E_\pi [U(t) | \sigma_t = \sigma]
+\end{split}
+\end{equation}
+
+\noindent 
+This equation can be rephrased with the derivation\cite{rearrange-value-function https://www.jeremyjordan.me/markov-decision-process/} to give :
+
+\begin{equation}
+\label{expected-discounted-rewards-rephrased}
+\begin{split}
+V_\pi (\sigma) = E_\pi [\rho(\sigma_t) + \gamma(V( \sigma_{t+1})) | \sigma_t = \sigma ]
+\end{split}
+\end{equation}
+
+\noindent 
+This now defines a function for calculating the utility of a \textit{specific state} as input, and the function returns a value for entering the given state.
+\\
+\\
+Alongside this, the Action-Value function, an estimate of the value given an action is as follows:
+
+
+\begin{equation}
+\label{action-value}
+\begin{split}
+Q_\pi(\sigma , \alpha) = E_\pi [U(t) | \sigma_t = \sigma, A_t, = \alpha]
+\end{split}
+\end{equation}
+
+
+\noindent 
+Considering the fact that the agent is interested in the optimal policy, and the optimal policy is the sequence of actions, that maximise the utility until the 'game' is finished, the value function alone cannot be used, as it only provides the expected return from a specific state, but information regarding which action to take is not provided. If the value function is to be used alone, the agent would have to simulate all possible actions to determine which action takes the agent to the state with the highest utility, which impossible in this problem domain. The Action-Value function connects the expected returns with actions, which provides the agent with information on what action to take to maximise its utility. 
+\\
+\\
+The derivation in \cite{rearrange-value-function https://www.jeremyjordan.me/markov-decision-process} allows the equation to be rephrased in such a way that matches the format of a Bellman equation, which then allows the action-value equation \ref{action-value} to be rephrased as a Bellman Expectation Equation, subject to a policy $\pi$:
+
+\begin{equation}
+\label{bellman}
+\begin{split}
+V_\pi(s) = E_\pi[R_t + \gamma V_\pi(S_{t+1} | S_t = s]
+\end{split}
+\end{equation}
+
+\noindent
+Which allows the Value \ref{expected-discounted-rewards-rephrased} , in finite terms, to be expressed as:
+
+\begin{equation}
+\label{bellman}
+\begin{split}
+V_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\sigma'}{\sum\limits^{}_{r}{p(\sigma' , r | \sigma, a) \{r + \gamma V_\pi(\sigma')\}}}
+\end{split}
+\end{equation}
+
+\noindent
+As well as the Action-Value function \ref{action-value}, expressed as:
+
+\begin{equation}
+\label{bellman}
+\begin{split}
+Q_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\sigma'}{\sum\limits^{}_{r}{p(\sigma' , r | \sigma, a) \{r + \gamma Q_\pi(\sigma')\}}}
+\end{split}
+\end{equation}
+\vspace{0.5cm}
+
+\subsection{Optimality}
+
+In an ideal scenario, the agent wants to find the optimal solution to the MDP problem. So, the definition of 'optimal' is as follows:
+
+\paragraph{Optimal Value Function.} The optimal state-value function $V_*(\sigma)$ is the maximum value function over all policies: $V_*(\sigma) = \max\limits_\pi V_\pi(\sigma)$. In essence, there are all kinds of policies that the agent can follow in the Markov chain, but this means that the agent wants to traverse the problem in such a way to maximise the expectation of rewards from the system. 
+ 
+\paragraph{Optimal Action-Value Function.} The optimal state-value function $Q_*(\sigma)$ is the maximum action-value function over all policies $Q_*(\sigma) = \max\limits_\pi Q_\pi(\sigma)$. This means that if the agent commits to a particular action, this provides the maximum possible returns out of every possible traversal thereafter. Crucially, if the agent knows $Q_*(\sigma)$, then it has found the best possible traversal, so it has 'solved' the entire problem. So informally, an MDP is solved if  $Q_*(\sigma)$ is solved.
+
+\paragraph{Optimal Policy.} The optimal policy, is to best possible way for an agent to behave in an MDP. The previous two definitions define \textit{what} the reward is, but this defines \textit{how} to achieve the reward. To define what makes one policy better than another, a partial ordering is created over policy space. $\pi \geq \pi'  if  V_\pi(\sigma) \geq V_{\pi'}(\sigma), \forall \sigma$. 
+
+The theorem \cite{MDP-theorem RL Course by David Silver - Lecture 2: Markov Decision Process} summarises that the optimal policy achieves the optimal value function as well as the optimal state-value function. 
+
+\subsection{Challenges to Find Optimal Solutions}
+The Bellman Optimality Equation is typically used to solve for trivial MDP problems however there are key challenges that are prevent it to be a solution in practice. 
+
+\begin{itemize}
+\item Bellman Optimality Equation is non-linear - as the Expectations are intractable 
+\item No closed form solution ( in general)
+\end{itemize}
+
+
+To deal with this challenges, there are very clever solutions that will be covered in the next section.
+
+\section{Solving Reinforcement Learning}
+
+
+
+
 
 % -----------------------------------------------------------------------------
 
 \chapter{Project Execution}
 \label{chap:execution}
 
-{\bf A topic-specific chapter, of roughly $15$ pages} 
-\vspace{1cm} 
-
-\noindent
-This chapter is intended to describe what you did: the goal is to explain
-the main activity or activities, of any type, which constituted your work 
-during the project.  The content is highly topic-specific, but for many 
-projects it will make sense to split the chapter into two sections: one 
-will discuss the design of something (e.g., some hardware or software, or 
-an algorithm, or experiment), including any rationale or decisions made, 
-and the other will discuss how this design was realised via some form of 
-implementation.  
-
-This is, of course, far from ideal for {\em many} project topics.  Some
-situations which clearly require a different approach include:
-
-\begin{itemize}
-\item In a project where asymptotic analysis of some algorithm is the goal,
-      there is no real ``design and implementation'' in a traditional sense
-      even though the activity of analysis is clearly within the remit of
-      this chapter.
-\item In a project where analysis of some results is as major, or a more
-      major goal than the implementation that produced them, it might be
-      sensible to merge this chapter with the next one: the main activity 
-      is such that discussion of the results cannot be viewed separately.
-\end{itemize}
-
-\noindent
-Note that it is common to include evidence of ``best practice'' project 
-management (e.g., use of version control, choice of programming language 
-and so on).  Rather than simply a rote list, make sure any such content 
-is useful and/or informative in some way: for example, if there was a 
-decision to be made then explain the trade-offs and implications 
-involved.
-
-\section{Example Section}
-
-This is an example section; 
-the following content is auto-generated dummy text.
-\lipsum
-
-\subsection{Example Sub-section}
-
-\begin{figure}[t]
-\centering
-foo
-\caption{This is an example figure.}
-\label{fig}
-\end{figure}
-
-\begin{table}[t]
-\centering
-\begin{tabular}{|cc|c|}
-\hline
-foo      & bar      & baz      \\
-\hline
-$0     $ & $0     $ & $0     $ \\
-$1     $ & $1     $ & $1     $ \\
-$\vdots$ & $\vdots$ & $\vdots$ \\
-$9     $ & $9     $ & $9     $ \\
-\hline
-\end{tabular}
-\caption{This is an example table.}
-\label{tab}
-\end{table}
-
-\begin{algorithm}[t]
-\For{$i=0$ {\bf upto} $n$}{
-  $t_i \leftarrow 0$\;
-}
-\caption{This is an example algorithm.}
-\label{alg}
-\end{algorithm}
-
-\begin{lstlisting}[float={t},caption={This is an example listing.},label={lst},language=C]
-for( i = 0; i < n; i++ ) {
-  t[ i ] = 0;
-}
-\end{lstlisting}
-
-This is an example sub-section;
-the following content is auto-generated dummy text.
-Notice the examples in Figure~\ref{fig}, Table~\ref{tab}, Algorithm~\ref{alg}
-and Listing~\ref{lst}.
-\lipsum
-
-\subsubsection{Example Sub-sub-section}
-
-This is an example sub-sub-section;
-the following content is auto-generated dummy text.
-\lipsum
-
-\paragraph{Example paragraph.}
-
-This is an example paragraph; note the trailing full-stop in the title,
-which is intended to ensure it does not run into the text.
+%{\bf A topic-specific chapter, of roughly $15$ pages} 
+%\vspace{1cm} 
+%
+%\noindent
+%This chapter is intended to describe what you did: the goal is to explain
+%the main activity or activities, of any type, which constituted your work 
+%during the project.  The content is highly topic-specific, but for many 
+%projects it will make sense to split the chapter into two sections: one 
+%will discuss the design of something (e.g., some hardware or software, or 
+%an algorithm, or experiment), including any rationale or decisions made, 
+%and the other will discuss how this design was realised via some form of 
+%implementation.  
+%
+%This is, of course, far from ideal for {\em many} project topics.  Some
+%situations which clearly require a different approach include:
+%
+%\begin{itemize}
+%\item In a project where asymptotic analysis of some algorithm is the goal,
+%      there is no real ``design and implementation'' in a traditional sense
+%      even though the activity of analysis is clearly within the remit of
+%      this chapter.
+%\item In a project where analysis of some results is as major, or a more
+%      major goal than the implementation that produced them, it might be
+%      sensible to merge this chapter with the next one: the main activity 
+%      is such that discussion of the results cannot be viewed separately.
+%\end{itemize}
+%
+%\noindent
+%Note that it is common to include evidence of ``best practice'' project 
+%management (e.g., use of version control, choice of programming language 
+%and so on).  Rather than simply a rote list, make sure any such content 
+%is useful and/or informative in some way: for example, if there was a 
+%decision to be made then explain the trade-offs and implications 
+%involved.
 
 % -----------------------------------------------------------------------------
 
 \chapter{Critical Evaluation}
 \label{chap:evaluation}
 
-{\bf A topic-specific chapter, of roughly $15$ pages} 
-\vspace{1cm} 
-
-\noindent
-This chapter is intended to evaluate what you did.  The content is highly 
-topic-specific, but for many projects will have flavours of the following:
-
-\begin{enumerate}
-\item functional  testing, including analysis and explanation of failure 
-      cases,
-\item behavioural testing, often including analysis of any results that 
-      draw some form of conclusion wrt. the aims and objectives,
-      and
-\item evaluation of options and decisions within the project, and/or a
-      comparison with alternatives.
-\end{enumerate}
-
-\noindent
-This chapter often acts to differentiate project quality: even if the work
-completed is of a high technical quality, critical yet objective evaluation 
-and comparison of the outcomes is crucial.  In essence, the reader wants to
-learn something, so the worst examples amount to simple statements of fact 
-(e.g., ``graph X shows the result is Y''); the best examples are analytical 
-and exploratory (e.g., ``graph X shows the result is Y, which means Z; this 
-contradicts [1], which may be because I use a different assumption'').  As 
-such, both positive {\em and} negative outcomes are valid {\em if} presented 
-in a suitable manner.
+%{\bf A topic-specific chapter, of roughly $15$ pages} 
+%\vspace{1cm} 
+%
+%\noindent
+%This chapter is intended to evaluate what you did.  The content is highly 
+%topic-specific, but for many projects will have flavours of the following:
+%
+%\begin{enumerate}
+%\item functional  testing, including analysis and explanation of failure 
+%  cases,
+%\item behavioural testing, often including analysis of any results that 
+%  draw some form of conclusion wrt. the aims and objectives,
+%  and
+%\item evaluation of options and decisions within the project, and/or a
+%  comparison with alternatives.
+%\end{enumerate}
+%
+%\noindent
+%This chapter often acts to differentiate project quality: even if the work
+%completed is of a high technical quality, critical yet objective evaluation 
+%and comparison of the outcomes is crucial.  In essence, the reader wants to
+%learn something, so the worst examples amount to simple statements of fact 
+%(e.g., ``graph X shows the result is Y''); the best examples are analytical 
+%and exploratory (e.g., ``graph X shows the result is Y, which means Z; this 
+%contradicts [1], which may be because I use a different assumption'').  As 
+%such, both positive {\em and} negative outcomes are valid {\em if} presented 
+%in a suitable manner.
 
 % -----------------------------------------------------------------------------
 
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-{\bf A compulsory chapter,     of roughly $5$ pages} 
-\vspace{1cm} 
-
-\noindent
-The concluding chapter of a dissertation is often underutilised because it 
-is too often left too close to the deadline: it is important to allocation
-enough attention.  Ideally, the chapter will consist of three parts:
-
-\begin{enumerate}
-\item (Re)summarise the main contributions and achievements, in essence
-      summing up the content.
-\item Clearly state the current project status (e.g., ``X is working, Y 
-      is not'') and evaluate what has been achieved with respect to the 
-      initial aims and objectives (e.g., ``I completed aim X outlined 
-      previously, the evidence for this is within Chapter Y'').  There 
-      is no problem including aims which were not completed, but it is 
-      important to evaluate and/or justify why this is the case.
-\item Outline any open problems or future plans.  Rather than treat this
-      only as an exercise in what you {\em could} have done given more 
-      time, try to focus on any unexplored options or interesting outcomes
-      (e.g., ``my experiment for X gave counter-intuitive results, this 
-      could be because Y and would form an interesting area for further 
-      study'' or ``users found feature Z of my software difficult to use,
-      which is obvious in hindsight but not during at design stage; to 
-      resolve this, I could clearly apply the technique of Smith [7]'').
-\end{enumerate}
+%{\bf A compulsory chapter,     of roughly $5$ pages} 
+%\vspace{1cm} 
+%
+%\noindent
+%The concluding chapter of a dissertation is often underutilised because it 
+%is too often left too close to the deadline: it is important to allocation
+%enough attention.  Ideally, the chapter will consist of three parts:
+%
+%\begin{enumerate}
+%\item (Re)summarise the main contributions and achievements, in essence
+%      summing up the content.
+%\item Clearly state the current project status (e.g., ``X is working, Y 
+%      is not'') and evaluate what has been achieved with respect to the 
+%      initial aims and objectives (e.g., ``I completed aim X outlined 
+%      previously, the evidence for this is within Chapter Y'').  There 
+%      is no problem including aims which were not completed, but it is 
+%      important to evaluate and/or justify why this is the case.
+%\item Outline any open problems or future plans.  Rather than treat this
+%      only as an exercise in what you {\em could} have done given more 
+%      time, try to focus on any unexplored options or interesting outcomes
+%      (e.g., ``my experiment for X gave counter-intuitive results, this 
+%      could be because Y and would form an interesting area for further 
+%      study'' or ``users found feature Z of my software difficult to use,
+%      which is obvious in hindsight but not during at design stage; to 
+%      resolve this, I could clearly apply the technique of Smith [7]'').
+%\end{enumerate}
 
 % =============================================================================
 
