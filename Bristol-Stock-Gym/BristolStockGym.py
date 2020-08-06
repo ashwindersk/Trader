@@ -471,60 +471,27 @@ def get_traders_schedule():
  
 def get_state(observation, position):
         
-         #Get the latest 5 changes to the lob - autoencoded 
-        def get_lob():
-            bids = observation['lob']['bids']
-            asks = observation['lob']['asks']
-            column = np.zeros(8)
-
-            len_bids = len(bids)
-            len_asks = len(asks)
-            for i in range(min(2,len_asks)):
-                column[4*i] = asks[i][0]
-                column[4*i +1 ] = asks[i][1]
-
-            for i in range(min(2,len_bids)):
-                column[4*i + 2] = bids[i][0]
-                column[4*i + 3] = bids[i][1] 
-
-            time = observation['lob']['time']
-
-            column = column.reshape((8,))
-
-            snapshot = lob_trainer.get_lob_snapshot(column, time)
-            snapshot = snapshot.flatten()
-            snapshot = snapshot.reshape(1,-1)
-
-            snapshot = scalar.transform(snapshot)
-            snapshot = torch.FloatTensor(snapshot)
-            snapshot = Autoencoder.encoder(snapshot)
-            snapshot = snapshot.cpu().detach().numpy()
-            snapshot = snapshot.reshape(8)
+        bids = observation['lob']['bids']
+        asks = observation['lob']['asks']
+        len_bids = len(bids)
+        len_asks = len(asks)
+        best_bid,_ = observation['lob']['best_bid']
+        best_ask,_ = observation['lob']['best_ask']
+        depth_bid = len_bids /30
+        depth_ask = len_asks/30
+        if best_bid is None:
+           best_bid = 0
+        if best_ask is None:
+           best_ask = 0
+        state = np.zeros(6)
+        state[0] = best_bid/1000
+        state[1] = best_ask/1000
+        state[2] = depth_bid
+        state[3] = depth_ask
+        state[4] = position
+        state[5] = observation['lob']['midprice']/1000
+        state = torch.Tensor(state) 
             
-            return snapshot
-        
-        def get_trades():
-            tape = observation['lob']['tape']
-            trades = np.zeros(8)
-            i = 0
-            for event in reversed(tape):
-                if event['type'] == 'Trade':
-                    
-                    try:
-                        trades[i] = event['price']
-                    except IndexError:
-                        pass
-                    i +=1
-                       
-            trades /=1000
-            return trades
-        
-        lob    = np.array(get_lob())
-        
-        
-        trades = np.array(get_trades())
-        state = np.concatenate((lob, trades, [position]))
-        state = torch.Tensor(state)
         return state.flatten()
 
 def trader_strategy(state):
@@ -589,80 +556,56 @@ def trader_strategy(state):
         
 
 if __name__ == "__main__":
-    
+    start_time = 0.0 
     end_time = 1000.0    
     
-    traders_spec, order_sched = get_traders_schedule()
+    #traders_spec, order_sched = get_traders_schedule()
+    def schedule_offsetfn(t):
+                pi2 = math.pi * 2
+                c = math.pi * 3000
+                wavelength = t / c
+                gradient = 100 * t / (c / pi2)
+                amplitude = 100 * t / (c / pi2)
+                offset = gradient + amplitude * math.sin(wavelength * t)
+                return int(round(offset, 0))
+                
+                
 
-    #------ Getting mixnmax scalar to transform lob input for AE -----
-    filehandler = open('Objects/scalar', 'rb')
-    scalar = pickle.load(filehandler)
-    filehandler.close()
-    #==================================================================
+# #        range1 = (10, 190, schedule_offsetfn)
+# #        range2 = (200,300, schedule_offsetfn)
+
+# #        supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
+# #                            {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
+# #                            {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+# #                          ]
+
+
+
+    range1 = (95, 95, schedule_offsetfn)
+    supply_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+                      ]
+    range1 = (105, 105, schedule_offsetfn)
+    demand_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+                      ]
+    order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
+                   'interval':30, 'timemode':'drip-poisson'}
+    buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
     
+
+    sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
     
-    #------ Autoencoder ----------------------------------------
+    traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
     
-    lob_trainer = LOB_trainer() 
-    
-    Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
-    Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
-    
-    
-    
-    #-----midprice LSTM -------------
     input_size = 4
     hidden_size = 256
     num_layers = 1
     seq_length = 4
     num_classes = 1
 
-    lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).float()
-    lstm.load_state_dict(torch.load('Models/midprice-regression-new', map_location='cpu'))
-    filehandler = open('Regression/sc_midprice', 'rb')
-    scalar = pickle.load(filehandler)
-    filehandler.close()
-    
-    #------MDNRNN -------------------------------------
-    # input_size = 18
-    # hidden_size = 256
-    # num_layers = 1
-    # num_classes = 1
-    # fc1_out = 64
-    # output_size = 18
-    # seq_length = 4
-    # state_lstm = LSTM(output_size, input_size, hidden_size, num_layers, seq_length, fc1_out).double()
-    # state_lstm.load_state_dict(torch.load('Models/transition-gpu-0.001', map_location='cpu'))
-    # filehandler = open('Transition/sc', 'rb')
-    # sc_mdn = pickle.load(filehandler)
-    # filehandler.close()
-    #------LSTM-----------------------------------------
-    # input_size = 8
-    # hidden_size = 256
-    # num_layers = 1
-    # num_classes = 1
-    # seq_length = 2
-    # lstm = LSTM(num_classes, input_size, hidden_size, num_layers, seq_length, fc1_out = 128).double()
-    # lstm.load_state_dict(torch.load('Models/midprice-regression', map_location = torch.device('cpu')))
-    # filehandler = open('Regression/sc_midprice', 'rb')
-    # sc_midprice = pickle.load(filehandler)
-    # filehandler.close()
-    # filehandler = open('Regression/sc_latent', 'rb')
-    # sc_latent = pickle.load(filehandler)
-    # filehandler.close()
-    
-    
-    
-    
-    # trader = Agent(actor_lr=1e-3, critic_lr=1e-3, input_dims = [17], gamma = 0.99,
-    #                n_actions = 3, l1_size = 32, l2_size= 32)
-    # trader.load_models(actor_outfile = "actor-regress.pth", critic_outfile = "critic-regress.pth")
-    trader = PolicyGradientAgent(lr = 1e-3, input_dims = [17], GAMMA = 0.99, n_actions = 3, layer1_size = 128, layer2_size = 128)
+    trader = PolicyGradientAgent(lr = 1e-3, input_dims = [6], GAMMA = 0.99, n_actions = 3, layer1_size = 128, layer2_size = 128)
     trader.load_model(f'PG-{args.suffix}')
     np.random.seed(0)
     
-    
-    #==================================================================    
     
     
     
@@ -683,33 +626,31 @@ if __name__ == "__main__":
             state = get_state(observation, position)      
             order, action, midprice = trader_strategy(state)
             
-            # midprices = np.concatenate([midprices[1:4], np.array([midprice])])
-            
-            # midprices = midprices.reshape((1,4))
-            # midprices = torch.Tensor(scalar.transform(midprices)).unsqueeze(0)
-            
-            # prediction = lstm(midprices).detach().numpy()
-            # prediction = scalar.inverse_transform(prediction)[0][0] - 45
-            # if np.isnan(prediction):
-            #     prediction = 0
-            
-            # midprices = midprices.flatten()
-            
-            
             
             reward = 0
             if position < 0:
                 if action == 1 and midprice < - position * 1000:
-                    reward +=100
+                    reward +=1000
+                if action == 2:
+                    reward -=100
+                if action == 0 and midprice < -position*1000:
+                   reward -=50
+                if action == 0 and midprice > -position*1000:
+                   reward +=50	
             if position > 0:
                 if action == 2 and midprice > position * 1000:
-                    reward+=100    
+                    reward+=1000
+                if action == 1:
+                    reward -=100
+                if action == 0 and midprice > -position*1000:
+                   reward -=50
+                if action == 0 and midprice < -position*1000:
+                   reward +=50   
             if reward > 0:
                 print(reward)
             if order is not None:
                 print(action,order, balance, position, num_trades)
             observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
-            #trader.remember(state,action,reward,new_state, int(done))
             
             
             
