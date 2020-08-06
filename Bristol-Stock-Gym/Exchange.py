@@ -91,6 +91,8 @@ class Exchange(OrderBook):
         public_data['asks'] = self.asks.lob_anon
         public_data['tape'] = self.tape
         public_data['midprice'] = self.get_midprice()
+        public_data['best_bid'] = self.bids.get_best()
+        public_data['best_ask'] = self.asks.get_best()
         return public_data
     
     def get_midprice(self):
