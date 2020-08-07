@@ -21,7 +21,14 @@
 \contentsline {paragraph}{Optimal Policy.}{11}{section*.16}
 \contentsline {subsection}{\numberline {2.2.3}Challenges to Find Optimal Solutions}{11}{subsection.2.2.3}
 \contentsline {section}{\numberline {2.3}Solving Reinforcement Learning}{11}{section.2.3}
-\contentsline {chapter}{\numberline {3}Project Execution}{13}{chapter.3}
-\contentsline {chapter}{\numberline {4}Critical Evaluation}{15}{chapter.4}
-\contentsline {chapter}{\numberline {5}Conclusion}{17}{chapter.5}
-\contentsline {chapter}{\numberline {A}An Example Appendix}{19}{appendix.A}
+\contentsline {subsection}{\numberline {2.3.1}Model Free Prediction: Monte Carlo }{12}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Model Free Control: Monte Carlo}{12}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Model Free: Temporal Difference Learning - TD(0)}{12}{subsection.2.3.3}
+\contentsline {subsection}{\numberline {2.3.4}Value Function Approximation}{13}{subsection.2.3.4}
+\contentsline {subsection}{\numberline {2.3.5}Policy Gradient}{14}{subsection.2.3.5}
+\contentsline {subsection}{\numberline {2.3.6}Discrete vs Continuous Action Spaces}{16}{subsection.2.3.6}
+\contentsline {section}{\numberline {2.4}Summary}{16}{section.2.4}
+\contentsline {chapter}{\numberline {3}Project Execution}{17}{chapter.3}
+\contentsline {chapter}{\numberline {4}Critical Evaluation}{19}{chapter.4}
+\contentsline {chapter}{\numberline {5}Conclusion}{21}{chapter.5}
+\contentsline {chapter}{\numberline {A}An Example Appendix}{23}{appendix.A}

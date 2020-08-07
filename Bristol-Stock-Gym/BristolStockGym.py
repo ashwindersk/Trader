@@ -630,28 +630,25 @@ if __name__ == "__main__":
             reward = 0
             if position < 0:
                 if action == 1 and midprice < - position * 1000:
-                    reward +=1000
+                    reward +=60
                 if action == 2:
-                    reward -=100
+                    reward -=10
                 if action == 0 and midprice < -position*1000:
-                   reward -=50
-                if action == 0 and midprice > -position*1000:
-                   reward +=50	
+                   reward -=20	
             if position > 0:
                 if action == 2 and midprice > position * 1000:
-                    reward+=1000
+                    reward+=60
                 if action == 1:
-                    reward -=100
+                    reward -=10
                 if action == 0 and midprice > -position*1000:
-                   reward -=50
-                if action == 0 and midprice < -position*1000:
-                   reward +=50   
+                   reward -=20  
             if reward > 0:
                 print(reward)
             if order is not None:
                 print(action,order, balance, position, num_trades)
             observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
-            
+            if benefit > 0 :
+                benefit *=10
             
             
             

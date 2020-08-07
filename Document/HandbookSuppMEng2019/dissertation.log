@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.12.13)  5 AUG 2020 17:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.12.13)  7 AUG 2020 16:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -529,43 +529,66 @@ Package caption Info: listings package is loaded.
 \sf@top=\skip78
 \sf@bottom=\skip79
 )
+(/usr/local/texlive/2018/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen158
+\WF@size=\dimen159
+\c@WF@wrappedlines=\count167
+\WF@box=\box42
+\WF@everypar=\toks33
+Package: wrapfig 2003/01/31  v 3.6
+)
 (./dissertation.aux
 
-LaTeX Warning: Label `bellman' multiply defined.
+LaTeX Warning: Label `TD error' multiply defined.
 
 
-LaTeX Warning: Label `bellman' multiply defined.
+LaTeX Warning: Label `SARSA' multiply defined.
+
+
+LaTeX Warning: Label `Policy Gradient' multiply defined.
+
+
+LaTeX Warning: Label `Policy Gradient' multiply defined.
+
+
+LaTeX Warning: Label `Policy Gradient' multiply defined.
+
+
+LaTeX Warning: Label `Policy Gradient' multiply defined.
+
+
+LaTeX Warning: Label `Policy Gradient' multiply defined.
 
 )
 \openout1 = `dissertation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
  (/usr/local/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count167
-\scratchdimen=\dimen158
-\scratchbox=\box42
-\nofMPsegments=\count168
-\nofMParguments=\count169
-\everyMPshowfont=\toks33
-\MPscratchCnt=\count170
-\MPscratchDim=\dimen159
-\MPnumerator=\count171
-\makeMPintoPDFobject=\count172
-\everyMPtoPDFconversion=\toks34
+\scratchcounter=\count168
+\scratchdimen=\dimen160
+\scratchbox=\box43
+\nofMPsegments=\count169
+\nofMParguments=\count170
+\everyMPshowfont=\toks34
+\MPscratchCnt=\count171
+\MPscratchDim=\dimen161
+\MPnumerator=\count172
+\makeMPintoPDFobject=\count173
+\everyMPtoPDFconversion=\toks35
 ) (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
@@ -620,8 +643,8 @@ e
 (/usr/local/texlive/2018/texmf-dist/tex/latex/fmtcount/fc-english.def
 File: fc-english.def 2016/01/12
 )
-\c@lstlisting=\count173
-\AtBeginShipoutBox=\box43
+\c@lstlisting=\count174
+\AtBeginShipoutBox=\box44
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
@@ -631,7 +654,7 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 147.
 )
-Package hyperref Info: Link coloring ON on input line 43.
+Package hyperref Info: Link coloring ON on input line 57.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -639,11 +662,11 @@ Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 (/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count174
+\c@section@level=\count175
 )
-LaTeX Info: Redefining \ref on input line 43.
-LaTeX Info: Redefining \pageref on input line 43.
-LaTeX Info: Redefining \nameref on input line 43.
+LaTeX Info: Redefining \ref on input line 57.
+LaTeX Info: Redefining \pageref on input line 57.
+LaTeX Info: Redefining \nameref on input line 57.
 
 (./dissertation.out) (./dissertation.out)
 \@outlinefile=\write4
@@ -651,27 +674,28 @@ LaTeX Info: Redefining \nameref on input line 43.
 
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
+Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
 
-Overfull \hbox (15.0pt too wide) in paragraph at lines 60--60
+Overfull \hbox (15.0pt too wide) in paragraph at lines 74--74
 [][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--60
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
 
  []
 
-<logo/logo_uob_color.pdf, id=60, 546.04pt x 158.5925pt>
+<logo/logo_uob_color.pdf, id=68, 546.04pt x 158.5925pt>
 File: logo/logo_uob_color.pdf Graphic file (type pdf)
 <use logo/logo_uob_color.pdf>
-Package pdftex.def Info: logo/logo_uob_color.pdf  used on input line 60.
+Package pdftex.def Info: logo/logo_uob_color.pdf  used on input line 74.
 (pdftex.def)             Requested size: 163.81326pt x 47.57811pt.
-LaTeX Font Info:    Try loading font information for U+msa on input line 60.
+LaTeX Font Info:    Try loading font information for U+msa on input line 74.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 60.
+LaTeX Font Info:    Try loading font information for U+msb on input line 74.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -690,12 +714,16 @@ logo_uob_color.pdf>] [2
 
  [3] [4
 
-] (./dissertation.lof)
+] (./dissertation.lof
+
+LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
+FA.pdf' on page v undefined on input line 5.
+
+)
 \tf@lof=\write6
 \openout6 = `dissertation.lof'.
 
- [5]
-[6
+ [5] [6
 
 ] (./dissertation.lot)
 \tf@lot=\write7
@@ -718,39 +746,39 @@ logo_uob_color.pdf>] [2
 
 ]
 
-LaTeX Warning: Citation `DQN' on page xiii undefined on input line 92.
+LaTeX Warning: Citation `DQN' on page xiii undefined on input line 106.
 
 
-LaTeX Warning: Citation `BSE' on page xiii undefined on input line 100.
+LaTeX Warning: Citation `BSE' on page xiii undefined on input line 114.
 
 
-LaTeX Warning: Citation `BSG' on page xiii undefined on input line 100.
+LaTeX Warning: Citation `BSG' on page xiii undefined on input line 114.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--104
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 91--104
+Underfull \hbox (badness 10000) in paragraph at lines 105--118
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--104
+Underfull \hbox (badness 10000) in paragraph at lines 105--118
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 116.
+
+Underfull \hbox (badness 10000) in paragraph at lines 105--118
+
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 130.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 116.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 130.
 
 
-LaTeX Warning: Citation `BC4' on page xiii undefined on input line 118.
+LaTeX Warning: Citation `BC4' on page xiii undefined on input line 132.
 
 [13] [14
 
@@ -763,86 +791,86 @@ LaTeX Warning: Citation `BC4' on page xiii undefined on input line 118.
 ]
 Chapter 1.
 
-LaTeX Warning: Citation `limit-order' on page 1 undefined on input line 225.
+LaTeX Warning: Citation `limit-order' on page 1 undefined on input line 239.
 
 
 LaTeX Warning: Citation `algorithmic-trading-wiki' on page 1 undefined on input
- line 232.
+ line 246.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 225--236
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 225--236
+Underfull \hbox (badness 10000) in paragraph at lines 239--250
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 225--236
+Underfull \hbox (badness 10000) in paragraph at lines 239--250
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 239--250
 
  []
 
 
 LaTeX Warning: Citation `MarketEquilibrium' on page 1 undefined on input line 2
-43.
+57.
 
 
-LaTeX Warning: Citation `Gode and Sunder' on page 1 undefined on input line 249
+LaTeX Warning: Citation `Gode and Sunder' on page 1 undefined on input line 263
 .
 
 
-LaTeX Warning: Citation `Cliff-critique' on page 1 undefined on input line 255.
+LaTeX Warning: Citation `Cliff-critique' on page 1 undefined on input line 269.
 
 
 
-LaTeX Warning: Citation `GD' on page 1 undefined on input line 258.
+LaTeX Warning: Citation `GD' on page 1 undefined on input line 272.
 
 
-LaTeX Warning: Citation `IBM experiments' on page 1 undefined on input line 261
+LaTeX Warning: Citation `IBM experiments' on page 1 undefined on input line 275
 .
 
 
-LaTeX Warning: Citation `AA' on page 1 undefined on input line 264.
+LaTeX Warning: Citation `AA' on page 1 undefined on input line 278.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 240--265
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 254--279
 
  []
 
@@ -850,127 +878,127 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.265 
+l.279 
        [1
 
 ]
 
 LaTeX Warning: Citation `Deep Learning Revolution' on page 2 undefined on input
- line 268.
+ line 282.
 
 
-LaTeX Warning: Citation `RL-history' on page 2 undefined on input line 271.
+LaTeX Warning: Citation `RL-history' on page 2 undefined on input line 285.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 268--272
+Underfull \hbox (badness 10000) in paragraph at lines 282--286
 
  []
 
 
 LaTeX Warning: Citation `deep learning robots https://arxiv.org/abs/1504.00702'
- on page 2 undefined on input line 273.
+ on page 2 undefined on input line 287.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.274 
+l.288 
        [2]
 
 LaTeX Warning: Citation `mx banks profit breakdown https://www.mx.com/moneysumm
-it/top-us-retail-banks-income-revenue' on page 3 undefined on input line 290.
+it/top-us-retail-banks-income-revenue' on page 3 undefined on input line 304.
 
 
 LaTeX Warning: Citation `quora-trading-hard' on page 3 undefined on input line 
-297.
+311.
 
 
 LaTeX Warning: Citation `https://www.statista.com/chart/20245/share-of-computer
-ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 297.
+ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 311.
 
 
 LaTeX Warning: Citation `https://www.statista.com/chart/20245/share-of-computer
-ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 300.
+ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 314.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--304
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 298--318
 
  []
 
 [3]
 
 LaTeX Warning: Reference `section:DevelopmentsAI' on page 4 undefined on input 
-line 308.
+line 322.
 
 
 LaTeX Warning: Citation `deepmind alpha go zero' on page 4 undefined on input l
-ine 311.
+ine 325.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 308--319
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 308--319
+Underfull \hbox (badness 10000) in paragraph at lines 322--333
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 308--319
+Underfull \hbox (badness 10000) in paragraph at lines 322--333
 
  []
 
 
-LaTeX Warning: Citation `falcao' on page 4 undefined on input line 323.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 323--330
+Underfull \hbox (badness 10000) in paragraph at lines 322--333
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 323--330
+LaTeX Warning: Citation `falcao' on page 4 undefined on input line 337.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 337--344
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--345
+Underfull \hbox (badness 10000) in paragraph at lines 337--344
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--345
+Underfull \hbox (badness 10000) in paragraph at lines 349--359
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--345
+Underfull \hbox (badness 10000) in paragraph at lines 349--359
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 349--359
 
  []
 
@@ -978,158 +1006,385 @@ Underfull \hbox (badness 10000) in paragraph at lines 335--345
 
 ]
 Chapter 2.
-<LOB-Precross.png, id=230, 324.21124pt x 131.49126pt>
+<LOB-Precross.png, id=242, 324.21124pt x 131.49126pt>
 File: LOB-Precross.png Graphic file (type png)
 <use LOB-Precross.png>
-Package pdftex.def Info: LOB-Precross.png  used on input line 397.
+Package pdftex.def Info: LOB-Precross.png  used on input line 411.
 (pdftex.def)             Requested size: 364.19667pt x 147.71861pt.
 
-Package caption Warning: \label without proper reference on input line 400.
+Package caption Warning: \label without proper reference on input line 414.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:lob' on page 7 undefined on input line 403.
+LaTeX Warning: Reference `fig:lob' on page 7 undefined on input line 417.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 402--408
+Underfull \hbox (badness 10000) in paragraph at lines 416--422
 
  []
 
 [7 <./LOB-Precross.png>]
 
-Package caption Warning: \label without proper reference on input line 400.
+Package caption Warning: \label without proper reference on input line 414.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 418.
+LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 432.
 
 
-Package caption Warning: \label without proper reference on input line 400.
+Package caption Warning: \label without proper reference on input line 414.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 441.
+LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 455.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 433--442
+Underfull \hbox (badness 10000) in paragraph at lines 447--456
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 433--442
+Underfull \hbox (badness 10000) in paragraph at lines 447--456
 
  []
 
-<LOB-Postcross.png, id=241, 323.2075pt x 133.49875pt>
+<LOB-Postcross.png, id=253, 323.2075pt x 133.49875pt>
 File: LOB-Postcross.png Graphic file (type png)
 <use LOB-Postcross.png>
-Package pdftex.def Info: LOB-Postcross.png  used on input line 445.
+Package pdftex.def Info: LOB-Postcross.png  used on input line 459.
 (pdftex.def)             Requested size: 364.19667pt x 150.43625pt.
 
-Package caption Warning: \label without proper reference on input line 448.
+Package caption Warning: \label without proper reference on input line 462.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:lob-post' on page 8 undefined on input line 451.
+LaTeX Warning: Reference `fig:lob-post' on page 8 undefined on input line 465.
 
 
-Package caption Warning: \label without proper reference on input line 400.
+Package caption Warning: \label without proper reference on input line 414.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 451.
+LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 465.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 455--459
+Underfull \hbox (badness 10000) in paragraph at lines 469--473
 
  []
 
 [8 <./LOB-Postcross.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 464--467
+Underfull \hbox (badness 10000) in paragraph at lines 478--481
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 464--467
+Underfull \hbox (badness 10000) in paragraph at lines 478--481
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 468--477
+Underfull \hbox (badness 10000) in paragraph at lines 482--491
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 468--477
+Underfull \hbox (badness 10000) in paragraph at lines 482--491
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--494
+Underfull \hbox (badness 10000) in paragraph at lines 504--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--494
+Underfull \hbox (badness 10000) in paragraph at lines 504--508
 
  []
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 506--511
+Underfull \hbox (badness 10000) in paragraph at lines 520--525
 
  []
 
 
 LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
-arkov-decision-process/' on page 10 undefined on input line 520.
+arkov-decision-process/' on page 10 undefined on input line 534.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--534
+Underfull \hbox (badness 10000) in paragraph at lines 543--548
 
  []
 
 
 LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
-arkov-decision-process' on page 10 undefined on input line 548.
+arkov-decision-process' on page 10 undefined on input line 562.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 544--549
+Underfull \hbox (badness 10000) in paragraph at lines 558--563
 
  []
 
 [10]
 
 LaTeX Warning: Citation `MDP-theorem RL Course by David Silver - Lecture 2: Mar
-kov Decision Process' on page 11 undefined on input line 588.
+kov Decision Process' on page 11 undefined on input line 603.
 
-[11] [12
 
-]
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--638
+
+ []
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 673--677
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 691--696
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 691--696
+
+ []
+
+[12]
+
+LaTeX Warning: Citation `https://www.cellstrat.com/2020/04/27/temporal-differen
+ce-methods/' on page 13 undefined on input line 698.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 697--705
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 697--705
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 710--720
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 710--720
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 727--732
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 744--749
+
+ []
+
+[13]
+<value-approximators.png, id=326, 445.665pt x 252.945pt>
+File: value-approximators.png Graphic file (type png)
+<use value-approximators.png>
+Package pdftex.def Info: value-approximators.png  used on input line 769.
+(pdftex.def)             Requested size: 218.51521pt x 124.02132pt.
+
+
+LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
+FA.pdf' on page 14 undefined on input line 771.
+
+
+LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
+FA.pdf' on page 14 undefined on input line 771.
+
+
+Underfull \hbox (badness 2744) in paragraph at lines 776--783
+[]\OT1/cmr/m/n/10 The fig-ure on the left hand side shows
+ []
+
+
+Underfull \hbox (badness 1005) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 the ar-chi-tec-tures of the vary-ing types of ap-
+ []
+
+
+Underfull \hbox (badness 1803) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 prox-i-ma-tors. The left-most ar-chi-tec-ture rep-
+ []
+
+
+Underfull \hbox (badness 3514) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 a 'black-box' func-tion spits out the 'value'
+ []
+
+
+Underfull \hbox (badness 4582) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 of be-ing in state \OT1/cmr/m/it/10 s\OT1/cmr/m/n/10 . The mid-
+dle ar-chi-
+ []
+
+
+Underfull \hbox (badness 6876) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 tec-ture show-cases the \OT1/cmr/m/it/10 action-value \OT1/cmr/
+m/n/10 ap-prox-i-
+ []
+
+
+Underfull \hbox (badness 2573) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 ma-tor, where again, a 'black box' func-tion
+ []
+
+
+Underfull \hbox (badness 6001) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 takes in the state the agent is in, and
+ []
+
+
+Underfull \hbox (badness 5403) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 the ac-tion it is con-sid-er-ing, and it spits
+ []
+
+
+Underfull \hbox (badness 2111) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 out how good that ac-tion is. Lastly, the
+ []
+
+
+Underfull \hbox (badness 2096) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 right-most ar-chi-tec-ture rep-re-sents an ar-chi-tec-
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 776--783
+\OT1/cmr/m/n/10 for all pos-si-ble ac-tions in the given state
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 776--783
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 776--783
+
+ []
+
+
+LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
+FA.pdf' on page 14 undefined on input line 789.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 806--810
+
+ []
+
+[14 <./value-approximators.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 824--833
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 824--833
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 847--853
+
+ []
+
+
+LaTeX Warning: Citation `score-function' on page 15 undefined on input line 859
+.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 858--863
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 877--881
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 877--881
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 882--888
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 912--918
+
+ []
+
+[16]
 Chapter 3.
-[13] [14
+[17
+
+] [18
 
 ]
 Chapter 4.
-[15] [16
+[19] [20
 
 ]
 Chapter 5.
-[17] [18
+[21] [22
 
 ]
 No file dissertation.bbl.
 Appendix A.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 761.
-[19
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1080.
+[23
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 761.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1080.
  (./dissertation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 761.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 761.
-Package rerunfilecheck Info: File `dissertation.out' has not changed.
-(rerunfilecheck)             Checksum: 475EE8F7DF199CE61547F5B3BB6D11AD;835.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1080.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1080.
 
+
+
+Package rerunfilecheck Warning: File `dissertation.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `dissertation.out':
+(rerunfilecheck)             Before: 2741F75C386F208A1C9CB0526DFAD4A7;972
+(rerunfilecheck)             After:  6445E5ACF731C6E468DD0AB9F2BE8D2F;889.
 
 LaTeX Warning: There were undefined references.
 
@@ -1139,36 +1394,41 @@ LaTeX Warning: There were multiply-defined labels.
  )
 (\end occurred inside a group at level 1)
 
-### simple group (level 1) entered at line 491 ({)
+### simple group (level 1) entered at line 505 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 13288 strings out of 492649
- 205450 string characters out of 6129621
- 452654 words of memory out of 5000000
- 16866 multiletter control sequences out of 15000+600000
- 9067 words of font info for 34 fonts, out of 8000000 for 9000
+ 13404 strings out of 492649
+ 207163 string characters out of 6129621
+ 455240 words of memory out of 5000000
+ 16942 multiletter control sequences out of 15000+600000
+ 9686 words of font info for 36 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 61i,17n,96p,1134b,463s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmbx10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi5.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-mi7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
-0.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.
-pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pf
-b></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><
-/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></
-usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr
-/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/l
-ocal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/lo
-cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on dissertation.pdf (41 pages, 471957 bytes).
+ 61i,24n,96p,1134b,485s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{section.2.5} has been referenced bu
+t does not exist, replaced by a fixed one
+
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></
+usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></us
+r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr
+/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/
+local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/lo
+cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/
+texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texl
+ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive
+/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/20
+18/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/local/texlive/201
+8/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2018/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2018/texm
+f-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on dissertation.pdf (45 pages, 530631 bytes).
 PDF statistics:
- 396 PDF objects out of 1000 (max. 8388607)
- 328 compressed objects within 4 object streams
- 93 named destinations out of 1000 (max. 500000)
- 128 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 480 PDF objects out of 1000 (max. 8388607)
+ 403 compressed objects within 5 object streams
+ 126 named destinations out of 1000 (max. 500000)
+ 149 words of extra memory for PDF output out of 10000 (max. 10000000)
 

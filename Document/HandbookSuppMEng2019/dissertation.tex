@@ -37,7 +37,21 @@
                       
 \usepackage{float} 
 \usepackage{subfig}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\def\gradient{
+\begin{pmatrix}
+    \frac{\partial J(\textbf{w})}{\partial\textbf{w}_1} \\
+    \vdots \\
+     \frac{\partial J(\textbf{w})}{\partial\textbf{w}_N}
+\end{pmatrix}}
 
+\def\policygradient{
+\begin{pmatrix}
+    \frac{\partial J(\theta)}{\partial\theta_1} \\
+    \vdots \\
+     \frac{\partial J(\theta)}{\partial\theta_N}
+\end{pmatrix}}
 
 
 \begin{document}
@@ -558,7 +572,7 @@ V_\pi(s) = E_\pi[R_t + \gamma V_\pi(S_{t+1} | S_t = s]
 Which allows the Value \ref{expected-discounted-rewards-rephrased} , in finite terms, to be expressed as:
 
 \begin{equation}
-\label{bellman}
+\label{value-function-bellman}
 \begin{split}
 V_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\sigma'}{\sum\limits^{}_{r}{p(\sigma' , r | \sigma, a) \{r + \gamma V_\pi(\sigma')\}}}
 \end{split}
@@ -568,7 +582,7 @@ V_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\
 As well as the Action-Value function \ref{action-value}, expressed as:
 
 \begin{equation}
-\label{bellman}
+\label{action-value-bellman}
 \begin{split}
 Q_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\sigma'}{\sum\limits^{}_{r}{p(\sigma' , r | \sigma, a) \{r + \gamma Q_\pi(\sigma')\}}}
 \end{split}
@@ -576,6 +590,7 @@ Q_\pi(s) = \sum\limits^{}_{\alpha \in A}{\pi(\alpha | \sigma)} \sum\limits^{}_{\
 \vspace{0.5cm}
 
 \subsection{Optimality}
+\label{Optimality}
 
 In an ideal scenario, the agent wants to find the optimal solution to the MDP problem. So, the definition of 'optimal' is as follows:
 
@@ -595,14 +610,318 @@ The Bellman Optimality Equation is typically used to solve for trivial MDP probl
 \item No closed form solution ( in general)
 \end{itemize}
 
-
+\noindent
 To deal with this challenges, there are very clever solutions that will be covered in the next section.
 
 \section{Solving Reinforcement Learning}
+\textbf{Model-Free}
+\\
+\\
+There are numerous methods designed, developed and tested to solve the MDP problem, such as dynamic programming. However, solutions that are similar in nature require a well defined model and environment. In most practices, the MDP agent does not know the environment and its intricacies, which must be figured out by the agent itself. \textit{Model-Free} solutions give up the assumption that the model is well defined for the agent, which is more ideal in practice.
+\\
+\\
+\textbf{Model Free Prediction} 
+\\
+\\
+This is an 'evaluation' task, where given a policy $\pi$ the agent evaluates its Value function $V_\pi(\sigma)$ as mentioned in \ref{value-function-bellman}, which can be done recursively through via the bellman equation until convergence. 
+\\
+\\
+\textbf{Model Free Control}
+\\
+\\
+\noindent
+Control is about the method used to improve on a policy $\pi$ to find the optimal policy $\pi_*$ as outlined in \ref{Optimality}. This is done via a method called \textit{Policy Iteration}, where unlike the prediction problem which iterates over the Value Function, \textit{Policy Iteration} iterates over the Action-Value function \ref{action-value-bellman}. This is done via iterating over every $Q_\pi(\sigma, \alpha)$ value and greedily taking the action with the maximum expected return. However, this solution in particular ignores the concept of 'delayed gratification' in which an individual state may not give the agent the maximum expected return, but the states following it yield greater reward, which would be ignored with this greedy solution. 
+\\
+\\
+\noindent
+In general, solving the Bellman Equation is to recursively solve for \ref{value-function-bellman} and \ref{action-value-bellman} is very inefficient as mentioned in below \ref{action-value}, so other solutions are explained below. 
+
+\subsection{Model Free Prediction: Monte Carlo }
+\label{Monte Carlo Prediction}
+The Monte Carlo (MC) method is one of the simpler and intuitive solutions to the reinforcement learning problems
+\begin{itemize}
+\item MC methods learn directly from experience
+\item MC methods have no prior knowledge of MDP transitions 
+\item Uses the simplest possible idea: Using sample means from episodic experience 
+\end{itemize}
+
+\noindent
+\textbf{Goal: } Given a policy $\pi$, learn $V_\pi$ from episodes of experience: $\sigma_1, \alpha_1, r_1,..., \sigma_k$
+Recall that the value function uses the expected return, however, Monte Carlo uses the empirical sample means as an approximation for the expected return:
+\begin{equation}
+\label{Monte Carlo Mean}
+\begin{split}
+V_\pi (\sigma) = E_\pi [U(t) | \sigma_t = \sigma] \approx \frac{1}{N} \sum\limits^{N}_{i=1}{U_{i,\sigma}}
+\end{split}
+\end{equation}
+\noindent 
+
+\subsection{Model Free Control: Monte Carlo}
+To solve the control problem, a greedy policy function is used w.r.t to the current value function. 
+\begin{equation}
+\label{Monte Carlo Control}
+\begin{split}
+\pi_*(\sigma) = arg\max\limits^{}_{\alpha}{Q_\pi(\sigma,\alpha)}
+\end{split}
+\end{equation}
+
+\noindent
+The major problem with this approach in this project's problem domain is the fact that because the state space in BSG is very complex, and because the Monte Carlo solution requires a 'reset' back to a specific state ${\sigma_t}$ to effectively approximate the expected returns, the solution is not a good fit for the problem at hand. 
+
+\subsection{Model Free: Temporal Difference Learning - TD(0)}
+\label{TD learning}
+Temporal Difference Learning (TDL) is an \textit{online}-policy method in which the agent learns updates it's prediction at every time step throughout an episode, this differs to the MC solution as MC relies on episodic experiences as a whole to learn, rather than learning during the actual episode.  
+\\
+\\
+In its mathematical notation, this means that the value function $V_\pi(\sigma)$ is updated toward the \textit{estimated} return $\rho(\sigma_t) + \gamma V_\pi (\sigma_t)$:
+\begin{equation}
+\label{TD error}
+\begin{split}
+V_\pi(\sigma) \leftarrow V_\pi(\sigma) + \beta(\rho(\sigma_t) + \gamma V_\pi (\sigma_t) - V_\pi(\sigma_{t+1}))
+\end{split}
+\end{equation}
+
+Where the estimated return is analogous to the Bellman equation \ref{value-function-bellman}, in which $\rho(\sigma_t)$ is the immediate reward and $\gamma V_\pi(\sigma_t)$ is the discounted future reward for the next step and where $\beta$ is the generalised \textit{learning rate}. We substitute this \textit{estimated} return( otherwise known as the \textit{TD Target} in for the \textit{real} return unlike in MC methods, which results in the \textit{TD error} of:
+
+\begin{equation}
+\label{TD error}
+\begin{split}
+\delta_t = \rho(\sigma_t) + \gamma V_\pi (\sigma_t) - V_\pi(\sigma_{t+1})
+\end{split}
+\end{equation}
+\noindent
+Intuitively this differs with MC methods because, in an example where the agent was driving a car and \textbf{almost} crashes, but then drives off safely: the MC method would not update the value function in a negative sense because the end goal was not negative, whilst with TD learning, the \textit{online} learning policy allows the agent to update the value function for the previous time steps leading up to the incident to change future behaviour. This is desirable behaviour for the prop trader problem as it means that the agent could potentially learn the states that lead up to a a sudden drop or rise in price of a stock, which the trader could have bided or asked for, which may have led to a loss. Whilst in MC the trader would have had to commit the to a bad trade to have learnt from the experience. 
+\\
+\\
+
+\noindent 
+To solve the control problem for TD Learning , there are various options that can applied to this kind of learning that follows the 'Generalised Policy Iteration' structure, with the exploration vs exploitation problem trade-off being achieved with the $\epsilon-greedy$ method. They are: \textit{SARSA, SARSA, Q-Learning, Expected SARSA}. The following equations have been obtained from \cite{https://www.cellstrat.com/2020/04/27/temporal-difference-methods/} 
+\\
+\\
+\textbf{SARSA}
+\\
+\\
+This method uses every element of the quintuple of events $(S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})$, inspiring the name "SARSA". 
+\begin{equation}
+\label{SARSA}
+\begin{split}
+Q(\sigma_t, \alpha_t) \leftarrow Q(\sigma_t, \alpha_t) + \alpha[\rho(\sigma_t) + \gamma Q(\sigma_{t+1}, \alpha_{t+1}) - Q(\sigma_t, \alpha_t)]
+\end{split}
+\end{equation}
+\noindent
+This is an \textit{on-policy} method which means that the agent will learn by using the experience sampled by the same policy. 
+\\
+\\
+\noindent
+\textbf{SARSAmax/Q-Learning}
+\\
+\\
+This is a \textit{off-policy} TD algorithm. This means that the learned action-value function, Q, directly approximates $Q_*$, the optimal action-value function. This occurs independent of the policy that is being followed. 
+\begin{equation}
+\label{Q-learning}
+\begin{split}
+Q(\sigma_t, \alpha_t) \leftarrow Q(\sigma_t, \alpha_t) + \alpha[\rho(\sigma_t) + \gamma \max\limits^{}_{\alpha}Q(\sigma_{t+1}, A) - Q(\sigma_t, \alpha_t)]
+\end{split}
+\end{equation}
+
+\noindent
+\textbf{Expected SARSA}
+\\
+\\
+This is an \textit{on-policy} TD control algorithm. It is similar to Q-learning, with a slight variance. Instead of the maximum over next state–action pairs,  the algorithm uses the expected value, taking into account how likely each action is under the policy being used. Given the next state, $\sigma_{t+1}$, this algorithm moves deterministically in the same direction as SARSA moves in expectation. 
+\begin{equation}
+\label{SARSA}
+\begin{split}
+Q(\sigma_t, \alpha_t) \leftarrow Q(\sigma_t, \alpha_t) + \alpha[\rho(\sigma_t) + \gamma E_\pi[Q(\sigma_{t+1}, \alpha_{t+1}) | \sigma_{t+1}] - Q(\sigma_t, \alpha_t)]
+\end{split}
+\end{equation}
+
+\noindent
+All three control solutions for TD learning follow the same \textit{Policy iteration} procedures as outlined earlier in this section. 
+
+\subsection{Value Function Approximation}
+\label{subsection:value-function-approx}
+In an ideal scenario, the discussed methods so far (MC and TD) would work for all reinforcement learning problems, however there is a critical hurdle that these solutions to not account for in real world problems. The solutions discussed thus far solve the reinforcement learning problems using \textit{tabular methods} i.e treating $V_\pi(\sigma)$ and $Q_\pi(\sigma, \alpha)$ as dictionaries, which is simply not a feasible solution for problems with a large state space. As examples, Backgammon has $10^{20}$ states, and the game AlphaGo Zero solved, 'Go', has $10^{70}$ states. Backgammon is considered a small game, which provides some added perspective as to the scale of problems that reinforcement learning can solve. 
+\\
+\\
+\noindent
+This problem is tackled using \textit{Value function approximation}:
+
+\begin{equation}
+\label{value-approx}
+\begin{split}
+\hat{V}(\sigma, \textbf{w}) \approx V_\pi(\sigma)
+\end{split}
+\end{equation}
+
+\begin{equation}
+\label{action-value-approx}
+\begin{split}
+\hat{Q}(\sigma,\alpha, \textbf{w}) \approx Q_\pi(\sigma, \textbf{w})
+\end{split}
+\end{equation}
+\noindent
+These functions are parametric function 'approximators', where \textbf{w} are the weights. So now, the parametric regression allows the approximator to generalise the previously denoted dictionaries as a general fitted function, which allows the agent to query the function for unseen/infinite state spaces. 
 
 
+\begin{wrapfigure}{L}{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=0.48\textwidth]{value-approximators.png}
+  \end{center}
+  \caption{Types of value approximators, reproduced from Silver \cite{https://www.davidsilver.uk/wp-content/uploads/2020/03/FA.pdf}}
+\label{fig:approximators}  
+\end{wrapfigure}
+\noindent
 
+The figure on the left hand side shows the architectures of the varying types of approximators. The leftmost architecture represents a \textit{Value function} approximator, where a 'black-box' function spits out the 'value' of being in state \textit{s}. The middle architecture showcases the \textit{action-value} approximator, where again, a 'black box' function takes in the state the agent is in, and the action it is considering, and it spits out how good that action is. Lastly, the rightmost architecture represents an architecture that will give the agent the action-value for all possible actions in the given state \textit{s}. 
+\\
+\\
+The natural step to take at this point is to choose the type of 'black-box', and this project explores the usage of neural networks. 
+\\
+\\
+The methodology to optimising these weights is Stochastic Gradient Descent(SGD). To perform SGD we need a differentiable function with input parameter \textbf{w}, J(\textbf{w}) , where the gradient of J(\textbf{w}) is defined as:
+\begin{equation}
+\label{parameter-gradient}
+\begin{split}
+\nabla_\textbf{w} J(\textbf{w}) = \gradient
+\end{split}
+\end{equation}
+In a supervised learning example, the goal is to find parameter vector \textbf{w} that minises the mean-squared error (MSE) between the approximated value function $\hat{V}(s, \textbf{w})$ and true value $V_\pi(\sigma)$ and then use SGD to find local minima as defined in \cite{https://www.davidsilver.uk/wp-content/uploads/2020/03/FA.pdf}:
 
+\begin{equation}
+\label{MSE-supervised}
+\begin{split}
+J(\textbf{w}) = E_\pi[(V_\pi(\sigma) - \hat{V(\sigma, \textbf{w}))^{2}}
+\end{split}
+\end{equation}
+\noindent
+However, considering the context is reinforcement learning, there is no objective truth for $V_\pi(\sigma)$, there are only rewards to indicate to the agent whether or not the actions are good or bad, which are acquired through experience. 
+Luckily, the previous subsections covered precise this. The objective function can be defined with the help of the TD/MC method defined earlier as:
+\begin{itemize}
+\item For MC the 'objective truth' becomes the return $U_t$: $\Delta \textbf{w} = \beta(U_t - \hat{V}(\sigma_t, \textbf{w})) \nabla_\textbf{w} \hat{V}(\sigma_t, \textbf{w}$
+\item For TD the 'objective truth' becomes the TD target $U_t$: $\Delta \textbf{w} = \beta(\rho(\sigma_{t+1}) + \gamma\hat{V}(\sigma_{t+1}, \textbf{w}) - \hat{V}(\sigma_t, \textbf{w})) \nabla_\textbf{w} \hat{V}(\sigma_t, \textbf{w})$
+\end{itemize}
+
+\subsection{Policy Gradient}
+The last subsection explained the use of value approximation functions \ref{value-approx} and \ref{action-value-approx}, to pick actions greedily with $\epsilon-greedy$ methods to acquire the max $Q_\pi$ during policy evaluation - summed up as policy iteration. 
+\\
+\\
+A more natural and direct approach may be to directly parameterise the \textit{policy} rather than the value functions - This is known as Policy-Based Reinforcement Learning. So now the policy will be manipulated directly, by controlling and learning the parameters to affect the distribution by which actions are picked: so the policy can be directly modelled as:
+
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+\pi_\theta(\sigma, \alpha) = P[\alpha | \sigma, \theta]
+\end{split}
+\end{equation}
+\noindent
+The goal for policy based reinforcement learning is that for a given policy $\pi_\theta(\sigma,\alpha)$ with paramters $\theta$, find the best set of paramteres $\theta$. However, the notion of 'best' is ambiguous, and  which is why an objective function needs to be defined. There are numerous kinds of functions depending on the type of environment, however, considering that a market session is an episodic environment, which has the notion of a \textit{start-state}, the most suitable objective function is as follows: 
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+J_1(\theta) = V^{\pi_\theta}(\sigma_1) = E_{\pi_\theta} [v_1]
+\end{split}
+\end{equation}
+\noindent
+This objective function encodes the notion that if the agent always starts in some start state $\sigma_1$ or if the agent has a distribution over $\sigma_1$, how does the agent maximise the total end reward.
+\\
+\\
+To find the $\theta$ that maximises the objective function $J(\theta)$ to find the optimal policy $\pi_*$, the project considers gradient \textit{ascent}. 
+\\
+\\
+Policy gradient algorithms search for a local maximum for the objective function $J(\theta)$ by ascending the gradient of the policy, w.r.t to the parameters $\theta$ 
+
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+\Delta \theta = \beta \nabla_\theta J(\theta)
+\end{split}
+\end{equation}
+\noindent
+where $\nabla_\theta J(\theta)$ is the \textbf{Policy Gradient} and $\beta$ is the learning rate 
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+\nabla_\theta J(\theta) = \policygradient
+\end{split}
+\end{equation}
+\noindent
+\textbf{Monte Carlo Policy Gradient}
+\\
+\\
+To compute the policy gradient analytically by exploiting the likelihood ratio trick:
+\begin{equation}
+\begin{split}
+\nabla_\theta \pi_\theta(\sigma, \alpha) = \pi_\theta(\sigma,\alpha) \frac{\nabla_\theta \pi_\theta(\sigma,\alpha}{\pi_\theta (\sigma, \alpha)} \\
+= \pi_\theta(\sigma,\alpha) \nabla_\theta \log_{\pi_\theta} (\sigma,\alpha) 
+\end{split}
+\end{equation}
+Which allows the equation to represent a familiar term in statistics and machine learning, the score function \cite{score-function} which allows the gradient ascent to maximise the log likelihood to tell it how to adjust the gradients.
+\\
+\\ 
+For \textbf{discrete} actions, a \textit{Softmax} Policy is used, where the actions are weighted using a linear combination of features $\phi(\sigma,\alpha)^{T}\theta$, and then to convert this linear combination to a probability function, these are exponentiated:
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+\pi_\theta(\sigma, \alpha) \propto e^{\phi(\sigma,\alpha)^{T}\theta}
+\end{split}
+\end{equation}
+
+\noindent
+To make the score function:
+\begin{equation}
+\label{Policy Gradient}
+\begin{split}
+ \nabla_\theta \log_{\pi_\theta} (\sigma,\alpha)  = \phi(\sigma,\alpha) - E_{\pi_\theta}[\phi(\sigma, \cdot)]
+\end{split}
+\end{equation}
+Intuitively this means that the feature for the action that the agent actually took, minus the average feature for all the actions the agent might have taken. So, the score function summarises how much more of the given feature it has more than usual, and if it gets a more reward, then adjust the policy to do it more. 
+\\
+\\
+
+\noindent
+\textbf{Actor Critic Policy Gradient}
+\\
+\\
+\noindent 
+An alternative method is also explored in this project. In the MC Policy Gradient method, the notion of the action-value functions defined earlier in this chapter are completely ignored, and focuses on the policy itself. In addition, the MC policy gradient method also has a high amount of variance.  Contrastingly, the Actor-Critic method reintroduced the notion of the action-value function via value function approximation outline in subsection \ref{subsection:value-function-approx}, whilst also aiming to reduce the variance.
+
+The main component in this method is that a \textit{Critic} is used to explicitly estimate the action-value function, rather than using the returns of the episode experience.
+\begin{equation}
+\begin{split}
+Q_w(\sigma,\alpha) \approx Q^{\pi_{\theta}} (\sigma, \alpha)
+\end{split}
+\end{equation}
+
+The Actor-Critic algorithms maintain two sets of parameters:
+\begin{itemize}
+\item Critic - Updates the action-value function paramters: w
+\item Actor - Updates policy parameters $\theta$, in the direction suggested by the critic
+\end{itemize}
+
+\noindent
+The actor is the entity that actually makes the decision in the environment. The critic merely observes the actor, however, it evaluates the actor's decisions. 
+The critic element is introduced in order to reduce the high variance experienced from using MC Policy Gradient methods.This methodology is unique in the sense that it combines the previously explained Value-based methods, as well as the newly defined Policy-based methods.  Unsurprisingly, this method follows the overarching structure of policy gradient methods, however, they are defined as an \textit{approximate} policy gradient:
+\begin{equation}
+\begin{split}
+\nabla_\theta J(\theta) \approx E_{\pi_{\theta}} [\nabla_\theta log_{\pi_{\theta}}(\sigma,\alpha) Q_w(\sigma, \alpha)]\\
+\Delta \theta = \beta \nabla_\theta log_{\pi_{\theta}}(\sigma,\alpha) Q_w(\sigma, \alpha)
+\end{split}
+\end{equation}
+
+\noindent
+The main idea here is that the actor adjusts the policy parameters in the direction that, according to the critic, will get more reward. So, the true action-value function is replaced by the critic's approximation of this function using a neural network. 
+\\
+\\
+\noindent
+The obvious question is how the critic is estimating the action value function, luckily this was covered in the previous sections, because this is a policy evaluation problem. subsections \ref{Monte Carlo Prediction} and \ref{TD learning}
+
+%
+\subsection{Discrete vs Continuous Action Spaces}
+%\subsection{DDPG}
+
+\section{Summary}
+This chapter aimed to summarise the actual technical challenges of the prop trader problem as well as the plethora of techniques that are traditionally used to solve reinforcement problems. The chapter started with providing the necessary context to understand how reinforcement learning is structured as a problem, and then the consequent sections built up the necessary knowledge to understand the main solutions outlined in the latter sections of the chapter. The project will aim to implement these techniques. 
 
 % -----------------------------------------------------------------------------
 
