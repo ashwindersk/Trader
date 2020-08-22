@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.12.13)  21 AUG 2020 21:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.12.13)  21 AUG 2020 16:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -988,79 +988,79 @@ Underfull \hbox (badness 10000) in paragraph at lines 273--284
 
 
 LaTeX Warning: Citation `MarketEquilibrium' on page 1 undefined on input line 2
-92.
+91.
 
 
 LaTeX Warning: Citation `https://www.investopedia.com/terms/c/competitive-equil
-ibriums.asp' on page 1 undefined on input line 292.
+ibriums.asp' on page 1 undefined on input line 291.
 
 
-LaTeX Warning: Citation `Gode and Sunder' on page 1 undefined on input line 298
+LaTeX Warning: Citation `Gode and Sunder' on page 1 undefined on input line 297
 .
 
 
 LaTeX Warning: Citation `https://www.economicshelp.org/blog/glossary/allocative
--efficiency/' on page 1 undefined on input line 301.
+-efficiency/' on page 1 undefined on input line 300.
 
 
-LaTeX Warning: Citation `Cliff-critique' on page 1 undefined on input line 304.
+LaTeX Warning: Citation `Cliff-critique' on page 1 undefined on input line 303.
 
 
 
-LaTeX Warning: Citation `GD' on page 1 undefined on input line 307.
+LaTeX Warning: Citation `GD' on page 1 undefined on input line 306.
 
 
-LaTeX Warning: Citation `IBM experiments' on page 1 undefined on input line 310
+LaTeX Warning: Citation `IBM experiments' on page 1 undefined on input line 309
 .
 
 
-LaTeX Warning: Citation `AA' on page 1 undefined on input line 313.
+LaTeX Warning: Citation `AA' on page 1 undefined on input line 312.
 
 
 LaTeX Warning: Citation `FinTech Lecture Slides' on page 1 undefined on input l
-ine 313.
+ine 312.
 
 
 LaTeX Warning: Citation `FinTech Lecture Slides' on page 1 undefined on input l
-ine 313.
+ine 312.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--314
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 288--313
 
  []
 
@@ -1068,19 +1068,19 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.314 
+l.313 
        [1
 
 ]
 
 LaTeX Warning: Citation `Deep Learning Revolution' on page 2 undefined on input
- line 317.
+ line 316.
 
 
-LaTeX Warning: Citation `RL-history' on page 2 undefined on input line 320.
+LaTeX Warning: Citation `RL-history' on page 2 undefined on input line 319.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 317--321
+Underfull \hbox (badness 10000) in paragraph at lines 316--320
 
  []
 
@@ -1091,111 +1091,107 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.321 
+l.320 
        [2]
 
 LaTeX Warning: Citation `deep learning robots https://arxiv.org/abs/1504.00702'
- on page 3 undefined on input line 322.
+ on page 3 undefined on input line 321.
 
 
 LaTeX Warning: Citation `mx banks profit breakdown https://www.mx.com/moneysumm
-it/top-us-retail-banks-income-revenue' on page 3 undefined on input line 341.
-
-
-LaTeX Warning: Reference `section:Experimental Economics to Algorithmic Trading
-' on page 3 undefined on input line 344.
+it/top-us-retail-banks-income-revenue' on page 3 undefined on input line 340.
 
 
 LaTeX Warning: Citation `quora-trading-hard' on page 3 undefined on input line 
-348.
+347.
 
 
 LaTeX Warning: Citation `https://www.statista.com/chart/20245/share-of-computer
-ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 348.
+ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 347.
 
 
 LaTeX Warning: Citation `https://www.statista.com/chart/20245/share-of-computer
-ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 351.
+ized-and-human-trading-in-us-equities/' on page 3 undefined on input line 350.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 335--355
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 334--354
 
  []
 
 [3]
 
 LaTeX Warning: Reference `section:DevelopmentsAI' on page 4 undefined on input 
-line 360.
+line 359.
 
 
 LaTeX Warning: Citation `deepmind alpha go zero' on page 4 undefined on input l
-ine 363.
+ine 362.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--371
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 360--371
+Underfull \hbox (badness 10000) in paragraph at lines 359--370
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--371
+Underfull \hbox (badness 10000) in paragraph at lines 359--370
 
  []
 
 
-LaTeX Warning: Citation `falcao' on page 4 undefined on input line 376.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 376--383
+Underfull \hbox (badness 10000) in paragraph at lines 359--370
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 376--383
+LaTeX Warning: Citation `falcao' on page 4 undefined on input line 375.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 375--382
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 389--399
+Underfull \hbox (badness 10000) in paragraph at lines 375--382
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 389--399
+Underfull \hbox (badness 10000) in paragraph at lines 388--398
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 389--399
+Underfull \hbox (badness 10000) in paragraph at lines 388--398
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 388--398
 
  []
 
@@ -1203,596 +1199,543 @@ Underfull \hbox (badness 10000) in paragraph at lines 389--399
 
 ]
 Chapter 2.
-<LOB-Precross.png, id=253, 324.21124pt x 131.49126pt>
+<LOB-Precross.png, id=254, 324.21124pt x 131.49126pt>
 File: LOB-Precross.png Graphic file (type png)
 <use LOB-Precross.png>
-Package pdftex.def Info: LOB-Precross.png  used on input line 453.
+Package pdftex.def Info: LOB-Precross.png  used on input line 452.
 (pdftex.def)             Requested size: 364.19667pt x 147.71861pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 457--463
+Underfull \hbox (badness 10000) in paragraph at lines 456--462
 
  []
 
 [7 <./LOB-Precross.png>]
 
-LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 473.
+LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 472.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 488--497
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 488--497
+Underfull \hbox (badness 10000) in paragraph at lines 487--496
 
  []
 
-<LOB-Postcross.png, id=265, 323.2075pt x 133.49875pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--496
+
+ []
+
+<LOB-Postcross.png, id=266, 323.2075pt x 133.49875pt>
 File: LOB-Postcross.png Graphic file (type png)
 <use LOB-Postcross.png>
-Package pdftex.def Info: LOB-Postcross.png  used on input line 500.
+Package pdftex.def Info: LOB-Postcross.png  used on input line 499.
 (pdftex.def)             Requested size: 364.19667pt x 150.43625pt.
 
-LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 505.
+LaTeX Warning: Reference `fig:lob' on page 8 undefined on input line 504.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 509--513
+Underfull \hbox (badness 10000) in paragraph at lines 508--512
 
  []
 
 [8 <./LOB-Postcross.png>]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 537.
+
+LaTeX Warning: Citation `hey' on page 9 undefined on input line 519.
 
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/base/omlcmr.fd
-File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 537.
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
+Underfull \hbox (badness 10000) in paragraph at lines 519--532
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
+Underfull \hbox (badness 10000) in paragraph at lines 519--532
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 515--544
+Underfull \hbox (badness 10000) in paragraph at lines 519--532
 
  []
 
 [9]
-
-LaTeX Warning: Citation `hey' on page 10 undefined on input line 549.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 549--562
+Underfull \hbox (badness 10000) in paragraph at lines 545--549
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 549--562
+Underfull \hbox (badness 10000) in paragraph at lines 545--549
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 549--562
+Underfull \hbox (badness 10000) in paragraph at lines 561--566
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--579
+LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
+arkov-decision-process/' on page 10 undefined on input line 575.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 584--589
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--579
+LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
+arkov-decision-process' on page 10 undefined on input line 603.
 
- []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 591--596
+Underfull \hbox (badness 10000) in paragraph at lines 599--605
 
  []
 
 [10]
 
-LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
-arkov-decision-process/' on page 11 undefined on input line 605.
+LaTeX Warning: Citation `MDP-theorem RL Course by David Silver - Lecture 2: Mar
+kov Decision Process' on page 11 undefined on input line 645.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 614--619
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
 
  []
 
 
-LaTeX Warning: Citation `rearrange-value-function https://www.jeremyjordan.me/m
-arkov-decision-process' on page 11 undefined on input line 633.
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
+
+ []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 629--635
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 660--681
 
  []
 
 [11]
-
-LaTeX Warning: Citation `MDP-theorem RL Course by David Silver - Lecture 2: Mar
-kov Decision Process' on page 12 undefined on input line 675.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 690--711
+Underfull \hbox (badness 10000) in paragraph at lines 716--720
 
  []
 
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 746--750
+Underfull \hbox (badness 10000) in paragraph at lines 734--739
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 764--769
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 764--769
+Underfull \hbox (badness 10000) in paragraph at lines 734--739
 
  []
 
 
 LaTeX Warning: Citation `https://www.cellstrat.com/2020/04/27/temporal-differen
-ce-methods/' on page 13 undefined on input line 771.
+ce-methods/' on page 13 undefined on input line 741.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 770--778
+Underfull \hbox (badness 10000) in paragraph at lines 740--748
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 770--778
+Underfull \hbox (badness 10000) in paragraph at lines 740--748
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 753--763
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 753--763
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 770--775
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 787--792
 
  []
 
 [13]
-Underfull \hbox (badness 10000) in paragraph at lines 783--793
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 783--793
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 800--805
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 817--822
-
- []
-
-<value-approximators.png, id=336, 445.665pt x 252.945pt>
+<value-approximators.png, id=338, 445.665pt x 252.945pt>
 File: value-approximators.png Graphic file (type png)
 <use value-approximators.png>
-Package pdftex.def Info: value-approximators.png  used on input line 843.
+Package pdftex.def Info: value-approximators.png  used on input line 813.
 (pdftex.def)             Requested size: 364.19667pt x 206.70607pt.
 
-LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
-FA.pdf' on page 14 undefined on input line 844.
-
 
 LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
-FA.pdf' on page 14 undefined on input line 844.
-
-[14]
-Underfull \hbox (badness 10000) in paragraph at lines 849--857
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 849--857
-
- []
+FA.pdf' on page 14 undefined on input line 814.
 
 
 LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
-FA.pdf' on page 15 undefined on input line 863.
+FA.pdf' on page 14 undefined on input line 814.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 881--885
-
- []
-
-[15 <./value-approximators.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 899--908
+Underfull \hbox (badness 10000) in paragraph at lines 819--827
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 899--908
+Underfull \hbox (badness 10000) in paragraph at lines 819--827
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 922--928
+LaTeX Warning: Citation `https://www.davidsilver.uk/wp-content/uploads/2020/03/
+FA.pdf' on page 14 undefined on input line 833.
+
+[14 <./value-approximators.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 851--855
 
  []
 
 
-LaTeX Warning: Citation `score-function' on page 16 undefined on input line 934
+Underfull \hbox (badness 10000) in paragraph at lines 869--878
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 869--878
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 892--898
+
+ []
+
+
+LaTeX Warning: Citation `score-function' on page 15 undefined on input line 904
 .
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 933--938
+Underfull \hbox (badness 10000) in paragraph at lines 903--908
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 922--926
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 952--956
+Underfull \hbox (badness 10000) in paragraph at lines 922--926
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 952--956
+Underfull \hbox (badness 10000) in paragraph at lines 927--933
 
  []
 
-[16]
+
 Underfull \hbox (badness 10000) in paragraph at lines 957--963
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 987--993
+Underfull \hbox (badness 10000) in paragraph at lines 967--976
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 997--1006
+Underfull \hbox (badness 10000) in paragraph at lines 967--976
 
  []
 
+[16] [17] [18
 
-Underfull \hbox (badness 10000) in paragraph at lines 997--1006
-
- []
-
-[17] [18]
+]
 Chapter 3.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1017--1022
+Underfull \hbox (badness 10000) in paragraph at lines 987--992
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1017--1022
+Underfull \hbox (badness 10000) in paragraph at lines 987--992
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1023--1028
+Underfull \hbox (badness 10000) in paragraph at lines 993--998
 
  []
 
-<RL-architecture.jpg, id=385, 421.575pt x 162.6075pt>
+<RL-architecture.jpg, id=383, 421.575pt x 162.6075pt>
 File: RL-architecture.jpg Graphic file (type jpg)
 <use RL-architecture.jpg>
-Package pdftex.def Info: RL-architecture.jpg  used on input line 1034.
+Package pdftex.def Info: RL-architecture.jpg  used on input line 1004.
 (pdftex.def)             Requested size: 364.19667pt x 140.47739pt.
-[19
-
- <./RL-architecture.jpg>]
-Underfull \hbox (badness 10000) in paragraph at lines 1055--1059
+[19 <./RL-architecture.jpg>]
+Underfull \hbox (badness 10000) in paragraph at lines 1025--1029
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1055--1059
+Underfull \hbox (badness 10000) in paragraph at lines 1025--1029
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 1069--1069
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1039--1039
 [][][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1071--1077
+Underfull \hbox (badness 10000) in paragraph at lines 1041--1047
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1080--1085
+Underfull \hbox (badness 10000) in paragraph at lines 1050--1055
 
  []
 
-LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 109
+LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 106
 0.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [20]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 1095--1095
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1065--1065
 [][][][][][][] 
  []
 
 
 LaTeX Warning: Citation `Deep learning for limit order books paper in research 
-folder' on page 21 undefined on input line 1106.
+folder' on page 21 undefined on input line 1076.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1096--1107
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1096--1107
+Underfull \hbox (badness 10000) in paragraph at lines 1066--1077
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1096--1107
+Underfull \hbox (badness 10000) in paragraph at lines 1066--1077
 
  []
 
-<LOB-Snapshot.png, id=417, 1099.10625pt x 774.895pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1066--1077
+
+ []
+
+<LOB-Snapshot.png, id=415, 1099.10625pt x 774.895pt>
 File: LOB-Snapshot.png Graphic file (type png)
 <use LOB-Snapshot.png>
-Package pdftex.def Info: LOB-Snapshot.png  used on input line 1111.
+Package pdftex.def Info: LOB-Snapshot.png  used on input line 1081.
 (pdftex.def)             Requested size: 227.62206pt x 160.47438pt.
-<AE-Architecture.png, id=419, 1144.275pt x 677.53125pt>
+<AE-Architecture.png, id=417, 1144.275pt x 677.53125pt>
 File: AE-Architecture.png Graphic file (type png)
 <use AE-Architecture.png>
-Package pdftex.def Info: AE-Architecture.png  used on input line 1133.
+Package pdftex.def Info: AE-Architecture.png  used on input line 1103.
 (pdftex.def)             Requested size: 364.19667pt x 215.6462pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1107
 
  []
 
 [21 <./LOB-Snapshot.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1138--1152
+Underfull \hbox (badness 10000) in paragraph at lines 1108--1122
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1138--1152
+Underfull \hbox (badness 10000) in paragraph at lines 1108--1122
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1138--1152
+Underfull \hbox (badness 10000) in paragraph at lines 1108--1122
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1138--1152
+Underfull \hbox (badness 10000) in paragraph at lines 1108--1122
 
  []
 
 [22 <./AE-Architecture.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1168--1175
+Underfull \hbox (badness 10000) in paragraph at lines 1138--1145
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1168--1175
+Underfull \hbox (badness 10000) in paragraph at lines 1138--1145
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1181--1189
+Underfull \hbox (badness 10000) in paragraph at lines 1151--1159
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1181--1189
+Underfull \hbox (badness 10000) in paragraph at lines 1151--1159
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1192--1197
+Underfull \hbox (badness 10000) in paragraph at lines 1162--1167
 
  []
 
 [23]
-<PG-Vanilla-Reward.png, id=447, 578.16pt x 433.62pt>
+<PG-Vanilla-Reward.png, id=445, 578.16pt x 433.62pt>
 File: PG-Vanilla-Reward.png Graphic file (type png)
 <use PG-Vanilla-Reward.png>
-Package pdftex.def Info: PG-Vanilla-Reward.png  used on input line 1226.
+Package pdftex.def Info: PG-Vanilla-Reward.png  used on input line 1196.
 (pdftex.def)             Requested size: 364.19667pt x 273.14235pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1231--1235
+Underfull \hbox (badness 10000) in paragraph at lines 1201--1205
 
  []
 
 [24 <./PG-Vanilla-Reward.png>]
-<PG-Vanilla-Num-Trades.png, id=455, 578.16pt x 433.62pt>
+<PG-Vanilla-Num-Trades.png, id=453, 578.16pt x 433.62pt>
 File: PG-Vanilla-Num-Trades.png Graphic file (type png)
 <use PG-Vanilla-Num-Trades.png>
-Package pdftex.def Info: PG-Vanilla-Num-Trades.png  used on input line 1238.
+Package pdftex.def Info: PG-Vanilla-Num-Trades.png  used on input line 1208.
 (pdftex.def)             Requested size: 364.19667pt x 273.14235pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1243--1249
+Underfull \hbox (badness 10000) in paragraph at lines 1213--1219
 
  []
 
-<PG-Vanilla-Good-Vs-Bad-Trades.png, id=456, 578.16pt x 433.62pt>
+<PG-Vanilla-Good-Vs-Bad-Trades.png, id=454, 578.16pt x 433.62pt>
 File: PG-Vanilla-Good-Vs-Bad-Trades.png Graphic file (type png)
 <use PG-Vanilla-Good-Vs-Bad-Trades.png>
 Package pdftex.def Info: PG-Vanilla-Good-Vs-Bad-Trades.png  used on input line 
-1252.
+1222.
 (pdftex.def)             Requested size: 364.19667pt x 273.14235pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [25 <./PG-Vanilla-Num-Trades.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1257--1263
+Underfull \hbox (badness 10000) in paragraph at lines 1227--1233
 
  []
 
 
 LaTeX Warning: Citation `https://medium.com/@BonsaiAI/deep-reinforcement-learni
 ng-models-tips-tricks-for-writing-reward-functions-a84fe525e8e0' on page 26 und
-efined on input line 1267.
+efined on input line 1237.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1267--1277
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1267--1277
+Underfull \hbox (badness 10000) in paragraph at lines 1237--1247
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1267--1277
+Underfull \hbox (badness 10000) in paragraph at lines 1237--1247
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1237--1247
 
  []
 
 [26 <./PG-Vanilla-Good-Vs-Bad-Trades.png>]
-LaTeX Font Info:    Try loading font information for OML+cmtt on input line 128
+LaTeX Font Info:    Try loading font information for OML+cmtt on input line 125
 9.
-LaTeX Font Info:    No file OMLcmtt.fd. on input line 1289.
+LaTeX Font Info:    No file OMLcmtt.fd. on input line 1259.
 
 
 LaTeX Font Warning: Font shape `OML/cmtt/m/n' undefined
 (Font)              using `OML/cmm/m/it' instead
-(Font)              for symbol `textgreater' on input line 1289.
+(Font)              for symbol `textgreater' on input line 1259.
 
 
-Overfull \hbox (16.06036pt too wide) in paragraph at lines 1289--1290
+Overfull \hbox (16.06036pt too wide) in paragraph at lines 1259--1260
 []\OT1/cmr/m/n/10 R(t) = 10 :\OT1/cmtt/m/n/10 if (Action == SELL and trader.pos
 ition == BOUGHT and current[]midprice \OML/cmm/m/it/10 >\OT1/cmtt/m/n/10 price
  []
 
 
-Overfull \hbox (0.3105pt too wide) in paragraph at lines 1290--1291
+Overfull \hbox (0.3105pt too wide) in paragraph at lines 1260--1261
 []\OT1/cmr/m/n/10 R(t) = 10 :\OT1/cmtt/m/n/10 if (Action == BUY and trader.posi
 tion == SOLD and current[]midprice \OML/cmtt/m/n/10 <\OT1/cmtt/m/n/10 price
  []
 
 
-Overfull \hbox (19.39369pt too wide) in paragraph at lines 1291--1292
+Overfull \hbox (19.39369pt too wide) in paragraph at lines 1261--1262
 []\OT1/cmr/m/n/10 R(t) = -10 :\OT1/cmtt/m/n/10 if (Action == SELL and trader.po
 sition == BOUGHT and current[]midprice \OML/cmtt/m/n/10 <\OT1/cmtt/m/n/10 price
 
  []
 
 
-Overfull \hbox (3.64383pt too wide) in paragraph at lines 1292--1293
+Overfull \hbox (3.64383pt too wide) in paragraph at lines 1262--1263
 []\OT1/cmr/m/n/10 R(t) = -10 :\OT1/cmtt/m/n/10 if (Action == BUY and trader.pos
 ition == SOLD and current[]midprice \OML/cmtt/m/n/10 >\OT1/cmtt/m/n/10 price
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1294--1308
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1278
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1294--1308
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1278
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1294--1308
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1278
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1294--1308
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1278
 
  []
 
 File: PG-Vanilla-Reward.png Graphic file (type png)
 <use PG-Vanilla-Reward.png>
-Package pdftex.def Info: PG-Vanilla-Reward.png  used on input line 1313.
+Package pdftex.def Info: PG-Vanilla-Reward.png  used on input line 1283.
 (pdftex.def)             Requested size: 364.19667pt x 273.14235pt.
 
 Underfull \vbox (badness 6094) has occurred while \output is active []
@@ -1801,7 +1744,7 @@ Underfull \vbox (badness 6094) has occurred while \output is active []
 File: PG-Vanilla-Good-Vs-Bad-Trades.png Graphic file (type png)
 <use PG-Vanilla-Good-Vs-Bad-Trades.png>
 Package pdftex.def Info: PG-Vanilla-Good-Vs-Bad-Trades.png  used on input line 
-1323.
+1293.
 (pdftex.def)             Requested size: 364.19667pt x 273.14235pt.
 
 [28] [29] [30
@@ -1817,17 +1760,17 @@ Chapter 5.
 ]
 No file dissertation.bbl.
 Appendix A.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1502.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1472.
 [35
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1502.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1472.
  (./dissertation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1502.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1502.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1472.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1472.
 
 Package rerunfilecheck Info: File `dissertation.out' has not changed.
-(rerunfilecheck)             Checksum: FC8EB920E7ECEE4061D7B63E3A746092;1091.
+(rerunfilecheck)             Checksum: 9FF84528ECD4F84100DFB12059810992;1075.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1841,16 +1784,16 @@ LaTeX Warning: There were multiply-defined labels.
  )
 (\end occurred inside a group at level 1)
 
-### simple group (level 1) entered at line 576 ({)
+### simple group (level 1) entered at line 546 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 15033 strings out of 492649
- 230345 string characters out of 6129621
+ 15016 strings out of 492649
+ 229948 string characters out of 6129621
  507131 words of memory out of 5000000
- 18479 multiletter control sequences out of 15000+600000
+ 18465 multiletter control sequences out of 15000+600000
  10952 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 61i,24n,96p,1153b,2047s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 61i,24n,96p,1134b,2047s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm
 -super-ts1.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/c
@@ -1874,10 +1817,10 @@ live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texli
 ve/2018/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/t
 exlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/tex
 live/2018/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb>
-Output written on dissertation.pdf (53 pages, 842451 bytes).
+Output written on dissertation.pdf (53 pages, 838231 bytes).
 PDF statistics:
- 639 PDF objects out of 1000 (max. 8388607)
- 538 compressed objects within 6 object streams
+ 637 PDF objects out of 1000 (max. 8388607)
+ 536 compressed objects within 6 object streams
  184 named destinations out of 1000 (max. 500000)
  195 words of extra memory for PDF output out of 10000 (max. 10000000)
 

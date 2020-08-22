@@ -1,9 +1,17 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{7}{figure.caption.12}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{8}{figure.caption.13}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Types of value approximators, reproduced from Silver \cite {https://www.davidsilver.uk/wp-content/uploads/2020/03/FA.pdf}\relax }}{14}{figure.caption.17}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{7}{figure.caption.10}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{8}{figure.caption.11}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Types of value approximators, reproduced from Silver \cite {https://www.davidsilver.uk/wp-content/uploads/2020/03/FA.pdf}\relax }}{15}{figure.caption.15}
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture of Reinforcement Learning Environments\relax }}{19}{figure.caption.16}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Capturing LOB Data\relax }}{21}{figure.caption.17}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Architecture of Auto-Encoder\relax }}{22}{figure.caption.18}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Total reward over 100 iterations of the PG Agent in a market evenly populated with ZIC, ZIP and GVWY traders. \relax }}{24}{figure.caption.19}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces A plot of the number transactions the PG Vanilla agent engaged in during each episode \relax }}{25}{figure.caption.20}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for the trader \relax }}{26}{figure.caption.21}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Total reward over 100 iterations of the PG Agent with an optimised reward system \relax }}{28}{figure.caption.22}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for PG-Optimised \relax }}{28}{figure.caption.23}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
