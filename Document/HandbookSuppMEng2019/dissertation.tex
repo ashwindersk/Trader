@@ -41,7 +41,7 @@
 \usepackage{amsmath}
 \usepackage{csquotes}
 \usepackage{textcomp}
-
+\raggedbottom
 
 \def\gradient{
 \begin{pmatrix}
@@ -313,7 +313,7 @@ Prior to 2001, these algorithms had solely been pitted against other algorithms,
 Despite the promising results and the wide press received from the IBM publications, relatively little experimentation has been conducted of this type. Meanwhile, Tesauro and Bredin published an improved version GD called GD-Extended (GDX) in 2002, and Vytelingum published the Adaptive-Aggressiveness Algorithm in 2006 \cite{AA}. AA uses past history of previous trades to estimate the market equilibrium, and uses this to determine whether the current order is intramarginal/extramarginal. Based on these metrics in conjunction with its current level of \enquote*{aggressiveness}, an AA agent places an order, where a more \enquote*{aggressive} order is a bid/offer more likely to be accepted \cite{FinTech Lecture Slides}. GDX uses real-time dynamic programming to formulate agent bidding strategies in a broad class of auctions\cite{FinTech Lecture Slides}. 
 
 \subsection{Developments in Artificial Intelligence}
-\label{ section:DevelopmentsAI}
+\label{section:DevelopmentsAI}
 Despite the the longstanding theory behind Deep Learning, it has been an explosive field in the last decade, with notable achievements including: enabling Google translate to become significantly more accurate, furthering NLP research massively, and a key factor behind the driverless car. It has been labelled the \enquote*{Deep Learning Revolution} by Terry Sejnowski \cite{Deep Learning Revolution}.
 \\
 \\
@@ -354,7 +354,7 @@ On the flip side, despite the removal of human error, Torsten Slok, chief intern
 Despite this, the reliance on state of the art technology and research to propel financial services into the fifth industrial revolution is undeniable which presents an opportunity for curious computer scientists and academics to tackle these complex problems. 
 
 \vspace{0.5cm}
-\subsection{Computer Science perspective}
+\subsection{Computer science perspective}
 \label{subsection:Computer Science perspective}
 \vspace{0.5cm} 
 As mentioned in Section \ref{section:DevelopmentsAI} DRL has recently scaled to previously unsolvable problems. This is down to the ability of DRL to learn from raw sensors or input images as input, without the intervention of human, in an unsupervised machine learning manner. 
@@ -512,6 +512,7 @@ The agents that are taking part in the \enquote*{gamification} of the trading se
 The proprietary trader's objective is that to maximise their own capital by buying and selling stocks for themselves. Whilst initially it may seem like the objective of the prop trader is different to the sales trader and therefore can't be compared, but the proprietary trader's ability to maximise the difference between the price they buy and sell a stock at is analogous to a sales trader maximising the difference between its limit price and its trade price. This rephrasing of the problem allows this project to directly compare the traditional machine learning approaches to the prop trader developed in this project.
 
 \section{Traditional Sales Trader Solutions}
+\label{section:Traditional Sales Trader Solutions}
 Chapter \ref{chap:context} outlined a brief history of various automated trading systems that contributed to the evolution of this field. It is important to gain a deeper understanding of the implementations of some of those trading systems as they serve as the foundations from which this project is built upon, and they are systems that are extensively used to evaluate how effective the system developed in this project is. 
 \\
 \\
@@ -545,9 +546,11 @@ As mentioned in Subsection \ref{subsection:Experimental Economics to Algorithmic
 \section{Reinforcement Learning}
 
 This project transforms the current Prop trader problem to a problem that is well suited to a DRL paradigm, which will be the main avenue of solutions this project explores, so it is paramount to provide the technical background for reinforcement learning, which is the basis of this project.
+\\
+\\
+The rest of this section explains the mathematical foundations behind the theory that drives RL-based solutions, with the equations and derivations acquired from the sources:\cite{https://towardsdatascience.com/reinforcement-learning-demystified-markov-decision-processes-part-1-bf00dda41690}, \cite{rearrange-value-function https://www.jeremyjordan.me/markov-decision-process}, \cite{https://www.davidsilver.uk/teaching/}
 \subsection{What is Reinforcement Learning}
 Reinforcement Learning is the training of machine learning models(agents) to take actions that interact with a complex, to maximise a reward {\color{red}{ \cite{hey}}}. More formally, the agent learns, via interactions with an environment, a policy $\pi(\alpha|\sigma)$ which is the probability to take a particular action $\alpha$, after observing a state $\sigma$ that maximises its reward. 
-{\color{red}{state all the sources for the derivations in the entire chapter}}
 \\
 \\
 \noindent
@@ -630,16 +633,19 @@ Q_\pi(\sigma , \alpha) = E_\pi [U(t) | \sigma_t = \sigma, A_t, = \alpha]
 Considering the fact that the agent is interested in the optimal policy, and the optimal policy is the sequence of actions, that maximise the utility until the \enquote*{game} is finished, the value function alone cannot be used, as it only provides the expected return from a specific state, but information regarding which action to take is not provided. If the value function is to be used alone, the agent would have to simulate all possible actions to determine which action takes the agent to the state with the highest utility, which impossible in this problem domain. The Action-Value function connects the expected returns with actions, which provides the agent with information on what action to take to maximise its utility. 
 \\
 \\
-The derivation in \cite{rearrange-value-function https://www.jeremyjordan.me/markov-decision-process} allows the Equation \ref{expected-discounted-rewards-rephrased} to be rearranged in such a way that matches the format of a Bellman equation, which then allows the action-value Equation \ref{action-value} to be rearranged as a Bellman Expectation Equation, subject to a policy $\pi$:
-{\color{red}{explain what a bellman equation is}}
-
+The derivation in \cite{rearrange-value-function https://www.jeremyjordan.me/markov-decision-process} allows the Equation \ref{expected-discounted-rewards-rephrased} to be rearranged in such a way that matches the format of a Bellman equation, which by extension allows the action-value Equation \ref{action-value} to be rearranged as a Bellman Expectation Equation, subject to a policy $\pi$:
+\\
+\\
 \begin{equation}
 \label{bellman}
 \begin{split}
 V_\pi(s) = E_\pi[R_t + \gamma V_\pi(S_{t+1} | S_t = s]
 \end{split}
 \end{equation}
-
+\noindent
+The Bellman equation is a condition that is necessary for optimality associated with the optimisation method \textit{dynamic programming} \cite{https://bit.ly/31gZ7tR}. The equation denotes the \enquote*{value} of a holistic problem at a particular point in time, in terms of the payoff of some initial choices and the \enquote*{value} of the remaining decision problem, that appear as a result from those initial choices. As is the nature of \textit{dynamic programming} based solutions, it breaks the problem into a sequence of simpler subproblems - which is Bellman's \enquote{principle of optimality}\cite{https://bit.ly/3iY76ls}
+\\
+\\
 \noindent
 Which allows the Value Equation \ref{expected-discounted-rewards-rephrased}, in finite terms, to be expressed as:
 
@@ -1002,8 +1008,8 @@ Methods which can optimise for continuous action spaces are applicable to many r
 \\
 \noindent
 Both types of action spaces are applicable to solutions to solve the prop trader problem, and both are explored throughout the project.
-%\subsection{DDPG}
-
+\subsection{Deep Deterministic Policy Gradient - (DDPG)}
+\label{subsection:Deep Deterministic Policy Gradient}
 \section{Summary}`
 \noindent
 This chapter aimed to summarise the difficult technical challenges of the prop trader problem as well as the plethora of techniques that are traditionally used to solve reinforcement problems. The chapter started with providing the necessary context to understand how reinforcement learning is structured as a problem, and then the consequent sections built up the necessary knowledge to understand the main solutions outlined in the latter sections of the chapter. The project will aim to implement these techniques. 
@@ -1012,11 +1018,13 @@ This chapter aimed to summarise the difficult technical challenges of the prop t
 
 \chapter{Project Execution}
 \label{chap:execution}
-\vspace{1cm}
+
 
 \noindent 
 This chapter intends to describe the entire journey of project. From the birth of the idea of the project, to the implementation and critical analysis of results. 
-{\color{red}{Talk about merging chapters 3 and 4 because the nature of project - intertwined}}
+\\
+\\
+The convention for a master's level thesis is to separate the project execution and the analysis of the implementation to form their own chapters. However, given the iterative nature of the project, the project execution heavily intertwined with the analysis of results, which by extension dictate the next iteration of the implementation of the trader. Hence, the decision was taken to merge the conventional chapters three and four into one chapter. 
 \\
 \\
 \section{Origin}
@@ -1067,7 +1075,7 @@ for i in range(Episodes):
             trader.store_rewards(reward)
             observation = observation_
 \end{lstlisting}
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \noindent
 To elaborate on the implementation above, the environment is initialised via the following steps:  Initialising an empty \texttt{Exchange},populating the market with traders ( specified by a \texttt{traders\_spec} which defines what types of traders to populate the market with), resetting the market session time to \texttt{1} and getting the initial observation. During an \textit{epsiode}, the trader looks at the observation, takes an action and gives it to the environment to make one \textit{step}. One \textit{step} through an environment allows each trader in the market to react the the current market conditions by placing an order or by updating their internal variables. If a trade occurs, both parties are notified, and then this trade is published in the lob. This process is repeated till the max time \texttt{1000} is reached, which signifies the end of one \textit{Episode}. 
 \\
@@ -1105,13 +1113,13 @@ The problem with this observation from the environment is that it is of a variab
 \\
 Research indicates that the local spatial structure in limit order books are key components in predictive analysis about the future behaviour of markets \cite{Deep learning for limit order books paper in research folder}. The paper explores and demonstrates how data in a LOB beyond the best bid and the best ask (which are directly used to calculate the midprice and microprice) can be used to regress to future prices with significant accuracy. This is down to the lower levels of the LOB indicating the varying levels of aggressiveness in the traders since they are more prone to cancellations and updates. This  theory would be appropriate for a trader in BSG as it may be an excellent way to for the trader to predict buy and sell opportunities. Thus, the design of the state space has incorporated this ideology. 
 
-
 \begin{figure}[H]
 	\centering
-  	\includegraphics[width=0.5\textwidth]{LOB-Snapshot.png}
+  	\includegraphics[width=0.4\textwidth]{LOB-Snapshot.png}
  	\caption{Capturing LOB Data}
 	\label{fig:LOB-Snapshot}  
 \end{figure}
+
 \noindent
 To capture trends in the LOB, the five latest changes to selected details in the LOB are stored as a matrix. The matrix is formed of five, \textit{1x9} vectors which contain the price and volume of level one and level two of the bids and asks and the current time stamp for the values that are currently on the LOB. It is important to note that the time steps are not necessarily consecutive in singular time steps, they are merely the time steps in which any change occurs to the non-time values in the LOB. 
 \\
@@ -1130,7 +1138,7 @@ An AE is a neural network (NN) that attempts to learn to copy its input to its o
 The architecture of the implemented AE is as follows:
 \begin{figure}[H]
 \centering{
-  \includegraphics[width=0.8\textwidth]{AE-Architecture.png}
+  \includegraphics[width=0.7\textwidth]{AE-Architecture.png}
   \caption{Architecture of Auto-Encoder}
   }
 \label{fig:AE-arch}  
@@ -1221,9 +1229,10 @@ In Furlan-Falcao's thesis, a Policy Gradient (PG) agent was implemented which pr
 This model is denoted as \textit{PG Vanilla} as it incorporates the vanilla reward system. 
 \subsection{Analysis and Evaluation of PG Vanilla}
 \label{subsection:Analysis and Evaluation of PG Vanilla}
+
 \begin{figure}[H]
 	\centering
-  	\includegraphics[width=0.8\textwidth]{PG-Vanilla-Reward.png}
+  	\includegraphics[width=0.7\textwidth]{PG-Vanilla-Reward.png}
   	\caption{Total reward over 100 iterations of the PG Agent in a market evenly populated with ZIC, ZIP and GVWY traders. }
 	\label{fig:PG-Vanilla-Reward}  
 \end{figure}
@@ -1235,7 +1244,7 @@ However, upon inspection, the steady increase in balance was not down to the tra
 
 \begin{figure}[H] 
 	\centering
-  	\includegraphics[width=0.8\textwidth]{PG-Vanilla-Num-Trades.png}
+  	\includegraphics[width=0.7\textwidth]{PG-Vanilla-Num-Trades.png}
   	\caption{A plot of the number transactions the PG Vanilla agent engaged in during each episode }
 	\label{fig:PG-Vanilla-Num-Trades}  
 \end{figure}
@@ -1259,11 +1268,16 @@ Figure \ref{fig:PG-Vanilla-Good-Vs-Bad} suggests that the trader did not improve
 \\
 \\
 \noindent
+It is also interesting to note that the average loss per bad trade did not steadily improve as the trader took part in less trades. The average loss per negative trade was £68.83 in episode five, despite engaging in roughly half the number of trades, the average loss per trade was £63.12. This is an indication that the trader was not learning to engage in better quality trades, and thus was truly just learning to engage in less trades to avoid losses.
+\\
+\\
+\noindent 
 It was important at this stage to evaluate and scrutinise the implementation to figure out which aspect of the MDP was causing this behaviour. The most obvious factor for the reasons behind this behaviour is the reward system. Expecting the system to learn what a good trade is via a simple \enquote*{Vanilla} profit and loss based reward system seemed be unrealistic - as it lacked guidance for the trader to incentivise it to take part in good trades. Other factors include: hyper-parameters of the models, the model architectures, and the state-space design. Ideally, all these factors would be explored to improve the model, however, given time constraints, the chosen reward system being rather simplistic and that reward systems play a crucial factor in the behaviour of a DRL-based trader, it was natural to explore this factor further with experimentation.
 
-{\color{red}{Add the average loss per bad trade and average profit from good trades}}
+
 
 \subsection{Optimising The Reward Function}
+\label{subsection:Optimising The Reward Function} 
 Whilst creating reward systems, the intended behaviour of the agent in training may not be realised, which Bonsai denotes as the \enquote*{cobra effect}\cite{https://medium.com/@BonsaiAI/deep-reinforcement-learning-models-tips-tricks-for-writing-reward-functions-a84fe525e8e0}. To elaborate, the article mentions that within the realm of RL, the agents behave as they are incentivised which may not align with the programmers intentions. 
 \\
 \\
@@ -1326,28 +1340,115 @@ The results of training the model using this reward system was as follows {\colo
 \end{figure}
 
 As seen in Figure \ref{fig:PG-Optimised-Balance}, the change in the structure of the reward system did not yield positive results with respect to the balance of the trader at the end of each trading session, however there are interesting key differences in these sets of results.  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\\
+\\
+{\color{red}{Despite a more refined reward system - similar results in terms of number of trades decreasing}}
+\\
+\\
+{\color{red}{Analysis indicates that the trader is learning to maximise the reward, which should correlate to better trades. suggests that the trader has the right intention, however is not able to engage in trades. Re ran experiments to see how many orders were submitted did not lead to transaction}}
+\\
+\\
+{\color{red}{Midprice consistently becomes 1, trading at a huge loss, and numerous occasions }}
+\\
+\\
+{\color{red}{Suggests that trading at a midprice is not an effective price point to trade at, which leads to a decision of exploring a continuous state space in which trader can choose to buy and sell, and choose the price it quotes.}}
 
 
 \subsection{Continuous Actions}
-\subsection{DDPG}
-\subsection{Optimising Reward Functions}
+Subsection \ref{subsection:Discretised Strategy} describes the strategy of limiting the trader to a discrete action space of BUY/SELL/NULL. The purpose of the strategy was to simplify the learning task for the trader, however after thorough analysis in the previous subsection, the midprice-based strategy indicated that it may not have been the most effective method to engage in profitable trades.
+\\
+\\
+\noindent
+This presented a more radical next iteration in the project, as it was a re-approach for the design of a solution for the DRL trader problem. As mentioned in Subsection \ref{subsection:Discrete Vs Continuous Action Spaces}, this context allowed for a continuous action based solution given that traders in BSG trade at prices between a market maximum and a market minimum, which are \textit{1000} and \textit{1} respectively. 
+\\
+\\
+The benefit of a solution of this kind could be that the trader gets complete freedom to decide on a price that it trades a commodity at, which could potentially solve the problems of being restricted to trading at the midprice - which the market might not favour. However, this freedom may also pose as a problem as it could significantly increase the training time of the agent as there are more actions to consider for the state space. 
+\\
+\\
+To implement a solution that could deal with a continuous action space, a \textit{Deep Deterministic Policy Gradient} based agent was implemented.
+\subsection{The DDPG Agent}
+The DDPG agent implemented follows the theory outlined in Subsection \ref{subsection:Deep Deterministic Policy Gradient} which combines TD learning and the Actor-Critic paradigm to learn the policy via PG based methods. 
+\\
+\\
+\noindent
+There are crucial details with regards to the implementation of this technique in practice and in this context, which are as follows:
+\\
+\\
+\textbf{Multiple Continuous Actions}
+\\
+\\
+\noindent
+As specified in the problem definition of the prop trader, the trader has the ability to buy and sell a commodity within a given market session, in comparison to the implementations of the traditional sales trader algorithms outlined in Section \ref{section:Traditional Sales Trader Solutions}, which have to be configured as buyers or sellers at the start of a trading experiment. 
+\\
+\\
+Given the decision to opt for a continuous action based solution to dictate the prices at which the trader trades at, this means that there are two actions to be taken on the traders behalf: the previously designed BUY/SELL/NONE actions, and the price to submit an order for. 
+\\
+\\
+To incorporate this into the design of the implementation. The actor model comprises of a neural network with two outputs, which crucially are subject to two separate activation functions. 
+
+\begin{lstlisting}[label=actor-forward-pass, caption = Forward pass for the Actor Model]
+def forward(self, state):
+        x = self.fc1(state)
+        x = self.bn1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
+        x = self.bn2(x)
+        x = F.relu(x)
+        x = self.mu(x)
+        action = x[0]
+        price = x[1]
+        action = torch.tanh(action)
+        price = torch.sigmoid(price)
+	return action, price
+\end{lstlisting}
+\noindent
+The two separate activation functions were crucial as they are chosen to appropriately distinguish the actions that can be taken by the trader. The BUY/SELL/NULL, is achieved with the $action = tanh(x)$ function which are then rounded to the integers: -1, 0, 1. These are then mapped to the actions specified in \ref{subsection:Discretised Strategy}, The price at which the trader submits an order at is achieved with the $price = 1000*sigmoid(x)$ function which restricts the output to be between \textit{1000} and \textit{1} which align with the maximum and minimum price of BSG. 
+\\
+\\
+\textbf{Reward Function}
+\\
+\\
+\noindent
+The reward function used for this method was exactly the same as the reward system outlined in Subsection \ref{subsection:Optimising The Reward Function}, however instead of utilising the midprice to reward the trader, the reward is based on the price quoted by the trader. 
+\\
+\\
+\noindent
+Similarly to the PG Vanilla Agent, this model was trained via gradient \textit{ascent}, however with \textit{TDL} which learns by updating its prediction at every time step throughout a trading session. 
+\subsection{Analysis and Evaluation of DDPG Agent}
+\label{subsection:Analysis and Evaluation of PG Vanilla}
+\begin{figure}[H]
+	\centering
+  	\includegraphics[width=0.8\textwidth]{PG-Vanilla-Reward.png}
+  	\caption{Total reward over 100 iterations of the PG Agent with an optimised reward system }
+	\label{fig:DDPG-Balance}  
+\end{figure}
+
+
+
+
+\begin{figure}[H] 
+	\centering
+  	\includegraphics[width=0.8\textwidth]{PG-Vanilla-Good-Vs-Bad-Trades.png}
+  	\caption{A plot of the number of profitable trades and trades that incur a loss for PG-Optimised }
+	\label{fig:DDPG-Good-Vs-Bad}  
+\end{figure}
+\noindent
+Despite Figure \ref{fig:DDPG-Balance} indicates that the DDPG Agent follows the same trend as previous implementations, there are promising results 
+\\
+\\
+
+{\color{red}{The trader eventually learns trade profitably on the whole, as the trading sessions beyond episode X show that the trader makes a profit, the frequency remains the problem }}
+\\
+\\
+{\color{red}{Huge element of DDPG - learning from replay buffer and learning the transitions, however after analysing the transitions, most of them are of null rewards, so the learning process is stunted}}
+\\
+\\
+{\color{red}{Options were to design a reward system that constantly provided non zero rewards, or opt to sample rewards that are non null}}
+
+
 \subsection{Sparsity in rewards}
-\subsection{Simpler state space}
+
+
 
 
 %{\bf A topic-specific chapter, of roughly $15$ pages} 
