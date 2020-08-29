@@ -20,6 +20,7 @@ class DeeplyReinforced(Trader):
         self.balance = balance
         self.lob_range = None
         self.prev_order = None
+        self.profit = 0
     
     def assign_order(self, order):
         pass
@@ -39,8 +40,7 @@ class DeeplyReinforced(Trader):
                         
             self.order = order
             return response 
-            
-       
+        
             
             
         return None 
@@ -51,6 +51,7 @@ class DeeplyReinforced(Trader):
                 return None
             self.lastquote = self.order
             return self.order
+    
     
         
     def notify_transaction(self, transaction_record):
@@ -84,6 +85,7 @@ class DeeplyReinforced(Trader):
                 self.num_trades +=1
                 profit = (trade_price - self.prev_trade_price)
                 reward += profit
+                self.profit = profit
                 print(f"Profit: {profit} -> {trade_price} - {self.prev_trade_price} ")
                 self.position = Position.NONE
                 self.prev_trade_price = None
@@ -92,6 +94,7 @@ class DeeplyReinforced(Trader):
                 self.balance -=trade_price 
                 profit = (self.prev_trade_price - trade_price)
                 reward = profit
+                self.profit = profit
                 self.num_trades += 1
                 print(f"Profit: {profit} -> {self.prev_trade_price} - {trade_price}")
                 self.position = Position.NONE
@@ -124,6 +127,11 @@ class DeeplyReinforced(Trader):
             
     def get_balance(self):
         return self.balance
+    
+    def get_profit(self):
+        profit = self.profit
+        self.profit = 0
+        return profit
     
     def update(self,bids, asks, time):
         self.time = time

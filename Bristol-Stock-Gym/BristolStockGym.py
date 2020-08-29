@@ -1,3 +1,4 @@
+
 import random
 import time as ti
 import signal
@@ -5,7 +6,6 @@ import sys
 import pickle
 import math
 import os
-import warnings
 
 from Exchange import Exchange
 from Order import OType, Order
@@ -22,12 +22,7 @@ from ZIU import ZIU
 from ZIC import ZIC
 from ZIP import ZIP
 from DeeplyReinforced import DeeplyReinforced, Position
-
-from torch.autograd import Variable
-
 from AE import LOB_trainer, Autoencoder
-from Regression.LSTM import LSTM
-from Transition.RNN import MDNRNN
 
 import matplotlib.pyplot as plt
 import argparse
@@ -37,7 +32,6 @@ parser.add_argument("--suffix", type = str, default = "")
 args = parser.parse_args()
 
 from actor_critic import Agent
-from PolicyGradient import PolicyGradientAgent
 
 
 class Environment:
@@ -71,8 +65,8 @@ class Environment:
     #
     def step(self, player_action):
         if not self.init:
-            #raise RuntimeError('Error: step() function in environment called before reset()')
-            warnings.warn('Error: step() function in environment called before reset()')
+            raise RuntimeError('Error: step() function in environment called before reset()')
+        
 
 
         trade = None
@@ -140,17 +134,18 @@ class Environment:
             for trader_key in trader_keys:
                 trader = self.traders[trader_key]
                 balance = trader.balance
-                string = trader_key + ":" + str(trader.balance) + ", "
-                info = info + string 
+                string = trader_key + ": " + str(trader.balance) + ", "
+                info = info + string
             info = info + "\n"
-
         position = Position.NONE.value
         if self.traders['PLAYER'].prev_trade_price is not None:
             position = self.traders['PLAYER'].position.value * self.traders['PLAYER'].prev_trade_price/1000
         num_trades =self.traders['PLAYER'].num_trades    
         reward = self.traders['PLAYER'].get_reward()
         balance = self.traders['PLAYER'].get_balance()
-        return observation, reward, done, info, balance, position, num_trades
+        profit = self.traders['PLAYER'].get_profit()
+        
+        return observation, reward, done, info, balance, position, num_trades, profit
 
     def _populate_traders(self, traders_spec):
 
@@ -210,7 +205,7 @@ class Environment:
 
         if n_buyers < 1:
                 raise RuntimeError('FATAL: no buyers specified\n')
-                
+
         shuffle_traders('B', n_buyers-1, traders)
 
 
@@ -226,7 +221,7 @@ class Environment:
 
         if n_sellers < 1:
                 raise RuntimeError('FATAL: no sellers specified\n')
-                
+
         shuffle_traders('S', n_sellers, traders)
 
         return {'n_buyers':n_buyers, 'n_sellers':n_sellers}, traders
@@ -235,16 +230,14 @@ class Environment:
     def _customer_orders(self, time, traders, trader_stats,os, pending, player_action):
         def sysmin_check(price):
             if price < self.minprice:
-                    #raise RuntimeWarning('WARNING: price < bse_sys_min -- clipped')
-                    warnings.warn('WARNING: price < bse_sys_min -- clipped')
+                    raise RuntimeWarning('WARNING: price < bse_sys_min -- clipped')
                     price = self.minprice
             return price
 
 
         def sysmax_check(price):
             if price > self.maxprice:
-                    #raise RuntimeWarning('WARNING: price > bse_sys_max -- clipped')
-                    warnings.warn('WARNING: price > bse_sys_max -- clipped')
+                    raise RuntimeWarning('WARNING: price > bse_sys_max -- clipped')
                     price = self.maxprice
             return price
 
@@ -471,143 +464,153 @@ def get_traders_schedule():
  
 def get_state(observation, position):
         
-        bids = observation['lob']['bids']
-        asks = observation['lob']['asks']
-        len_bids = len(bids)
-        len_asks = len(asks)
-        best_bid,_ = observation['lob']['best_bid']
-        best_ask,_ = observation['lob']['best_ask']
-        depth_bid = len_bids /30
-        depth_ask = len_asks/30
-        if best_bid is None:
-           best_bid = 0
-        if best_ask is None:
-           best_ask = 0
-        state = np.zeros(6)
-        state[0] = best_bid/1000
-        state[1] = best_ask/1000
-        state[2] = depth_bid
-        state[3] = depth_ask
-        state[4] = position
-        state[5] = observation['lob']['midprice']/1000
-        state = torch.Tensor(state) 
+         #Get the latest 5 changes to the lob - autoencoded 
+        def get_lob():
+            bids = observation['lob']['bids']
+            asks = observation['lob']['asks']
+            column = np.zeros(8)
+
+            len_bids = len(bids)
+            len_asks = len(asks)
+            for i in range(min(2,len_asks)):
+                column[4*i] = asks[i][0]
+                column[4*i +1 ] = asks[i][1]
+
+            for i in range(min(2,len_bids)):
+                column[4*i + 2] = bids[i][0]
+                column[4*i + 3] = bids[i][1] 
+
+            time = observation['lob']['time']
+
+            column = column.reshape((8,))
+
+            snapshot = lob_trainer.get_lob_snapshot(column, time)
+            snapshot = snapshot.flatten()
+            snapshot = snapshot.reshape(1,-1)
+
+            snapshot = scalar.transform(snapshot)
+            snapshot = torch.FloatTensor(snapshot)
+            snapshot = Autoencoder.encoder(snapshot)
+            snapshot = snapshot.cpu().detach().numpy()
+            snapshot = snapshot.reshape(8)
             
-        return state.flatten()
+            return snapshot
+        
+        def get_trades():
+            tape = observation['lob']['tape']
+            trades = np.zeros(8)
+            i = 0
+            for event in reversed(tape):
+                if event['type'] == 'Trade':
+                    
+                    try:
+                        trades[i] = event['price']
+                    except IndexError:
+                        pass
+                    i +=1
+                       
+            trades /=1000
+            return trades
+        
+        lob    = np.array(get_lob())
+        
+        
+        trades = np.array(get_trades())
+        input = np.concatenate((lob, trades, [position]))
+        
+        return input 
 
 def trader_strategy(state):
         
-        midprice = observation['lob']['midprice']
+    
+        #Model chooses an action based on oberservation
+        action, price = agent.choose_action(state)
+        #print(action,price)
         current_position = observation['trader'].position
-        action = trader.choose_action(state)
         time = observation['lob']['time']
         tid = observation['trader'].tid
         
-        if current_position != Position.NONE and time > 998:
+        
+        if current_position != Position.NONE and time > 990:
             if current_position == Position.SOLD:
                 order_type = OType.BID 
                 
                 price = observation['lob']['asks'][0][0]
                 
             else:
-                order_type = OType.ASK 
+                order_type = OType.BID 
                 price = observation['lob']['bids'][0][0]
         
             order = Order(tid, order_type, price, 1, time)
                 
-            return order,action, midprice
+            return order,action
         
-        if current_position == Position.NONE and time > 998:
-            return None, action, midprice
+        if current_position == Position.NONE and time > 990:
+            return None, action
         
-        if midprice == None:
-            return None,action, midprice
-
+        price = round(price)
         if action == 0:
-            return None,action, midprice
+            return None, action
         
         if current_position == Position.NONE:
             
             if action == 1:
                 order_type = OType.BID
-            elif action == 2:
+            elif action == -1:
                 order_type = OType.ASK
             else:
                 return None, action
         elif current_position == Position.BOUGHT:
             if action == 1 or action == 0:
-                return None,action, midprice
-            elif action == 2:
+                return None, action
+            elif action == -1:
                 order_type = OType.ASK
         elif current_position == Position.SOLD: 
             if action == 1:
                 order_type = OType.BID
-            elif action == 2 or action == 0:
-                return None,action, midprice
-        tid = observation['trader'].tid
-        time =  observation['lob']['time']
+            elif action == -1 or action == 0:
+                return None, action
+            
         
-        price = int(midprice)
+        
+        if price < 0:
+            price = 1
+        if price > 1000:
+            price = 1000
         order = Order(tid, order_type, price, 1, time)
         
         
         
-        return order, action, midprice
-        
-        
+        return order, action
 
 if __name__ == "__main__":
-    start_time = 0.0 
+    
     end_time = 1000.0    
     
-    #traders_spec, order_sched = get_traders_schedule()
-    def schedule_offsetfn(t):
-                pi2 = math.pi * 2
-                c = math.pi * 3000
-                wavelength = t / c
-                gradient = 100 * t / (c / pi2)
-                amplitude = 100 * t / (c / pi2)
-                offset = gradient + amplitude * math.sin(wavelength * t)
-                return int(round(offset, 0))
-                
-                
+    traders_spec, order_sched = get_traders_schedule()
 
-# #        range1 = (10, 190, schedule_offsetfn)
-# #        range2 = (200,300, schedule_offsetfn)
-
-# #        supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
-# #                            {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
-# #                            {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-# #                          ]
-
-
-
-    range1 = (95, 95, schedule_offsetfn)
-    supply_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                      ]
-    range1 = (105, 105, schedule_offsetfn)
-    demand_schedule = [ {'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                      ]
-    order_sched = {'sup':supply_schedule, 'dem':demand_schedule,
-                   'interval':30, 'timemode':'drip-poisson'}
-    buyers_spec = [(TType.GVWY,10),(TType.ZIC,9),(TType.ZIP,10), (TType.PLAYER, 1)]
+    #------ Getting mixnmax scalar to transform lob input for AE -----
+    filehandler = open('Objects/scalar', 'rb')
+    scalar = pickle.load(filehandler)
+    filehandler.close()
+    #==================================================================
     
-
-    sellers_spec = [(TType.GVWY,10),(TType.ZIC,10),(TType.ZIP,10)]
     
-    traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
+    #------ Autoencoder ----------------------------------------
     
-    input_size = 4
-    hidden_size = 256
-    num_layers = 1
-    seq_length = 4
-    num_classes = 1
-
-    trader = PolicyGradientAgent(lr = 1e-3, input_dims = [6], GAMMA = 0.99, n_actions = 3, layer1_size = 128, layer2_size = 128)
-    trader.load_model(f'PG-{args.suffix}')
+    lob_trainer = LOB_trainer() 
+    
+    Autoencoder = Autoencoder(input_dims = 9*5, l1_size = 32, l2_size = 16, l3_size = 8)
+    Autoencoder.load_state_dict(torch.load('Models/autoencoder.pth', map_location=torch.device('cpu')))
+    
+    
+    agent = Agent(alpha = 2.5e-5, beta = 2.5e-4, input_dims =[17], tau = 0.001,
+                  batch_size = 64, layer1_size = 400, layer2_size = 300, n_actions = 2)
+    
     np.random.seed(0)
     
     
-    
+    #==================================================================    
     
     for i in range(1000):
         time_step = 1.0/60.0
@@ -619,62 +622,72 @@ if __name__ == "__main__":
         position = Position.NONE.value
         num_trades = 0
         j  = 0
-        
-        midprices = np.zeros(4)
+        good_trades = 0
+        bad_trades = 0
+        average_loss_per_trade = 0
+        average_profit_per_trade = 0
         
         while not done:
-            state = get_state(observation, position)      
-            order, action, midprice = trader_strategy(state)
+            state = get_state(observation, position)
+            order, action = trader_strategy(state.flatten())
             
-            
-            reward = 0
-            if position < 0:
-                if action == 1 and midprice < - position * 1000:
-                    reward +=60
-                if action == 2:
-                    reward -=10
-                if action == 0 and midprice < -position*1000:
-                   reward -=20	
-            if position > 0:
-                if action == 2 and midprice > position * 1000:
-                    reward+=60
-                if action == 1:
-                    reward -=10
-                if action == 0 and midprice > -position*1000:
-                   reward -=20  
-            if reward > 0:
-                print(reward)
             if order is not None:
                 print(action,order, balance, position, num_trades)
-            observation_, benefit, done, info, balance, position, num_trades = environment.step(order)
-            if benefit > 0 :
-                benefit *=10
+            observation_, reward, done, info, balance, position, num_trades, profit = environment.step(order)
+            
+            if profit > 0:
+                good_trades +=1
+                reward *= 10
+                average_profit_per_trade +=profit
+                
+            elif profit < 0:
+                bad_trades +=1
+                reward *=2
+                average_loss_per_trade +=profit
+                
+            else:
+                pass
             
             
+            if order is None:
+                reward -=10
+                
+            if action == 1 and position < 0 and order.price < -1000*position:
+                reward +=50
+            elif action == -1 and position > 0 and order.price > 1000*position:
+                reward +=50
+            elif action == 1 and position < 0 and order.price > -1000*position:
+                reward -=50
+            elif action == -1 and position > 0 and order.price < 1000*position:
+                reward -=50
             
-            trader.store_rewards(benefit + reward)
-            totalreward +=  reward + benefit
             
+            new_state  = get_state(observation_, position)
+            agent.remember(state,action,reward,new_state, int(done))
+            agent.learn(j)
+            totalreward += reward
             observation = observation_
             j+=1
-        trader.learn()
-        
             
         
-        print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades} ")
+        print(f"End of trading session{i} with Total Reward: {totalreward}, Total Balance: {balance}, number of trades: {num_trades}")
+            
+        if good_trades == 0:
+            good_trades = 1
+        if bad_trades == 0:
+            bad_trades = 1
             
         with open(f'rewards-{args.suffix}.csv', 'a') as rewardfile:
-            rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}\n")
-        with open(f'balances-{args.suffix}.csv', 'a') as balances:
-            balances.write(f"{i}: {info}\n")
+            rewardfile.write(f"{i}: {totalreward}, {balance}, {num_trades}, {good_trades}, {bad_trades},{average_profit_per_trade/good_trades}, {average_loss_per_trade/bad_trades}\n")
+            
+        
+        with open(f'balances-{args.suffix}.csv', 'a') as balancefile:
+            balancefile.write(f"Trading session {i}:{info}\n")
         
         
-        trader.save_model(args.suffix)
-
-       
         
-    
-    
-    
-
-   
+                    
+        
+        agent.save_models()
+        
+        
