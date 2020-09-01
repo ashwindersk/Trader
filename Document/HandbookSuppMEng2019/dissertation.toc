@@ -15,37 +15,41 @@
 \contentsline {subsection}{\numberline {2.1.2}Proprietary trader's Objective}{9}{subsection.2.1.2}
 \contentsline {section}{\numberline {2.2}Traditional Sales Trader Solutions}{9}{section.2.2}
 \contentsline {section}{\numberline {2.3}Reinforcement Learning}{10}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}What is Reinforcement Learning}{10}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.1}What is Reinforcement Learning?}{10}{subsection.2.3.1}
 \contentsline {subsection}{\numberline {2.3.2}Optimality}{12}{subsection.2.3.2}
 \contentsline {paragraph}{Optimal Value Function.}{12}{section*.12}
 \contentsline {paragraph}{Optimal Action-Value Function.}{12}{section*.13}
-\contentsline {paragraph}{Optimal Policy.}{12}{section*.14}
-\contentsline {subsection}{\numberline {2.3.3}Challenges to Find Optimal Solutions}{12}{subsection.2.3.3}
-\contentsline {section}{\numberline {2.4}Solving Reinforcement Learning}{12}{section.2.4}
+\contentsline {paragraph}{Optimal Policy.}{13}{section*.14}
+\contentsline {subsection}{\numberline {2.3.3}Challenges to Find Optimal Solutions}{13}{subsection.2.3.3}
+\contentsline {section}{\numberline {2.4}Solving Reinforcement Learning}{13}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}Model Free Prediction: Monte Carlo }{13}{subsection.2.4.1}
-\contentsline {subsection}{\numberline {2.4.2}Model Free Control: Monte Carlo}{13}{subsection.2.4.2}
-\contentsline {subsection}{\numberline {2.4.3}Model Free: Temporal Difference Learning - TD(0)}{13}{subsection.2.4.3}
-\contentsline {subsection}{\numberline {2.4.4}Value Function Approximation}{14}{subsection.2.4.4}
-\contentsline {subsection}{\numberline {2.4.5}Policy Gradient}{16}{subsection.2.4.5}
-\contentsline {subsection}{\numberline {2.4.6}Discrete vs Continuous Action Spaces}{17}{subsection.2.4.6}
-\contentsline {subsection}{\numberline {2.4.7}Deep Deterministic Policy Gradient - (DDPG)}{18}{subsection.2.4.7}
-\contentsline {section}{\numberline {2.5}Summary}{18}{section.2.5}
-\contentsline {chapter}{\numberline {3}Project Execution}{19}{chapter.3}
-\contentsline {section}{\numberline {3.1}Origin}{19}{section.3.1}
-\contentsline {section}{\numberline {3.2}The Deeply Reinforced Trader}{19}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Training Environment}{20}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Designing the State}{21}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Varying Supply and Demand Schedules}{23}{subsection.3.2.3}
-\contentsline {subsection}{\numberline {3.2.4}Discretised Strategy}{23}{subsection.3.2.4}
-\contentsline {subsection}{\numberline {3.2.5}Vanilla Reward}{23}{subsection.3.2.5}
-\contentsline {subsection}{\numberline {3.2.6}The PG Vanilla Agent}{24}{subsection.3.2.6}
-\contentsline {subsection}{\numberline {3.2.7}Analysis and Evaluation of PG Vanilla}{25}{subsection.3.2.7}
-\contentsline {subsection}{\numberline {3.2.8}Optimising The Reward Function}{27}{subsection.3.2.8}
-\contentsline {subsection}{\numberline {3.2.9}Analysis of Optimised Reward System}{28}{subsection.3.2.9}
-\contentsline {subsection}{\numberline {3.2.10}Continuous Actions}{29}{subsection.3.2.10}
-\contentsline {subsection}{\numberline {3.2.11}The DDPG Agent}{29}{subsection.3.2.11}
-\contentsline {subsection}{\numberline {3.2.12}Analysis and Evaluation of DDPG Agent}{31}{subsection.3.2.12}
-\contentsline {subsection}{\numberline {3.2.13}Sparsity in rewards}{32}{subsection.3.2.13}
-\contentsline {chapter}{\numberline {4}Critical Evaluation}{33}{chapter.4}
-\contentsline {chapter}{\numberline {5}Conclusion}{35}{chapter.5}
-\contentsline {chapter}{\numberline {A}An Example Appendix}{37}{appendix.A}
+\contentsline {subsection}{\numberline {2.4.2}Model Free Control: Monte Carlo}{14}{subsection.2.4.2}
+\contentsline {subsection}{\numberline {2.4.3}Model Free: Temporal Difference Learning - TD(0)}{14}{subsection.2.4.3}
+\contentsline {subsection}{\numberline {2.4.4}Value Function Approximation}{15}{subsection.2.4.4}
+\contentsline {subsection}{\numberline {2.4.5}Policy Gradient}{17}{subsection.2.4.5}
+\contentsline {subsection}{\numberline {2.4.6}Deep Deterministic Policy Gradient - (DDPG)}{18}{subsection.2.4.6}
+\contentsline {subsection}{\numberline {2.4.7}Discrete vs Continuous Action Spaces}{20}{subsection.2.4.7}
+\contentsline {section}{\numberline {2.5}Summary}{21}{section.2.5}
+\contentsline {chapter}{\numberline {3}Project Execution}{23}{chapter.3}
+\contentsline {section}{\numberline {3.1}Origin}{23}{section.3.1}
+\contentsline {section}{\numberline {3.2}The Deeply Reinforced Trader}{23}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Training Environment}{23}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Designing the State}{24}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Discretised Strategy}{27}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.4}Vanilla Reward}{27}{subsection.3.2.4}
+\contentsline {subsection}{\numberline {3.2.5}The PG Vanilla Agent}{28}{subsection.3.2.5}
+\contentsline {subsection}{\numberline {3.2.6}Analysis and Evaluation of PG Vanilla}{28}{subsection.3.2.6}
+\contentsline {subsection}{\numberline {3.2.7}Optimising The Reward Function}{30}{subsection.3.2.7}
+\contentsline {subsection}{\numberline {3.2.8}Analysis of Optimised Reward System}{31}{subsection.3.2.8}
+\contentsline {subsection}{\numberline {3.2.9}Continuous Actions}{34}{subsection.3.2.9}
+\contentsline {subsection}{\numberline {3.2.10}The DDPG Agent}{34}{subsection.3.2.10}
+\contentsline {subsection}{\numberline {3.2.11}Analysis and Evaluation of DDPG Agent}{35}{subsection.3.2.11}
+\contentsline {subsection}{\numberline {3.2.12}Sparsity in rewards}{38}{subsection.3.2.12}
+\contentsline {chapter}{\numberline {4}Conclusion}{43}{chapter.4}
+\contentsline {section}{\numberline {4.1}Overview}{43}{section.4.1}
+\contentsline {section}{\numberline {4.2}Project Status}{43}{section.4.2}
+\contentsline {section}{\numberline {4.3}Future Work}{44}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Exploration of State Space Design}{45}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Regression Models}{45}{subsection.4.3.2}
+\contentsline {subsection}{\numberline {4.3.3}Increase explorative power}{45}{subsection.4.3.3}
+\contentsline {section}{\numberline {4.4}Last Words}{45}{section.4.4}

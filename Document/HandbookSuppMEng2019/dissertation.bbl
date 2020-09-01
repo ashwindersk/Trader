@@ -1,0 +1,193 @@
+\begin{thebibliography}{10}
+
+\bibitem{MDP-demystified}
+Mohammed Ashraf.
+\newblock Reinforcement learning demystified: Markov decision processes (part
+  1), 2018.
+
+\bibitem{sample-solution}
+Branko Blagojevic.
+\newblock Reinforcement learning with sparse rewards, 2017.
+\newblock A Medium research blog. Accessed August 2020.
+
+\bibitem{cobra-effect}
+Bonsai.
+\newblock Deep reinforcement learning models: Tips \& tricks for writing reward
+  functions, 2017.
+\newblock A Medium research blog. Accessed August 2020.
+
+\bibitem{computers-trade-more}
+Katharina Buchholz.
+\newblock Computers manage more stock than humans do, 2019.
+
+\bibitem{BSE}
+Dave Cliff.
+\newblock Bristol stock exchange.
+\newblock Available at \url{https://github.com/davecliff/BristolStockExchange}.
+  Accessed May 2020.
+
+\bibitem{cliff-critique}
+Dave Cliff.
+\newblock More than zero intelligence needed for continuous double-auction
+  trading.
+
+\bibitem{Fintech-lecture}
+Dave Cliff.
+\newblock Economic agents and market-based systems ii, 2019.
+
+\bibitem{ZIP}
+Dave Cliff and Janet Bruten.
+\newblock Minimal-intelligence agents for bargaining behaviors in market-based
+  environments, 1997.
+
+\bibitem{score-function}
+Marko Cotra.
+\newblock Deep learning basics:the score function and cross entropy, 2017.
+\newblock A research blog. Accessed August 2020.
+
+\bibitem{IBM-experiments}
+Rajarshi Das, James~E Hanson, Jeffrey~O Kephart, and Gerald~J Tesauro.
+\newblock Agent-human interactions in the continuous double auction, 2001.
+
+\bibitem{dynamic-programming}
+Avinash~K. Dixit.
+\newblock Optimization in economic theory: Second edtion, 1990.
+\newblock Pages 163-166. Accessed August 2020.
+
+\bibitem{BSG}
+Alvaro Furlan-Falcao.
+\newblock Bristol stock gym.
+\newblock Available at
+  \url{https://github.com/ElectronAlchemist/Bristol-Stock-Gym/}. Accessed July
+  2020.
+
+\bibitem{falcao}
+Alvaro Furlan-Falcao.
+\newblock Using reinforcement learning to train adaptive traders in a
+  limit-order-book financial market, 2019.
+
+\bibitem{BC4}
+Caroline Gardiner.
+\newblock Blue crystal phase 4.
+\newblock Bristol Advanced Computing Research. Accessed August 2020.
+
+\bibitem{MGD}
+Steven Gjerstad and John Dickhaut.
+\newblock Price formation in double auctions, 1998.
+
+\bibitem{rearrange-value-function}
+Jeremy Jordan.
+\newblock Planning in a stochastic environment, 2017.
+
+\bibitem{optimal-control-theory-bellman}
+Donald~E. Kirk.
+\newblock Optimal control theory: An introduction.
+\newblock Pages 55-61. Accessed August 2020.
+
+\bibitem{quora-trading-hard}
+Gavin Koh.
+\newblock Why is trading so hard?, 2017.
+
+\bibitem{limit-order}
+Michael~J. Kramer.
+\newblock Limit order.
+\newblock Limit Order Investopedia Definition. Accessed August 2020.
+
+\bibitem{deep-learning-robots}
+Sergey Levine, Chelsea Finn, Trevor Darrell, and Pieter Abbeel.
+\newblock End-to-end training of deep visuomotor policies, 2015.
+
+\bibitem{Competitive-Equilibrium}
+Daniel Liberto.
+\newblock Competitive equilibrium.
+\newblock Competitive Equilibrium Investopedia Definition. Accessed August
+  2020.
+
+\bibitem{DDPG}
+Timothy~P. Lillicrap, Jonathan~J. Hunt, Alexander Pritzel, Nicolas Heess, Tom
+  Erez, David~Silver Yuval~Tassa, and Daan Wierstra.
+\newblock Continuous control with deep reinforcement learning.
+\newblock Research paper. Accessed August 2020.
+
+\bibitem{TD-methods}
+Shubha Manikarnike.
+\newblock Temporal difference methods in rl, 2020.
+\newblock A research blog discussing TD methods. Accessed August 2020.
+
+\bibitem{DDPG-vs-DQN}
+Jon Michaux.
+\newblock Off-policy actor-critic algorithms.
+\newblock A github post. Available at https://jmichaux.github.io/week4b/.
+  Accessed August 2020.
+
+\bibitem{DQN}
+Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis
+  Antonoglou, Daan Wierstra, and Martin Riedmiller.
+\newblock Playing atari with deep reinforcement learning, 2013.
+
+\bibitem{what-is-RL}
+Błażej Osiński and Konrad Budek.
+\newblock What is reinforcement learning? the complete guide, 2018.
+
+\bibitem{Sutton}
+Gregory Piatetsky.
+\newblock Exclusive: Interview with rich sutton, the father of reinforcement
+  learning.
+
+\bibitem{Deep-Learning-Revolution}
+Terry Sejnowski.
+\newblock The deep learning revolution, 2018.
+
+\bibitem{VA-fig}
+David Silver.
+\newblock Value function approximation.
+\newblock A lecture series by David Silver at UCL. Accessed August 2020.
+
+\bibitem{david-silver-teaching}
+David Silver.
+\newblock David silver ucl course on rl, 2015.
+
+\bibitem{MDP-theorem}
+David Silver.
+\newblock Markov decision process, 2020.
+\newblock A lecture series by David Silver at UCL. Accessed August 2020.
+
+\bibitem{deepmind-alpha-go-zero}
+David Silver and Demis Hassabis.
+\newblock Alphago zero: Starting from scratch, 2017.
+
+\bibitem{Silver-theorem}
+David Silver, Guy Lever, Nicolas Heess, Thomas Degris, Daan Wierstra, and
+  Martin Riedmiller.
+\newblock Deterministic policy gradient algorithms.
+\newblock A paper produced in association with DeepMind. Accessed August 2020.
+
+\bibitem{DeepLOB}
+Justin~A. Sirignano.
+\newblock Deep learning for limit order books, 2018.
+\newblock A paper produced in the University of Illinois at Urbana-Champaign.
+  Accessed at 2020.
+
+\bibitem{vernon-smith}
+Vernon~L. Smith.
+\newblock An experimental study of competitive market behavior.
+
+\bibitem{sample-inefficient}
+Stable-baselines.
+\newblock Reinforcement learning tips and tricks.
+\newblock Documentation for stable-baselines. Accessed August 2020.
+
+\bibitem{mx-banks-profit-breakdown}
+Money Summit.
+\newblock How the four biggest us banks generate income and revenue, 2020.
+
+\bibitem{Gode-Sunder}
+Shyam Sunder and Dan Gode.
+\newblock Allocative efficiency of markets with zero-intelligence traders:
+  Market as a partial substitute for individual rationality, 1993.
+
+\bibitem{AA}
+Perukrishnen Vytelingum.
+\newblock The structure and behaviour of the continuous double auction, 2006.
+
+\end{thebibliography}

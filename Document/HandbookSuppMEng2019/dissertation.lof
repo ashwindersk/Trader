@@ -1,19 +1,26 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{7}{figure.caption.10}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces A graphical representation of a Limit Order Book (LOB), reproduced from Cliff (2018)\relax }}{8}{figure.caption.11}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Types of value approximators, reproduced from Silver \cite {https://www.davidsilver.uk/wp-content/uploads/2020/03/FA.pdf}\relax }}{15}{figure.caption.15}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces A graphical representation of a Limit Order Book, reproduced from Cliff (2018)\relax }}{7}{figure.caption.9}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces A graphical representation of a Limit Order Book, reproduced from Cliff (2018)\relax }}{8}{figure.caption.10}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Architecture of Reinforcement Learning Environments\relax }}{10}{figure.caption.11}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Types of value approximators, reproduced from Silver \cite {VA-fig}\relax }}{16}{figure.caption.15}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Architecture Comparison: DQN vs DDPG, borrowed from\relax }}{19}{figure.caption.16}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Training Actor with DDPG\relax }}{20}{figure.caption.17}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture of Reinforcement Learning Environments\relax }}{20}{figure.caption.16}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Capturing LOB Data\relax }}{21}{figure.caption.17}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Architecture of Auto-Encoder\relax }}{22}{figure.caption.18}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Total reward over 100 iterations of the PG Agent in a market evenly populated with ZIC, ZIP and GVWY traders. \relax }}{25}{figure.caption.19}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces A plot of the number transactions the PG Vanilla agent engaged in during each episode \relax }}{25}{figure.caption.20}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for the trader \relax }}{26}{figure.caption.21}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Total reward over 100 iterations of the PG Agent with an optimised reward system \relax }}{28}{figure.caption.22}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for PG-Optimised \relax }}{28}{figure.caption.23}
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Total reward over 100 iterations of the PG Agent with an optimised reward system \relax }}{31}{figure.caption.24}
-\contentsline {figure}{\numberline {3.10}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for PG-Optimised \relax }}{31}{figure.caption.25}
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Capturing LOB Data\relax }}{25}{figure.caption.18}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Architecture of Auto-Encoder\relax }}{26}{figure.caption.19}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Total reward over 100 iterations of the PG-Vanilla trader in a market evenly populated with ZIC, ZIP and GVWY traders. \relax }}{28}{figure.caption.20}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces A plot of the number transactions the PG Vanilla agent engaged in during each episode \relax }}{29}{figure.caption.21}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for the trader \relax }}{29}{figure.caption.22}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Total reward and balance over 373 iterations of the PG Agent with an optimised reward system \relax }}{31}{figure.caption.23}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces A plot of the number of profitable trades and trades that incur a loss for PG-Optimised \relax }}{32}{figure.caption.24}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces A plot of the average profit and average loss of the PG-Optimised trader's trades over 373 iterations \relax }}{32}{figure.caption.25}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Total balance over 114 iterations of the DDPG trader with an optimised reward system \relax }}{35}{figure.caption.26}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Total reward over 114 iterations of the DDPG trader with an optimised reward system \relax }}{36}{figure.caption.27}
+\contentsline {figure}{\numberline {3.11}{\ignorespaces A plot of the profitable vs negative trades for the DDPG trader over 114 iterations\relax }}{36}{figure.caption.28}
+\contentsline {figure}{\numberline {3.12}{\ignorespaces A plot of the average profit and average losses incurred from the DDPG trader's trades over 114 iterations \relax }}{37}{figure.caption.29}
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Total balance over 116 iterations of the DDPG-Sparsity trader with an optimised reward system \relax }}{39}{figure.caption.30}
+\contentsline {figure}{\numberline {3.14}{\ignorespaces Total reward over 116 iterations of the DDPG-Sparsity trader with an optimised reward system \relax }}{40}{figure.caption.31}
+\contentsline {figure}{\numberline {3.15}{\ignorespaces A plot of the profitable vs negative trades for the DDPG-Sparsity trader over 116 iterations\relax }}{40}{figure.caption.32}
+\contentsline {figure}{\numberline {3.16}{\ignorespaces A plot of the average profit and average losses incurred from the DDPG-Sparsity trader's trades over 116 iterations \relax }}{41}{figure.caption.33}
 \addvspace {10\p@ }
